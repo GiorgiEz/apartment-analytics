@@ -4,8 +4,9 @@ __pycache__/
 *.sqlite3
 *.log
 
-# FastAPI/SQLModel
+# database
 .env
+*.db
 .env.*
 
 # VSCode or JetBrains IDEs

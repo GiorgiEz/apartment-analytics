@@ -1,6 +1,5 @@
 from .BaseScraper import BaseScraper
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support import expected_conditions as EC
 import time
 
 
@@ -13,7 +12,7 @@ class MyHomeScraper(BaseScraper):
         self.number_of_pages_to_scrape = 10
 
     def get_url(self, id, page):
-        """ URL for apartment listings (no including houses, hotels or other real estate types)"""
+        """ URL for apartment listings (not including houses, hotels or other real estate types)"""
         # MAIN_URL = "https://www.myhome.ge/"
         return f'https://www.myhome.ge/s/?currency_id=1&CardView=1&real_estate_types=1&cities={id}&page={page}'
     
