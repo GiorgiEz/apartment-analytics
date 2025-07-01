@@ -5,11 +5,12 @@ from selenium.webdriver.chrome.options import Options
 from webdriver_manager.chrome import ChromeDriverManager
 
 
-
 class BaseScraper:
     def __init__(self):
         self.user_agent = ("user-agent=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) "
                            "HeadlessBrowser/1.0 Chrome/90.0.4430.85 Safari/537.36")
+        self.headers = ['url', 'city', 'price', 'price_per_sqm', 'description', 'street_name',
+                        'street_number', 'area_m2', 'upload_date']
         self.raw_apartments_csv_path = 'data_output/raw_apartments.csv'
 
     def configure_chromedriver(self):
@@ -38,8 +39,8 @@ class BaseScraper:
             return
 
         with open(self.raw_apartments_csv_path, mode='w', newline='', encoding='utf-8') as csvfile:
-            writer = csv.DictWriter(csvfile, fieldnames=data[0].keys())
+            writer = csv.DictWriter(csvfile, fieldnames=self.headers)
             writer.writeheader()
             writer.writerows(data)
 
-        print(f"✅ Data written to '{self.raw_apartments_csv_path}'")
+        print(f"Data written to '{self.raw_apartments_csv_path}'")
