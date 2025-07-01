@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.py[cod]
+*.sqlite3
+*.log
+
+# FastAPI/SQLModel
+.env
+.env.*
+
+# VSCode or JetBrains IDEs
+.vscode/
+.idea/
+
+# System files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Python virtual environments
+venv/
+.env/
+.envrc
+.venv
+
+# Backup files
+*~
+*.bak
