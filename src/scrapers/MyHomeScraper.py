@@ -26,6 +26,7 @@ class MyHomeScraper(BaseScraper):
         return False
     
     def scraper(self):
+        """ Main function to scrape the data from myhome.ge website """
         driver = self.configure_chromedriver()
         apartments_data = []
 
@@ -42,7 +43,7 @@ class MyHomeScraper(BaseScraper):
                         print("No listings found on this page. Stopping pagination.")
                         break
 
-                    print("Page: ", page_counter)
+                    print(f"{city_name}, Page: {page_counter}")
 
                     all_links = driver.find_elements(By.TAG_NAME, 'a')  # finds all <a> tags
 
@@ -50,7 +51,7 @@ class MyHomeScraper(BaseScraper):
                         href = a.get_attribute('href')  # We only want links that are links of uploaded apartments
                         if not href or not ('https://www.myhome.ge/pr' in str(href)):
                             continue
-                        
+
                         try: 
                             # Each <a> contains 2 direct divs. 2nd div is where the main data is stored
                             data_div = a.find_elements(By.CSS_SELECTOR, ':scope > div')[1]
@@ -115,6 +116,3 @@ class MyHomeScraper(BaseScraper):
 
         finally:
             driver.quit()
-
-    def main(self):
-        self.scraper()

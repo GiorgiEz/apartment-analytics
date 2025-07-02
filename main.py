@@ -8,7 +8,7 @@ from src.data_analysis.DataAnalysis import DataAnalysis
 if __name__ == "__main__":
     """ Step 1: Scrape the data"""
     # myhome_scraper = MyHomeScraper()
-    # myhome_scraper.main()
+    # myhome_scraper.scraper()
 
     """ Step 2: Data cleaning and transformation """
 
