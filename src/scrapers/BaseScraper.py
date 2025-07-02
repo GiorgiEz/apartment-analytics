@@ -5,6 +5,7 @@ from selenium.webdriver.chrome.options import Options
 from webdriver_manager.chrome import ChromeDriverManager
 
 
+
 class BaseScraper:
     def __init__(self):
         self.user_agent = ("user-agent=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) "
@@ -14,7 +15,7 @@ class BaseScraper:
         self.raw_apartments_csv_path = 'data_output/raw_apartments.csv'
 
     def configure_chromedriver(self):
-        # Configure Chrome
+        """ Configures the chromedriver and initializes the driver """
         options = Options()
         options.add_argument('--start-maximized')
         options.add_argument('--headless')  # uncomment for headless mode
@@ -29,11 +30,10 @@ class BaseScraper:
             "profile.managed_default_content_settings.notifications": 2,
         }
         options.add_experimental_option("prefs", prefs)
-
-        # Initialize driver
         return webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
 
     def write_to_csv(self, data):
+        """ Writes the list of dictionaries' data to a csv file """
         if not data:
             print("No data to write.")
             return

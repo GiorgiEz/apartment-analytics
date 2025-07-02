@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Real Estate Chart Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>Real Estate Analysis Dashboard</h1>
+
+    <nav>
+        <div>
+            <button id="btn-distribution" class="active">City Distribution</button>
+            <button id="btn-price-by-city">Avg Price by City</button>
+            <button id="btn-price-per-sqm">Avg Price per m² by City</button>
+            <button id="btn-price-by-street">Avg Price by Street</button>
+            <button id="btn-area-bin">Price by Area Bin per City</button>
+        </div>
+
+        <div>
+            <label for="city-select"></label>
+            <select id="city-select" style="display: none;">
+                <option value="ბათუმი">ბათუმი</option>
+                <option value="თბილისი">თბილისი</option>
+                <option value="ქუთაისი" selected>ქუთაისი</option>
+            </select>
+        </div>
+    </nav>
+
+    <div id="charts" class="chart-container">
+        <!-- Charts will be inserted here dynamically by JavaScript -->
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

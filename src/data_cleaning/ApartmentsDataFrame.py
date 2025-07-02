@@ -16,9 +16,9 @@ class ApartmentsDataFrame:
 
     def init_data(self, apartments_csv):
         """Loads data from CSV files and merges them into a single DataFrame."""
-        self.products_df = pd.read_csv(apartments_csv)
-        print(f"✅ DataFrame loaded with {len(self.products_df)} records.")
+        self.apartments_df = pd.read_csv(apartments_csv)
+        print(f"✅ DataFrame loaded with {len(self.apartments_df)} records.")
 
     def get_df(self):
         """Returns the DataFrame instance."""
-        return self.products_df
+        return self.apartments_df
