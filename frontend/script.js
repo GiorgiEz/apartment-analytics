@@ -6,9 +6,9 @@ document.addEventListener('DOMContentLoaded', () => {
     city_distribution: ['charts/city_distribution_pie.png'],
     avg_price_by_city: [
       'charts/avg_price_by_city/იყიდება.png',
-      'charts/avg_price_by_city/გირავდება.png',
       'charts/avg_price_by_city/ქირავდება დღიურად.png',
-      'charts/avg_price_by_city/ქირავდება თვიურად.png'
+      'charts/avg_price_by_city/ქირავდება თვიურად.png',
+      'charts/avg_price_by_city/გირავდება.png',
     ],
     avg_price_per_sqm_by_city: ['charts/avg_price_per_sqm_by_city.png'],
     price_by_area_bin_per_city: [

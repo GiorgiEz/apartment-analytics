@@ -25,8 +25,10 @@ class DataCleaning:
         print("AMOUNT OF NULL VALUES IN APARTMENTS DATASET: \n", self.apartments_df.isnull().sum(), '\n')
 
     def __clean_area_m2(self):
-        """ Remove 'მ²' from area_m2 column and convert it to numeric value """
-        self.apartments_df['area_m2'] = self.apartments_df['area_m2'].str[:-2]
+        """Clean area_m2 column by removing 'მ²' from strings and converting to numeric"""
+        self.apartments_df['area_m2'] = self.apartments_df['area_m2'].apply(
+            lambda x: x[:-2] if isinstance(x, str) and x.endswith('მ²') else x
+        )
         self.apartments_df['area_m2'] = pd.to_numeric(self.apartments_df['area_m2'], errors='coerce')
 
     def __clean_price_per_sqm(self):
@@ -53,10 +55,10 @@ class DataCleaning:
         self.apartments_df = df
         print("NULL COLUMNS IN PRICE_PER_SQM COLUMN HAS BEEN FILLED")
 
-    def __fill_street_name_nulls(self):
-        """Fills missing values in the street_name column with a default message."""
-        self.apartments_df['street_name'] = self.apartments_df['street_name'].fillna("არ არის მოწოდებული")
-        print("NULL COLUMNS IN STREET_NAME COLUMN HAVE BEEN FILLED")
+    def __fill_district_name_nulls(self):
+        """Fills missing values in the district_name column with a default message."""
+        self.apartments_df['district_name'] = self.apartments_df['district_name'].fillna("არ არის მოწოდებული")
+        print("NULL COLUMNS IN DISTRICT_NAME COLUMN HAVE BEEN FILLED")
 
     def __transform_upload_date(self):
         # Georgian abbreviated month names to numbers
@@ -126,5 +128,5 @@ class DataCleaning:
         self.__new_transaction_type_col()
 
         self.__fill_price_per_sqm_nulls()
-        self.__fill_street_name_nulls()
+        self.__fill_district_name_nulls()
         self.__get_null_columns()
