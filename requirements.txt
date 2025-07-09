@@ -3,3 +3,4 @@ webdriver-manager~=4.0.2
 pandas~=2.3.0
 seaborn~=0.13.2
 matplotlib~=3.10.3
+requests~=2.32.4

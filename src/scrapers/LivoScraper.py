@@ -1,6 +1,6 @@
 from .BaseScraper import BaseScraper
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
+
 
 
 class LivoScraper(BaseScraper):
@@ -8,7 +8,7 @@ class LivoScraper(BaseScraper):
         super().__init__()
         self.main_url = "https://livo.ge/"
         self.city_id_dict = {"ქუთაისი": 96, 'თბილისი': 1, 'ბათუმი': 15}  # Cities with ids on this website
-        self.number_of_pages_to_scrape = 2
+        self.number_of_pages_to_scrape = 1
         self.raw_apartments_csv_path = 'data_output/livo_apartments.csv'
 
     def get_url(self, id, page):
@@ -28,18 +28,10 @@ class LivoScraper(BaseScraper):
                     driver.get(self.get_url(city_id, page_counter))
 
                     print(f"{self.main_url} - City: {city_name}, Page: {page_counter}")
+                    self.wait_for_links(driver, 'udzravi-qoneba', selector='a.item-url')
 
-                    # Wait until at least 10 matching <a> tags are found
-                    WebDriverWait(driver, 2).until(
-                        lambda d: len([
-                            a for a in d.find_elements(By.CSS_SELECTOR, 'a.item-url')
-                            if self.main_url + 'udzravi-qoneba' in str(a.get_attribute('href'))
-                        ]) >= 10
-                    )
-
-                    a_tags = driver.find_elements(By.CSS_SELECTOR, 'a.item-url')  # finds all <a> tags
-                    apartments = [a for a in a_tags if
-                                  (self.main_url + 'udzravi-qoneba' in str(a.get_attribute('href')))]
+                    a_tags = driver.find_elements(By.CSS_SELECTOR, 'a.item-url')  # finds all <a class=item-url> tags
+                    apartments = [a for a in a_tags if self.main_url + 'udzravi-qoneba' in str(a.get_attribute('href'))]
 
                     for a in apartments:
                         try:
@@ -51,7 +43,14 @@ class LivoScraper(BaseScraper):
                             div_1 = siblings[1]
 
                             price_el = self.safe_find_element(div_0, By.XPATH, './div/div/div/div[1]')
-                            price = price_el.text.strip() if price_el else None
+                            if price_el:
+                                price_text = price_el.text.strip().replace(",", "")  # Remove commas
+                                if price_text.isdigit():
+                                    price = price_text + "$"
+                                else:
+                                    continue
+                            else:
+                                price = None
 
                             square_tag = self.safe_find_element(div_0, By.CLASS_NAME, 'statement__square-tag')
                             price_per_sqm = square_tag.find_element(By.XPATH,
@@ -70,7 +69,8 @@ class LivoScraper(BaseScraper):
                                 area_m2 = None
 
                             try:
-                                upload_date = div_1.find_element(By.XPATH, ".//span[2]").text.strip()
+                                spans = div_1.find_elements(By.TAG_NAME, 'span')
+                                upload_date = spans[1].text if len(spans) > 1 else None
                             except:
                                 upload_date = None
 
@@ -80,14 +80,14 @@ class LivoScraper(BaseScraper):
                                 'price': price,
                                 'price_per_sqm': price_per_sqm,
                                 'description': description,
-                                'district_name': None,
+                                'district_name': 'არ არის მოწოდებული',
                                 'street_address': street_address,
                                 'area_m2': area_m2,
                                 'upload_date': upload_date
                             })
 
                         except Exception as parse_err:
-                            print(f"Error parsing apartment card: {parse_err}")
+                            print(f"{self.main_url} - Error parsing apartment card: {parse_err}")
                             continue
 
                     page_counter += 1
@@ -95,7 +95,7 @@ class LivoScraper(BaseScraper):
             self.write_to_csv(apartments_data)
 
         except Exception as e:
-            print("Failed to load page or parse listings:", str(e))
+            print(f"{self.main_url} -Failed to load page or parse listings:", str(e))
 
         finally:
             driver.quit()

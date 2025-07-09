@@ -1,121 +1,59 @@
 url,city,price,price_per_sqm,description,district_name,street_address,area_m2,upload_date
-https://livo.ge/udzravi-qoneba/iyideba-bina/iyideba-5-otaxiani-bina-qutaisshi-21752049,ქუთაისი,"255,000","1,393 $ /მ2",იყიდება 5 ოთახიანი ბინა ქუთაისში,,გრიშაშვილის ქ. 9,183,
-https://livo.ge/udzravi-qoneba/qiravdeba-bina/qiravdeba-3-otaxiani-bina-qutaisshi-625527,ქუთაისი,"1,050",14 $ /მ2,ქირავდება 3 ოთახიანი ბინა ქუთაისში,,თამარ მეფის ქ. 1,76,
-https://livo.ge/udzravi-qoneba/iyideba-bina/iyideba-3-otaxiani-bina-qutaisshi-21765168,ქუთაისი,"115,000","1,523 $ /მ2",იყიდება 3 ოთახიანი ბინა ქუთაისში,,თამარ მეფის ქ.,75.5,
-https://livo.ge/udzravi-qoneba/qiravdeba-bina/qiravdeba-3-otaxiani-bina-qutaisshi-21765129,ქუთაისი,400,7 $ /მ2,ქირავდება 3 ოთახიანი ბინა ქუთაისში,,აღმაშენებლის გამზ.,55,
-https://livo.ge/udzravi-qoneba/qiravdeba-bina/qiravdeba-3-otaxiani-bina-qutaisshi-21764848,ქუთაისი,550,8 $ /მ2,ქირავდება 3 ოთახიანი ბინა ქუთაისში,,აღმაშენებლის გამზ.,65,
-https://livo.ge/udzravi-qoneba/qiravdeba-bina/qiravdeba-3-otaxiani-bina-qutaisshi-21764660,ქუთაისი,441,7 $ /მ2,ქირავდება 3 ოთახიანი ბინა ქუთაისში,,მელიქიშვილი პ. ქ. 8ა,60,
-https://livo.ge/udzravi-qoneba/qiravdeba-bina/qiravdeba-3-otaxiani-bina-qutaisshi-21764487,ქუთაისი,552,6 $ /მ2,ქირავდება 3 ოთახიანი ბინა ქუთაისში,,ბუხაიძის ქ.,85,
-https://livo.ge/udzravi-qoneba/iyideba-bina/iyideba-3-otaxiani-bina-qutaisshi-21764323,ქუთაისი,"63,000","1,050 $ /მ2",იყიდება 3 ოთახიანი ბინა ქუთაისში,,ბალანჩივაძის ქ.,60,
-https://livo.ge/udzravi-qoneba/qiravdeba-bina/qiravdeba-4-otaxiani-bina-qutaisshi-21764299,ქუთაისი,600,5 $ /მ2,ქირავდება 4 ოთახიანი ბინა ქუთაისში,,ფალიაშვილი ზ. ქ.,110,
-https://livo.ge/udzravi-qoneba/iyideba-bina/iyideba-1-otaxiani-bina-qutaisshi-21764165,ქუთაისი,"38,000",760 $ /მ2,იყიდება 1 ოთახიანი ბინა ქუთაისში,,აღმაშენებლის გამზ. 111,50,
-https://livo.ge/udzravi-qoneba/qiravdeba-bina/qiravdeba-1-otaxiani-bina-qutaisshi-21764149,ქუთაისი,184,5 $ /მ2,ქირავდება 1 ოთახიანი ბინა ქუთაისში,,რუსთაველის შეს. 116,35,
-https://livo.ge/udzravi-qoneba/qiravdeba-bina/qiravdeba-1-otaxiani-bina-qutaisshi-21764035,ქუთაისი,184,5 $ /მ2,ქირავდება 1 ოთახიანი ბინა ქუთაისში,,ჭავჭავაძის გამზ. 59ა,36,
-https://livo.ge/udzravi-qoneba/qiravdeba-bina/qiravdeba-3-otaxiani-bina-qutaisshi-21763943,ქუთაისი,405,5 $ /მ2,ქირავდება 3 ოთახიანი ბინა ქუთაისში,,რუსთაველის შეს. 24,75,
-https://livo.ge/udzravi-qoneba/qiravdeba-bina/qiravdeba-2-otaxiani-bina-qutaisshi-21763900,ქუთაისი,257,7 $ /მ2,ქირავდება 2 ოთახიანი ბინა ქუთაისში,,ბუხაიძის ქ.,35,
-https://livo.ge/udzravi-qoneba/qiravdeba-bina/qiravdeba-1-otaxiani-bina-qutaisshi-21763734,ქუთაისი,221,6 $ /მ2,ქირავდება 1 ოთახიანი ბინა ქუთაისში,,მაისურაძის ქ. 11,38,
-https://livo.ge/udzravi-qoneba/qiravdeba-bina/qiravdeba-3-otaxiani-bina-qutaisshi-21763728,ქუთაისი,"88,000","1,128 $ /მ2",ქირავდება 3 ოთახიანი ბინა ქუთაისში,,ერისთავის ქ. 7,78,
-https://livo.ge/udzravi-qoneba/iyideba-bina/iyideba-2-otaxiani-bina-qutaisshi-21763695,ქუთაისი,"51,000","1,000 $ /მ2",იყიდება 2 ოთახიანი ბინა ქუთაისში,,რუსთაველის შეს.,51,
-https://livo.ge/udzravi-qoneba/qiravdeba-bina/qiravdeba-2-otaxiani-bina-qutaisshi-21763656,ქუთაისი,331,6 $ /მ2,ქირავდება 2 ოთახიანი ბინა ქუთაისში,,ფალიაშვილი ზ. ქ. 23,57,
-https://livo.ge/udzravi-qoneba/qiravdeba-bina/qiravdeba-3-otaxiani-bina-qutaisshi-21763646,ქუთაისი,400,7 $ /მ2,ქირავდება 3 ოთახიანი ბინა ქუთაისში,,აღმაშენებელი დ. გამზირი 112,55,
-https://livo.ge/udzravi-qoneba/qiravdeba-bina/qiravdeba-1-otaxiani-bina-qutaisshi-21763216,ქუთაისი,202,4 $ /მ2,ქირავდება 1 ოთახიანი ბინა ქუთაისში,,ჭავჭავაძის გამზ. 49,50,
-https://livo.ge/udzravi-qoneba/qiravdeba-bina/qiravdeba-3-otaxiani-bina-qutaisshi-21762847,ქუთაისი,700,9 $ /მ2,ქირავდება 3 ოთახიანი ბინა ქუთაისში,,თამარ მეფის ქ. 87,77,
-https://livo.ge/udzravi-qoneba/qiravdeba-bina/qiravdeba-2-otaxiani-bina-qutaisshi-21762819,ქუთაისი,331,7 $ /მ2,ქირავდება 2 ოთახიანი ბინა ქუთაისში,,რუსთაველის შეს. 23,50,
-https://livo.ge/udzravi-qoneba/qiravdeba-bina/qiravdeba-5-otaxiani-bina-qutaisshi-21762754,ქუთაისი,368,3 $ /მ2,ქირავდება 5 ოთახიანი ბინა ქუთაისში,,სარაჯიშვილი ვ. ქუჩა 0,120,
-https://livo.ge/udzravi-qoneba/qiravdeba-bina/qiravdeba-2-otaxiani-bina-qutaisshi-21762551,ქუთაისი,331,6 $ /მ2,ქირავდება 2 ოთახიანი ბინა ქუთაისში,,ფალიაშვილი ზ. ქ. 23,57,
-https://livo.ge/udzravi-qoneba/iyideba-bina/iyideba-4-otaxiani-bina-qutaisshi-21762271,ქუთაისი,"75,000","1,027 $ /მ2",იყიდება 4 ოთახიანი ბინა ქუთაისში,,ბალანჩივაძის ქ.,73,
-https://livo.ge/udzravi-qoneba/iyideba-bina/iyideba-3-otaxiani-bina-qutaisshi-21761948,ქუთაისი,"115,000","1,523 $ /მ2",იყიდება 3 ოთახიანი ბინა ქუთაისში,,თამარ მეფის ქ. 87,75.5,
-https://livo.ge/udzravi-qoneba/iyideba-bina/iyideba-3-otaxiani-bina-qutaisshi-21761932,ქუთაისი,"63,000","1,050 $ /მ2",იყიდება 3 ოთახიანი ბინა ქუთაისში,,ბალანჩივაძის ქ.,60,
-https://livo.ge/udzravi-qoneba/qiravdeba-bina/qiravdeba-5-otaxiani-bina-qutaisshi-21761903,ქუთაისი,294,3 $ /მ2,ქირავდება 5 ოთახიანი ბინა ქუთაისში,,თაბუკაშვილის ქ.,100,
-https://livo.ge/udzravi-qoneba/qiravdeba-bina/qiravdeba-2-otaxiani-bina-qutaisshi-21761883,ქუთაისი,331,7 $ /მ2,ქირავდება 2 ოთახიანი ბინა ქუთაისში,,აღმაშენებლის გამზ.,50,
-https://livo.ge/udzravi-qoneba/qiravdeba-bina/qiravdeba-3-otaxiani-bina-qutaisshi-21761869,ქუთაისი,478,9 $ /მ2,ქირავდება 3 ოთახიანი ბინა ქუთაისში,,საგარაძე ლ. ქ.,56,
-https://livo.ge/udzravi-qoneba/qiravdeba-bina/qiravdeba-4-otaxiani-bina-qutaisshi-21761851,ქუთაისი,600,5 $ /მ2,ქირავდება 4 ოთახიანი ბინა ქუთაისში,,ფალიაშვილი ზ. ქ.,110,
-https://livo.ge/udzravi-qoneba/qiravdeba-bina/qiravdeba-1-otaxiani-bina-qutaisshi-21761824,ქუთაისი,368,9 $ /მ2,ქირავდება 1 ოთახიანი ბინა ქუთაისში,,გელათის ქ.,42,
-https://livo.ge/udzravi-qoneba/qiravdeba-bina/qiravdeba-4-otaxiani-bina-qutaisshi-21761807,ქუთაისი,294,4 $ /მ2,ქირავდება 4 ოთახიანი ბინა ქუთაისში,,ბუხაიძის ქ. 20,75,
-https://livo.ge/udzravi-qoneba/qiravdeba-bina/qiravdeba-2-otaxiani-bina-qutaisshi-21761806,ქუთაისი,313,7 $ /მ2,ქირავდება 2 ოთახიანი ბინა ქუთაისში,,თამარ მეფის ქ. 87,45,
-https://livo.ge/udzravi-qoneba/qiravdeba-bina/qiravdeba-3-otaxiani-bina-qutaisshi-21761799,ქუთაისი,368,3 $ /მ2,ქირავდება 3 ოთახიანი ბინა ქუთაისში,,სარაჯიშვილი ვ. ქუჩა,120,
-https://livo.ge/udzravi-qoneba/iyideba-bina/iyideba-3-otaxiani-bina-qutaisshi-21761755,ქუთაისი,"88,000","1,128 $ /მ2",იყიდება 3 ოთახიანი ბინა ქუთაისში,,ერისთავის ქ.,78,
-https://livo.ge/udzravi-qoneba/iyideba-bina/iyideba-3-otaxiani-bina-qutaisshi-21761709,ქუთაისი,"63,000","1,050 $ /მ2",იყიდება 3 ოთახიანი ბინა ქუთაისში,,ბალანჩივაძის ქ.,60,
-https://livo.ge/udzravi-qoneba/qiravdeba-bina/qiravdeba-2-otaxiani-bina-qutaisshi-21761674,ქუთაისი,331,6 $ /მ2,ქირავდება 2 ოთახიანი ბინა ქუთაისში,,გამსახურდია ზ. გამზ.,60,
-https://livo.ge/udzravi-qoneba/qiravdeba-bina/qiravdeba-2-otaxiani-bina-qutaisshi-21761666,ქუთაისი,294,7 $ /მ2,ქირავდება 2 ოთახიანი ბინა ქუთაისში,,აღმაშენებლის გამზ. 0,45,
-https://livo.ge/udzravi-qoneba/qiravdeba-bina/qiravdeba-3-otaxiani-bina-qutaisshi-21761599,ქუთაისი,800,12 $ /მ2,ქირავდება 3 ოთახიანი ბინა ქუთაისში,,გელათის ქ.,66,
-https://livo.ge/udzravi-qoneba/qiravdebadghiurad-bina/qiravdeba-dghiurad-2-otaxiani-bina-gldanshi-571227,თბილისი,11,0 $ /მ2,ქირავდება დღიურად 2 ოთახიანი ბინა გლდანში,,ვასაძის ქ. 2ბ,55,
-https://livo.ge/udzravi-qoneba/qiravdeba-bina/qiravdeba-3-otaxiani-bina-varketilshi-21765004,თბილისი,500,9 $ /მ2,ქირავდება 3 ოთახიანი ბინა ვარკეთილში,,კალოუბნის ქ. 13,53,
-https://livo.ge/udzravi-qoneba/qiravdeba-bina/qiravdeba-3-otaxiani-bina-bagebshi-21763928,თბილისი,"1,000",10 $ /მ2,ქირავდება 3 ოთახიანი ბინა ბაგებში,,უჩანეიშვილის ქ. 34,100,
-https://livo.ge/udzravi-qoneba/qiravdeba-bina/qiravdeba-2-otaxiani-bina-dighmis-masivshi-21609724,თბილისი,600,11 $ /მ2,ქირავდება 2 ოთახიანი ბინა დიღმის მასივში,,ბელიაშვილი ა. ქ.,57,
-https://livo.ge/udzravi-qoneba/qiravdeba-bina/qiravdeba-1-otaxiani-bina-nadzaladevshi-21763620,თბილისი,313,9 $ /მ2,ქირავდება 1 ოთახიანი ბინა ნაძალადევში,,დადიანი ც. ქ. 34,36,
-https://livo.ge/udzravi-qoneba/qiravdebadghiurad-bina/qiravdeba-dghiurad-2-otaxiani-bina-nadzaladevshi-19514916,თბილისი,26,1 $ /მ2,ქირავდება დღიურად 2 ოთახიანი ბინა ნაძალადევში,,ჭყონდიდელის ქ. 109,50,
-https://livo.ge/udzravi-qoneba/iyideba-bina/iyideba-2-otaxiani-bina-nutsubidzis-ferdobze-21763221,თბილისი,"93,000","1,788 $ /მ2",იყიდება 2 ოთახიანი ბინა ნუცუბიძის ფერდობზე,,კაპანელი კ. ქ.,52,
-https://livo.ge/udzravi-qoneba/iyideba-bina/iyideba-3-otaxiani-bina-nutsubidzis-ferdobze-21762813,თბილისი,"145,728","1,380 $ /მ2",იყიდება 3 ოთახიანი ბინა ნუცუბიძის ფერდობზე,,ამაშუკელი ე. ქ. 23,105.6,
-https://livo.ge/udzravi-qoneba/qiravdeba-bina/qiravdeba-2-otaxiani-bina-gldanshi-21762719,თბილისი,368,8 $ /მ2,ქირავდება 2 ოთახიანი ბინა გლდანში,,ბოჭორიშვილი ა. ქ. 3,47,
-https://livo.ge/udzravi-qoneba/qiravdeba-bina/qiravdeba-1-otaxiani-bina-samgorshi-21762406,თბილისი,294,9 $ /მ2,ქირავდება 1 ოთახიანი ბინა სამგორში,,ქინძმარაულის ქ. 15,32,
-https://livo.ge/udzravi-qoneba/iyideba-bina/iyideba-3-otaxiani-bina-chughuretshi-21761872,თბილისი,"103,000","1,286 $ /მ2",იყიდება 3 ოთახიანი ბინა ჩუღურეთში,,აღმაშენებლი დ. ჩიხი,80.1,
-https://livo.ge/udzravi-qoneba/qiravdebadghiurad-bina/qiravdeba-dghiurad-2-otaxiani-bina-varketilshi-551432,თბილისი,11,0 $ /მ2,ქირავდება დღიურად 2 ოთახიანი ბინა ვარკეთილში,,ჯავახეთის ქ.,50,
-https://livo.ge/udzravi-qoneba/qiravdebadghiurad-bina/qiravdeba-dghiurad-1-otaxiani-bina-dighmis-masivshi-451791,თბილისი,37,1 $ /მ2,ქირავდება დღიურად 1 ოთახიანი ბინა დიღმის მასივში,,დიღმის მასივი - III კვარტ.,33,
-https://livo.ge/udzravi-qoneba/qiravdeba-bina/qiravdeba-5-otaxiani-bina-lisze-21761002,თბილისი,"3,100",13 $ /მ2,ქირავდება 5 ოთახიანი ბინა ლისზე,,ლისი ვერანდა 11,240,
-https://livo.ge/udzravi-qoneba/iyideba-bina/iyideba-3-otaxiani-bina-dighomi-1-9-shi-21760997,თბილისი,"82,500","1,355 $ /მ2",იყიდება 3 ოთახიანი ბინა დიღომი 1-9-ში,,ბობ უოლშის ქუჩა 10,60.9,
-https://livo.ge/udzravi-qoneba/iyideba-bina/iyideba-3-otaxiani-bina-did-dighomshi-21760955,თბილისი,"81,000","1,231 $ /მ2",იყიდება 3 ოთახიანი ბინა დიდ დიღომში,,მირიან მეფის ქ. 87,65.8,
-https://livo.ge/udzravi-qoneba/qiravdeba-bina/qiravdeba-2-otaxiani-bina-isanshi-21204438,თბილისი,478,9 $ /მ2,ქირავდება 2 ოთახიანი ბინა ისანში,,ნადირაშვილი შ. ქ. 21,55,
-https://livo.ge/udzravi-qoneba/qiravdeba-bina/qiravdeba-3-otaxiani-bina-ortachalashi-21760657,თბილისი,950,8 $ /მ2,ქირავდება 3 ოთახიანი ბინა ორთაჭალაში,,გორგასალი ვ. ქუჩა 3,120,
-https://livo.ge/udzravi-qoneba/qiravdeba-bina/qiravdeba-2-otaxiani-bina-san-zonashi-21760633,თბილისი,600,12 $ /მ2,ქირავდება 2 ოთახიანი ბინა სან. ზონაში,,გურამიშვილის გამზ.,50,
-https://livo.ge/udzravi-qoneba/qiravdebadghiurad-bina/qiravdeba-dghiurad-1-otaxiani-bina-mtawmindaze-21760603,თბილისი,66,2 $ /მ2,ქირავდება დღიურად 1 ოთახიანი ბინა მთაწმინდაზე,,ბორბალოს ქ. 7,37,
-https://livo.ge/udzravi-qoneba/qiravdeba-bina/qiravdeba-3-otaxiani-bina-nadzaladevshi-21760492,თბილისი,600,9 $ /მ2,ქირავდება 3 ოთახიანი ბინა ნაძალადევში,,დადიანი ც. ქ. 12,70,
-https://livo.ge/udzravi-qoneba/qiravdeba-bina/qiravdeba-2-otaxiani-bina-saburtaloze-21756601,თბილისი,500,12 $ /მ2,ქირავდება 2 ოთახიანი ბინა საბურთალოზე,,პოლიტკოვსკაია ა. ქ. (ჯიქია) 3,42.5,
-https://livo.ge/udzravi-qoneba/qiravdeba-bina/qiravdeba-3-otaxiani-bina-saburtaloze-21756567,თბილისი,800,9 $ /მ2,ქირავდება 3 ოთახიანი ბინა საბურთალოზე,,ჩიქოვანი ს. ქ. 30,89,
-https://livo.ge/udzravi-qoneba/qiravdebadghiurad-bina/qiravdeba-dghiurad-1-otaxiani-bina-gldanshi-549966,თბილისი,15,0 $ /მ2,ქირავდება დღიურად 1 ოთახიანი ბინა გლდანში,,ხიზაბავრას ქ.,58,
-https://livo.ge/udzravi-qoneba/qiravdebadghiurad-bina/qiravdeba-dghiurad-2-otaxiani-bina-muxianshi-638055,თბილისი,15,0 $ /მ2,ქირავდება დღიურად 2 ოთახიანი ბინა მუხიანში,,გობრონიძე ა. ქ.,43,
-https://livo.ge/udzravi-qoneba/iyideba-bina/iyideba-2-otaxiani-bina-did-dighomshi-21755269,თბილისი,"68,000","1,447 $ /მ2",იყიდება 2 ოთახიანი ბინა დიდ დიღომში,,დიდი დიღომი - III მ/რ,47,
-https://livo.ge/udzravi-qoneba/qiravdeba-bina/qiravdeba-2-otaxiani-bina-did-dighomshi-21754940,თბილისი,500,10 $ /მ2,ქირავდება 2 ოთახიანი ბინა დიდ დიღომში,,დიდი დიღომი - IV მ/რ,50,
-https://livo.ge/udzravi-qoneba/iyideba-bina/iyideba-2-otaxiani-bina-dighmis-masivshi-21754858,თბილისი,"78,000","1,681 $ /მ2",იყიდება 2 ოთახიანი ბინა დიღმის მასივში,,ონიანის ქ. 51,46.4,
-https://livo.ge/udzravi-qoneba/qiravdeba-bina/qiravdeba-2-otaxiani-bina-bagebshi-21516269,თბილისი,650,11 $ /მ2,ქირავდება 2 ოთახიანი ბინა ბაგებში,,წყნეთის გზატკეცილი 45,60,
-https://livo.ge/udzravi-qoneba/qiravdeba-bina/qiravdeba-1-otaxiani-bina-saburtaloze-21754391,თბილისი,400,9 $ /მ2,ქირავდება 1 ოთახიანი ბინა საბურთალოზე,,ცინცაძე ს. ქ. 50,43,
-https://livo.ge/udzravi-qoneba/qiravdeba-bina/qiravdeba-2-otaxiani-bina-saburtaloze-21754160,თბილისი,550,10 $ /მ2,ქირავდება 2 ოთახიანი ბინა საბურთალოზე,,ცაგარელის ქ. 34,55,
-https://livo.ge/udzravi-qoneba/iyideba-bina/iyideba-4-otaxiani-bina-saburtaloze-21754134,თბილისი,"200,000","1,212 $ /მ2",იყიდება 4 ოთახიანი ბინა საბურთალოზე,,ფანასკერტელ-ციციშვილის ქ.,165,
-https://livo.ge/udzravi-qoneba/iyideba-bina/iyideba-3-otaxiani-bina-muxianshi-21751404,თბილისი,"77,000","1,100 $ /მ2",იყიდება 3 ოთახიანი ბინა მუხიანში,,ნონეშვილი ი. ქ. 16,70,
-https://livo.ge/udzravi-qoneba/iyideba-bina/iyideba-2-otaxiani-bina-chughuretshi-21751254,თბილისი,"86,000","1,654 $ /მ2",იყიდება 2 ოთახიანი ბინა ჩუღურეთში,,მარჯანიშვილი კ. ქ. 35,52,
-https://livo.ge/udzravi-qoneba/qiravdeba-bina/qiravdeba-2-otaxiani-bina-vakeshi-21747236,თბილისი,"1,000",18 $ /მ2,ქირავდება 2 ოთახიანი ბინა ვაკეში,,ჭავჭავაძე ი. გამზირი 49,56,
-https://livo.ge/udzravi-qoneba/qiravdeba-bina/qiravdeba-1-otaxiani-bina-dighmis-masivshi-21747174,თბილისი,364,8 $ /მ2,ქირავდება 1 ოთახიანი ბინა დიღმის მასივში,,რობაქიძე გრ. გამზ.,45,
-https://livo.ge/udzravi-qoneba/iyideba-bina/iyideba-5-otaxiani-bina-saburtaloze-21746772,თბილისი,"180,000","1,579 $ /მ2",იყიდება 5 ოთახიანი ბინა საბურთალოზე,,ვაჟა-ფშაველას II შეს. 12,114,
-https://livo.ge/udzravi-qoneba/iyideba-bina/iyideba-3-otaxiani-bina-mtawmindaze-21745608,თბილისი,"250,000","2,427 $ /მ2",იყიდება 3 ოთახიანი ბინა მთაწმინდაზე,,რუსთაველის გამზირი 50,103,
-https://livo.ge/udzravi-qoneba/qiravdebadghiurad-bina/qiravdeba-dghiurad-2-otaxiani-bina-didubeshi-19514804,თბილისი,26,1 $ /მ2,ქირავდება დღიურად 2 ოთახიანი ბინა დიდუბეში,,თორნიკე ერისთავის ქუჩა 8,50,
-https://livo.ge/udzravi-qoneba/qiravdebadghiurad-bina/qiravdeba-dghiurad-2-otaxiani-bina-vashlijvarshi-502925,თბილისი,29,1 $ /მ2,ქირავდება დღიურად 2 ოთახიანი ბინა ვაშლიჯვარში,,სარაჯიშვილი პ. ქ.,40,
-https://livo.ge/udzravi-qoneba/qiravdeba-bina/qiravdeba-1-otaxiani-bina-batumshi-21763978,ბათუმი,44,1 $ /მ2,ქირავდება 1 ოთახიანი ბინა ბათუმში,,ინასარიძის ქ. 20,35,
-https://livo.ge/udzravi-qoneba/qiravdebadghiurad-bina/qiravdeba-dghiurad-1-otaxiani-bina-batumshi-425867,ბათუმი,37,1 $ /მ2,ქირავდება დღიურად 1 ოთახიანი ბინა ბათუმში,,ხიმშიაშვილი შ. ქ. 7ბ,33,
-https://livo.ge/udzravi-qoneba/qiravdebadghiurad-bina/qiravdeba-dghiurad-1-otaxiani-bina-batumshi-21469551,ბათუმი,29,1 $ /მ2,ქირავდება დღიურად 1 ოთახიანი ბინა ბათუმში,,შარტავა ჟ. ქ. 8,33,
-https://livo.ge/udzravi-qoneba/qiravdeba-bina/qiravdeba-3-otaxiani-bina-batumshi-21760650,ბათუმი,700,10 $ /მ2,ქირავდება 3 ოთახიანი ბინა ბათუმში,,კაჭარავა ა. ქუჩა 7,72,
-https://livo.ge/udzravi-qoneba/qiravdebadghiurad-bina/qiravdeba-dghiurad-3-otaxiani-bina-batumshi-21759902,ბათუმი,74,1 $ /მ2,ქირავდება დღიურად 3 ოთახიანი ბინა ბათუმში,,ფარნავაზ მეფის ქ. 73,65,
-https://livo.ge/udzravi-qoneba/qiravdebadghiurad-bina/qiravdeba-dghiurad-1-otaxiani-bina-batumshi-21208121,ბათუმი,29,1 $ /მ2,ქირავდება დღიურად 1 ოთახიანი ბინა ბათუმში,,შარტავა ჟ. ქ. 8,33,
-https://livo.ge/udzravi-qoneba/iyideba-bina/iyideba-1-otaxiani-bina-batumshi-21759030,ბათუმი,"54,000","1,421 $ /მ2",იყიდება 1 ოთახიანი ბინა ბათუმში,,ხიმშიაშვილი შ. ქ. 57,38,
-https://livo.ge/udzravi-qoneba/qiravdebadghiurad-bina/qiravdeba-dghiurad-3-otaxiani-bina-batumshi-21754867,ბათუმი,55,1 $ /მ2,ქირავდება დღიურად 3 ოთახიანი ბინა ბათუმში,,კობალაძე ი. ქ. 8ა,70,
-https://livo.ge/udzravi-qoneba/qiravdebadghiurad-bina/qiravdeba-dghiurad-1-otaxiani-bina-batumshi-21751966,ბათუმი,29,1 $ /მ2,ქირავდება დღიურად 1 ოთახიანი ბინა ბათუმში,,ხიმშიაშვილი შ. ქ. 7ბ,33,
-https://livo.ge/udzravi-qoneba/qiravdebadghiurad-bina/qiravdeba-dghiurad-3-otaxiani-bina-batumshi-21751440,ბათუმი,44,1 $ /მ2,ქირავდება დღიურად 3 ოთახიანი ბინა ბათუმში,,ფარნავაზ მეფის ქ. 107,70,
-https://livo.ge/udzravi-qoneba/qiravdebadghiurad-bina/qiravdeba-dghiurad-1-otaxiani-bina-batumshi-21750623,ბათუმი,29,1 $ /მ2,ქირავდება დღიურად 1 ოთახიანი ბინა ბათუმში,,ლორთქიფანიძე გრ. ქ. 24,32,
-https://livo.ge/udzravi-qoneba/qiravdebadghiurad-bina/qiravdeba-dghiurad-1-otaxiani-bina-batumshi-21736102,ბათუმი,29,1 $ /მ2,ქირავდება დღიურად 1 ოთახიანი ბინა ბათუმში,,ინასარიძის ქ. 13,32,
-https://livo.ge/udzravi-qoneba/qiravdebadghiurad-bina/qiravdeba-dghiurad-1-otaxiani-bina-batumshi-407289,ბათუმი,29,1 $ /მ2,ქირავდება დღიურად 1 ოთახიანი ბინა ბათუმში,,ხიმშიაშვილი შ. ქ.,34,
-https://livo.ge/udzravi-qoneba/qiravdebadghiurad-bina/qiravdeba-dghiurad-3-otaxiani-bina-batumshi-616250,ბათუმი,ფასი შეთანხმებით,,ქირავდება დღიურად 3 ოთახიანი ბინა ბათუმში,,გორგილაძე ზ. ქუჩა,57,
-https://livo.ge/udzravi-qoneba/qiravdebadghiurad-bina/qiravdeba-dghiurad-1-otaxiani-bina-batumshi-21727008,ბათუმი,37,1 $ /მ2,ქირავდება დღიურად 1 ოთახიანი ბინა ბათუმში,,ხიმშიაშვილი შ. ქ. 15,29,
-https://livo.ge/udzravi-qoneba/qiravdebadghiurad-bina/qiravdeba-dghiurad-1-otaxiani-bina-batumshi-21745218,ბათუმი,31,1 $ /მ2,ქირავდება დღიურად 1 ოთახიანი ბინა ბათუმში,,ლორთქიფანიძე გრ. ქ. 24,34,
-https://livo.ge/udzravi-qoneba/iyideba-bina/iyideba-3-otaxiani-bina-batumshi-21744887,ბათუმი,"130,000","2,245 $ /მ2",იყიდება 3 ოთახიანი ბინა ბათუმში,,ანგისის II ჩიხი 10,57.9,
-https://livo.ge/udzravi-qoneba/qiravdebadghiurad-bina/qiravdeba-dghiurad-2-otaxiani-bina-batumshi-532828,ბათუმი,55,1 $ /მ2,ქირავდება დღიურად 2 ოთახიანი ბინა ბათუმში,,ფიროსმანი ნ. ქ. 17,50,
-https://livo.ge/udzravi-qoneba/qiravdeba-bina/qiravdeba-1-otaxiani-bina-batumshi-21742142,ბათუმი,700,14 $ /მ2,ქირავდება 1 ოთახიანი ბინა ბათუმში,,ნიჟარაძე რ. ქუჩა 3,49,
-https://livo.ge/udzravi-qoneba/qiravdeba-bina/qiravdeba-2-otaxiani-bina-batumshi-21737247,ბათუმი,368,10 $ /მ2,ქირავდება 2 ოთახიანი ბინა ბათუმში,,ჭავჭავაძე ი. ქუჩა,38,
-https://livo.ge/udzravi-qoneba/iyideba-bina/iyideba-3-otaxiani-bina-batumshi-21736664,ბათუმი,"150,000","2,308 $ /მ2",იყიდება 3 ოთახიანი ბინა ბათუმში,,ჭავჭავაძე ი. ქუჩა,65,
-https://livo.ge/udzravi-qoneba/qiravdebadghiurad-bina/qiravdeba-dghiurad-3-otaxiani-bina-batumshi-21581089,ბათუმი,55,1 $ /მ2,ქირავდება დღიურად 3 ოთახიანი ბინა ბათუმში,,შარტავა ჟ. ქ. 16,60,
-https://livo.ge/udzravi-qoneba/qiravdeba-bina/qiravdeba-3-otaxiani-bina-batumshi-21635551,ბათუმი,850,14 $ /მ2,ქირავდება 3 ოთახიანი ბინა ბათუმში,,შარტავა ჟ. ქ. 16,60,
-https://livo.ge/udzravi-qoneba/qiravdeba-bina/qiravdeba-4-otaxiani-bina-batumshi-21735150,ბათუმი,700,6 $ /მ2,ქირავდება 4 ოთახიანი ბინა ბათუმში,,ტაბიძის ქ. 7,110,
-https://livo.ge/udzravi-qoneba/iyideba-bina/iyideba-2-otaxiani-bina-batumshi-21734704,ბათუმი,"71,000","1,511 $ /მ2",იყიდება 2 ოთახიანი ბინა ბათუმში,,კობალაძე ი. ქ. 4,47,
-https://livo.ge/udzravi-qoneba/qiravdebadghiurad-bina/qiravdeba-dghiurad-1-otaxiani-bina-batumshi-21734494,ბათუმი,26,1 $ /მ2,ქირავდება დღიურად 1 ოთახიანი ბინა ბათუმში,,შარტავა ჟ. ქ. 8,35,
-https://livo.ge/udzravi-qoneba/iyideba-bina/iyideba-1-otaxiani-bina-batumshi-21731278,ბათუმი,"90,000","1,607 $ /მ2",იყიდება 1 ოთახიანი ბინა ბათუმში,,ხიმშიაშვილი ს. ქ. 32,56,
-https://livo.ge/udzravi-qoneba/qiravdebadghiurad-bina/qiravdeba-dghiurad-1-otaxiani-bina-batumshi-21623040,ბათუმი,29,1 $ /მ2,ქირავდება დღიურად 1 ოთახიანი ბინა ბათუმში,,ინასარიძე შ. ქ. 64a,40,
-https://livo.ge/udzravi-qoneba/qiravdeba-bina/qiravdeba-3-otaxiani-bina-batumshi-21704418,ბათუმი,700,12 $ /მ2,ქირავდება 3 ოთახიანი ბინა ბათუმში,,პაოლო,60,
-https://livo.ge/udzravi-qoneba/qiravdebadghiurad-bina/qiravdeba-dghiurad-1-otaxiani-bina-batumshi-21702226,ბათუმი,44,1 $ /მ2,ქირავდება დღიურად 1 ოთახიანი ბინა ბათუმში,,დ. მამულაძე 27,33.5,
-https://livo.ge/udzravi-qoneba/qiravdebadghiurad-bina/qiravdeba-dghiurad-4-otaxiani-bina-batumshi-408606,ბათუმი,ფასი შეთანხმებით,,ქირავდება დღიურად 4 ოთახიანი ბინა ბათუმში,,გორგილაძე ზ. ქუჩა 98,90,
-https://livo.ge/udzravi-qoneba/qiravdebadghiurad-bina/qiravdeba-dghiurad-1-otaxiani-bina-batumshi-21766080,ბათუმი,37,1 $ /მ2,ქირავდება დღიურად 1 ოთახიანი ბინა ბათუმში,,ხიმშიაშვილი შ. ქ.,35,
-https://livo.ge/udzravi-qoneba/iyideba-bina/iyideba-4-otaxiani-bina-batumshi-21766077,ბათუმი,"287,000","1,979 $ /მ2",იყიდება 4 ოთახიანი ბინა ბათუმში,,ფარნავაზ მეფის ქ.,145,
-https://livo.ge/udzravi-qoneba/iyideba-bina/iyideba-3-otaxiani-bina-batumshi-21766074,ბათუმი,"93,000","1,238 $ /მ2",იყიდება 3 ოთახიანი ბინა ბათუმში,,შარტავა ჟ. ქ.,75.1,
-https://livo.ge/udzravi-qoneba/qiravdeba-bina/qiravdeba-2-otaxiani-bina-batumshi-21766049,ბათუმი,650,11 $ /მ2,ქირავდება 2 ოთახიანი ბინა ბათუმში,,26 მაისის ქ. 68,60,
-https://livo.ge/udzravi-qoneba/qiravdebadghiurad-bina/qiravdeba-dghiurad-2-otaxiani-bina-batumshi-21766046,ბათუმი,55,1 $ /მ2,ქირავდება დღიურად 2 ოთახიანი ბინა ბათუმში,,აეროპორტის გზატკეცილი,40,
-https://livo.ge/udzravi-qoneba/qiravdeba-bina/qiravdeba-2-otaxiani-bina-batumshi-21766014,ბათუმი,400,9 $ /მ2,ქირავდება 2 ოთახიანი ბინა ბათუმში,,ინასარიძის ქ. 7,45,
-https://livo.ge/udzravi-qoneba/qiravdeba-bina/qiravdeba-1-otaxiani-bina-batumshi-21766001,ბათუმი,400,13 $ /მ2,ქირავდება 1 ოთახიანი ბინა ბათუმში,,ადლიის ქ.,32,
-https://livo.ge/udzravi-qoneba/qiravdebadghiurad-bina/qiravdeba-dghiurad-1-otaxiani-bina-batumshi-21765993,ბათუმი,37,1 $ /მ2,ქირავდება დღიურად 1 ოთახიანი ბინა ბათუმში,,ხიმშიაშვილი შ. ქ.,33,
-https://livo.ge/udzravi-qoneba/iyideba-bina/iyideba-3-otaxiani-bina-batumshi-21765990,ბათუმი,"52,000",958 $ /მ2,იყიდება 3 ოთახიანი ბინა ბათუმში,,ბაგრატიონი პ. შეს.,54.3,
+https://livo.ge/udzravi-qoneba/iyideba-bina/iyideba-2-otaxiani-bina-qutaisshi-21373456,ქუთაისი,40000$,755 $ /მ2,იყიდება 2 ოთახიანი ბინა ქუთაისში,არ არის მოწოდებული,შერვაშიძის ქ. 53,53,"9 ივლ, 11:20"
+https://livo.ge/udzravi-qoneba/iyideba-bina/iyideba-2-otaxiani-bina-qutaisshi-21772722,ქუთაისი,30000$,600 $ /მ2,იყიდება 2 ოთახიანი ბინა ქუთაისში,არ არის მოწოდებული,ორახელაშვილის ქ.,50,"7 ივლ, 18:45"
+https://livo.ge/udzravi-qoneba/qiravdeba-bina/qiravdeba-3-otaxiani-bina-qutaisshi-625527,ქუთაისი,1050$,14 $ /მ2,ქირავდება 3 ოთახიანი ბინა ქუთაისში,არ არის მოწოდებული,თამარ მეფის ქ. 1,76,"30 ივნ, 17:00"
+https://livo.ge/udzravi-qoneba/qiravdeba-bina/qiravdeba-2-otaxiani-bina-qutaisshi-21791583,ქუთაისი,450$,9 $ /მ2,ქირავდება 2 ოთახიანი ბინა ქუთაისში,არ არის მოწოდებული,ჯავახიშვილი ი. ქუჩა 25,52,"9 ივლ, 17:17"
+https://livo.ge/udzravi-qoneba/qiravdeba-bina/qiravdeba-3-otaxiani-bina-qutaisshi-21546688,ქუთაისი,258$,3 $ /მ2,ქირავდება 3 ოთახიანი ბინა ქუთაისში,არ არის მოწოდებული,ნიკეას ქ. 64,75,"9 ივლ, 17:15"
+https://livo.ge/udzravi-qoneba/iyideba-bina/iyideba-2-otaxiani-bina-qutaisshi-21791429,ქუთაისი,55800$,900 $ /მ2,იყიდება 2 ოთახიანი ბინა ქუთაისში,არ არის მოწოდებული,პეტრიწის ქ. 10,62,"9 ივლ, 17:10"
+https://livo.ge/udzravi-qoneba/iyideba-bina/iyideba-5-otaxiani-bina-qutaisshi-21791266,ქუთაისი,110000$,759 $ /მ2,იყიდება 5 ოთახიანი ბინა ქუთაისში,არ არის მოწოდებული,ნიკეას ქ.,145,"9 ივლ, 17:03"
+https://livo.ge/udzravi-qoneba/qiravdeba-bina/qiravdeba-3-otaxiani-bina-qutaisshi-21789932,ქუთაისი,441$,7 $ /მ2,ქირავდება 3 ოთახიანი ბინა ქუთაისში,არ არის მოწოდებული,მელიქიშვილი პ. ქ. 8ა,60,"9 ივლ, 16:01"
+https://livo.ge/udzravi-qoneba/qiravdeba-bina/qiravdeba-3-otaxiani-bina-qutaisshi-21789640,ქუთაისი,700$,10 $ /მ2,ქირავდება 3 ოთახიანი ბინა ქუთაისში,არ არის მოწოდებული,თამარ მეფის ქ. 70,70,"9 ივლ, 15:48"
+https://livo.ge/udzravi-qoneba/iyideba-bina/iyideba-2-otaxiani-bina-qutaisshi-21789202,ქუთაისი,65640$,"1,200 $ /მ2",იყიდება 2 ოთახიანი ბინა ქუთაისში,არ არის მოწოდებული,რუსთაველის შეს. 107,54.7,"9 ივლ, 15:30"
+https://livo.ge/udzravi-qoneba/iyideba-bina/iyideba-4-otaxiani-bina-qutaisshi-21788484,ქუთაისი,90000$,857 $ /მ2,იყიდება 4 ოთახიანი ბინა ქუთაისში,არ არის მოწოდებული,აღმაშენებელი დ. გამზირი 112,105,"9 ივლ, 14:56"
+https://livo.ge/udzravi-qoneba/iyideba-bina/iyideba-2-otaxiani-bina-qutaisshi-21787288,ქუთაისი,59000$,"1,017 $ /მ2",იყიდება 2 ოთახიანი ბინა ქუთაისში,არ არის მოწოდებული,აღმაშენებლის გამზ. 81,58,"9 ივლ, 13:44"
+https://livo.ge/udzravi-qoneba/qiravdeba-bina/qiravdeba-1-otaxiani-bina-qutaisshi-21787189,ქუთაისი,350$,10 $ /მ2,ქირავდება 1 ოთახიანი ბინა ქუთაისში,არ არის მოწოდებული,ჯავახიშვილი ი. ქუჩა,35,"9 ივლ, 13:38"
+https://livo.ge/udzravi-qoneba/qiravdeba-bina/qiravdeba-1-otaxiani-bina-qutaisshi-21787125,ქუთაისი,184$,5 $ /მ2,ქირავდება 1 ოთახიანი ბინა ქუთაისში,არ არის მოწოდებული,ნიკეას ქ. 9,39.52,"9 ივლ, 13:34"
+https://livo.ge/udzravi-qoneba/iyideba-bina/iyideba-2-otaxiani-bina-qutaisshi-21786444,ქუთაისი,1100$,37 $ /მ2,იყიდება 2 ოთახიანი ბინა ქუთაისში,არ არის მოწოდებული,სადგურის ქ. 3,30,"9 ივლ, 12:50"
+https://livo.ge/udzravi-qoneba/qiravdeba-bina/qiravdeba-2-otaxiani-bina-qutaisshi-21786222,ქუთაისი,294$,6 $ /მ2,ქირავდება 2 ოთახიანი ბინა ქუთაისში,არ არის მოწოდებული,ბუხაიძის ქ. 4,50,"9 ივლ, 12:40"
+https://livo.ge/udzravi-qoneba/qiravdeba-bina/qiravdeba-2-otaxiani-bina-qutaisshi-21785024,ქუთაისი,221$,3 $ /მ2,ქირავდება 2 ოთახიანი ბინა ქუთაისში,არ არის მოწოდებული,ახალგაზრდობის გამზ. 90,65,"9 ივლ, 11:02"
+https://livo.ge/udzravi-qoneba/qiravdeba-bina/qiravdeba-1-otaxiani-bina-qutaisshi-21784957,ქუთაისი,239$,6 $ /მ2,ქირავდება 1 ოთახიანი ბინა ქუთაისში,არ არის მოწოდებული,ჭავჭავაძის გამზ. 54,40,"9 ივლ, 10:35"
+https://livo.ge/udzravi-qoneba/qiravdeba-bina/qiravdeba-3-otaxiani-bina-qutaisshi-21784934,ქუთაისი,552$,6 $ /მ2,ქირავდება 3 ოთახიანი ბინა ქუთაისში,არ არის მოწოდებული,ბუხაიძის ქ. 4,85,"9 ივლ, 10:21"
+https://livo.ge/udzravi-qoneba/qiravdeba-bina/qiravdeba-2-otaxiani-bina-qutaisshi-21784922,ქუთაისი,313$,7 $ /მ2,ქირავდება 2 ოთახიანი ბინა ქუთაისში,არ არის მოწოდებული,თამარ მეფის ქ. 87,45,"9 ივლ, 10:15"
+https://livo.ge/udzravi-qoneba/qiravdeba-bina/qiravdeba-2-otaxiani-bina-isanshi-21790497,თბილისი,550$,10 $ /მ2,ქირავდება 2 ოთახიანი ბინა ისანში,არ არის მოწოდებული,ნავთლუღის ქ. 10,57,"9 ივლ, 16:26"
+https://livo.ge/udzravi-qoneba/qiravdebadghiurad-bina/qiravdeba-dghiurad-2-otaxiani-bina-didubeshi-19514804,თბილისი,26$,1 $ /მ2,ქირავდება დღიურად 2 ოთახიანი ბინა დიდუბეში,არ არის მოწოდებული,თორნიკე ერისთავის ქუჩა 8,50,"9 ივლ, 11:00"
+https://livo.ge/udzravi-qoneba/iyideba-bina/iyideba-7-otaxiani-bina-sololakshi-20456954,თბილისი,468000$,"2,000 $ /მ2",იყიდება 7 ოთახიანი ბინა სოლოლაკში,არ არის მოწოდებული,იაშვილი პ. ქ. 5,234,"9 ივლ, 10:48"
+https://livo.ge/udzravi-qoneba/qiravdeba-bina/qiravdeba-3-otaxiani-bina-chughuretshi-21784630,თბილისი,550$,10 $ /მ2,ქირავდება 3 ოთახიანი ბინა ჩუღურეთში,არ არის მოწოდებული,თოიძის ქ. 20,55,"9 ივლ, 00:20"
+https://livo.ge/udzravi-qoneba/qiravdeba-bina/qiravdeba-2-otaxiani-bina-saburtaloze-21784116,თბილისი,37$,1 $ /მ2,ქირავდება 2 ოთახიანი ბინა საბურთალოზე,არ არის მოწოდებული,ყაზბეგის გამზ. 53,40,"8 ივლ, 21:21"
+https://livo.ge/udzravi-qoneba/giravdeba-bina/giravdeba-3-otaxiani-bina-chughuretshi-21783618,თბილისი,36790$,613 $ /მ2,გირავდება 3 ოთახიანი ბინა ჩუღურეთში,არ არის მოწოდებული,დადიანი ც. ქ. 7ბ,60,"8 ივლ, 19:08"
+https://livo.ge/udzravi-qoneba/qiravdeba-bina/qiravdeba-2-otaxiani-bina-mtawmindaze-21781055,თბილისი,600$,13 $ /მ2,ქირავდება 2 ოთახიანი ბინა მთაწმინდაზე,არ არის მოწოდებული,სარაჯიშვილი ვ. ქ. 32,45,"8 ივლ, 17:01"
+https://livo.ge/udzravi-qoneba/qiravdebadghiurad-bina/qiravdeba-dghiurad-1-otaxiani-bina-saburtaloze-18969208,თბილისი,44$,1 $ /მ2,ქირავდება დღიურად 1 ოთახიანი ბინა საბურთალოზე,არ არის მოწოდებული,მარშალ გელოვანის გამზ. 52,40,"8 ივლ, 16:54"
+https://livo.ge/udzravi-qoneba/qiravdebadghiurad-bina/qiravdeba-dghiurad-2-otaxiani-bina-nadzaladevshi-21281871,თბილისი,29$,1 $ /მ2,ქირავდება დღიურად 2 ოთახიანი ბინა ნაძალადევში,არ არის მოწოდებული,ჭყონდიდელის ქ.,50,"8 ივლ, 16:33"
+https://livo.ge/udzravi-qoneba/qiravdeba-bina/qiravdeba-3-otaxiani-bina-didubeshi-21775755,თბილისი,699$,14 $ /მ2,ქირავდება 3 ოთახიანი ბინა დიდუბეში,არ არის მოწოდებული,ფოთის ქ. 32,49,"8 ივლ, 12:42"
+https://livo.ge/udzravi-qoneba/iyideba-bina/iyideba-2-otaxiani-bina-did-dighomshi-21774338,თბილისი,60000$,"1,277 $ /მ2",იყიდება 2 ოთახიანი ბინა დიდ დიღომში,არ არის მოწოდებული,დემეტრე თავდადებულის ქუჩა 40,47,"8 ივლ, 10:55"
+https://livo.ge/udzravi-qoneba/qiravdeba-bina/qiravdeba-2-otaxiani-bina-ortachalashi-21605118,თბილისი,550$,10 $ /მ2,ქირავდება 2 ოთახიანი ბინა ორთაჭალაში,არ არის მოწოდებული,კალანდაძე ბ. ქ. 15,55,"8 ივლ, 10:17"
+https://livo.ge/udzravi-qoneba/qiravdebadghiurad-bina/qiravdeba-dghiurad-3-otaxiani-bina-gldanshi-616249,თბილისი,11$,0 $ /მ2,ქირავდება დღიურად 3 ოთახიანი ბინა გლდანში,არ არის მოწოდებული,ვეკუა ი. ქ.,70,"8 ივლ, 08:29"
+https://livo.ge/udzravi-qoneba/iyideba-bina/iyideba-2-otaxiani-bina-dighmis-masivshi-21773870,თბილისი,100000$,"2,041 $ /მ2",იყიდება 2 ოთახიანი ბინა დიღმის მასივში,არ არის მოწოდებული,ლუბლიანას ქ. 3ა,49,"8 ივლ, 00:42"
+https://livo.ge/udzravi-qoneba/qiravdeba-bina/qiravdeba-5-otaxiani-bina-saburtaloze-21773757,თბილისი,1000$,9 $ /მ2,ქირავდება 5 ოთახიანი ბინა საბურთალოზე,არ არის მოწოდებული,კვერნაძე ბ. ქ. 13,116,"7 ივლ, 23:31"
+https://livo.ge/udzravi-qoneba/iyideba-bina/iyideba-2-otaxiani-bina-didubeshi-21773562,თბილისი,98000$,"1,307 $ /მ2",იყიდება 2 ოთახიანი ბინა დიდუბეში,არ არის მოწოდებული,სტანისლავსკის ქ. 12ა,75,"7 ივლ, 22:02"
+https://livo.ge/udzravi-qoneba/qiravdeba-bina/qiravdeba-3-otaxiani-bina-veraze-21773560,თბილისი,1300$,12 $ /მ2,ქირავდება 3 ოთახიანი ბინა ვერაზე,არ არის მოწოდებული,ქიაჩელის ქ.,105,"7 ივლ, 22:02"
+https://livo.ge/udzravi-qoneba/iyideba-bina/iyideba-2-otaxiani-bina-vakeshi-21773150,თბილისი,155000$,"3,370 $ /მ2",იყიდება 2 ოთახიანი ბინა ვაკეში,არ არის მოწოდებული,ავალიშვილი ზ. ქ. 12,46,"7 ივლ, 19:41"
+https://livo.ge/udzravi-qoneba/qiravdebadghiurad-bina/qiravdeba-dghiurad-1-otaxiani-bina-gldanshi-21222765,თბილისი,6$,0 $ /მ2,ქირავდება დღიურად 1 ოთახიანი ბინა გლდანში,არ არის მოწოდებული,ხიზანიშვილის ქ. 8,40,"7 ივლ, 18:45"
+https://livo.ge/udzravi-qoneba/iyideba-bina/iyideba-3-otaxiani-bina-ortachalashi-21771406,თბილისი,111640$,"1,420 $ /მ2",იყიდება 3 ოთახიანი ბინა ორთაჭალაში,არ არის მოწოდებული,ორთაჭალა 40,78.62,"7 ივლ, 17:41"
+https://livo.ge/udzravi-qoneba/iyideba-bina/iyideba-1-otaxiani-bina-batumshi-21784649,ბათუმი,38870$,"1,300 $ /მ2",იყიდება 1 ოთახიანი ბინა ბათუმში,არ არის მოწოდებული,კობალაძე ი. ქ. 18,29.9,"9 ივლ, 00:28"
+https://livo.ge/udzravi-qoneba/qiravdebadghiurad-bina/qiravdeba-dghiurad-4-otaxiani-bina-batumshi-21784571,ბათუმი,55$,1 $ /მ2,ქირავდება დღიურად 4 ოთახიანი ბინა ბათუმში,არ არის მოწოდებული,ხიმშიაშვილი შ. ქ. 43,40,"8 ივლ, 23:56"
+https://livo.ge/udzravi-qoneba/iyideba-bina/iyideba-1-otaxiani-bina-batumshi-21774792,ბათუმი,40000$,"1,053 $ /მ2",იყიდება 1 ოთახიანი ბინა ბათუმში,არ არის მოწოდებული,ანგისის 3 ჩიხი 8,38,"8 ივლ, 11:46"
+https://livo.ge/udzravi-qoneba/iyideba-bina/iyideba-3-otaxiani-bina-batumshi-21624227,ბათუმი,75000$,"1,415 $ /მ2",იყიდება 3 ოთახიანი ბინა ბათუმში,არ არის მოწოდებული,აღმაშენებლის ქ. 3,53,"8 ივლ, 09:24"
+https://livo.ge/udzravi-qoneba/iyideba-bina/iyideba-3-otaxiani-bina-batumshi-21773755,ბათუმი,170000$,"1,595 $ /მ2",იყიდება 3 ოთახიანი ბინა ბათუმში,არ არის მოწოდებული,ლომონოსოვი მ. ქ. 75,106.59,"7 ივლ, 23:31"
+https://livo.ge/udzravi-qoneba/qiravdeba-bina/qiravdeba-1-otaxiani-bina-batumshi-21763978,ბათუმი,44$,1 $ /მ2,ქირავდება 1 ოთახიანი ბინა ბათუმში,არ არის მოწოდებული,ინასარიძის ქ. 20,35,"7 ივლ, 10:30"
+https://livo.ge/udzravi-qoneba/qiravdebadghiurad-bina/qiravdeba-dghiurad-1-otaxiani-bina-batumshi-425867,ბათუმი,44$,1 $ /მ2,ქირავდება დღიურად 1 ოთახიანი ბინა ბათუმში,არ არის მოწოდებული,ხიმშიაშვილი შ. ქ. 7ბ,33,"6 ივლ, 13:25"
+https://livo.ge/udzravi-qoneba/qiravdebadghiurad-bina/qiravdeba-dghiurad-1-otaxiani-bina-batumshi-21469551,ბათუმი,29$,1 $ /მ2,ქირავდება დღიურად 1 ოთახიანი ბინა ბათუმში,არ არის მოწოდებული,შარტავა ჟ. ქ. 8,33,"6 ივლ, 10:46"
+https://livo.ge/udzravi-qoneba/qiravdeba-bina/qiravdeba-3-otaxiani-bina-batumshi-21760650,ბათუმი,700$,10 $ /მ2,ქირავდება 3 ოთახიანი ბინა ბათუმში,არ არის მოწოდებული,კაჭარავა ა. ქუჩა 7,72,"5 ივლ, 23:43"
+https://livo.ge/udzravi-qoneba/qiravdebadghiurad-bina/qiravdeba-dghiurad-3-otaxiani-bina-batumshi-21759902,ბათუმი,74$,1 $ /მ2,ქირავდება დღიურად 3 ოთახიანი ბინა ბათუმში,არ არის მოწოდებული,ფარნავაზ მეფის ქ. 73,65,"5 ივლ, 18:43"
+https://livo.ge/udzravi-qoneba/qiravdebadghiurad-bina/qiravdeba-dghiurad-1-otaxiani-bina-batumshi-21208121,ბათუმი,29$,1 $ /მ2,ქირავდება დღიურად 1 ოთახიანი ბინა ბათუმში,არ არის მოწოდებული,შარტავა ჟ. ქ. 8,33,"5 ივლ, 18:25"
+https://livo.ge/udzravi-qoneba/iyideba-bina/iyideba-1-otaxiani-bina-batumshi-21759030,ბათუმი,54000$,"1,421 $ /მ2",იყიდება 1 ოთახიანი ბინა ბათუმში,არ არის მოწოდებული,ხიმშიაშვილი შ. ქ. 57,38,"5 ივლ, 17:10"
+https://livo.ge/udzravi-qoneba/qiravdebadghiurad-bina/qiravdeba-dghiurad-3-otaxiani-bina-batumshi-21754867,ბათუმი,55$,1 $ /მ2,ქირავდება დღიურად 3 ოთახიანი ბინა ბათუმში,არ არის მოწოდებული,კობალაძე ი. ქ. 8ა,70,"4 ივლ, 23:55"
+https://livo.ge/udzravi-qoneba/qiravdeba-bina/qiravdeba-4-otaxiani-bina-batumshi-21735150,ბათუმი,700$,6 $ /მ2,ქირავდება 4 ოთახიანი ბინა ბათუმში,არ არის მოწოდებული,ტაბიძის ქ. 7,110,"2 ივლ, 21:39"
+https://livo.ge/udzravi-qoneba/iyideba-bina/iyideba-2-otaxiani-bina-batumshi-21734704,ბათუმი,71000$,"1,511 $ /მ2",იყიდება 2 ოთახიანი ბინა ბათუმში,არ არის მოწოდებული,კობალაძე ი. ქ. 4,47,"2 ივლ, 19:34"
+https://livo.ge/udzravi-qoneba/qiravdebadghiurad-bina/qiravdeba-dghiurad-1-otaxiani-bina-batumshi-21623040,ბათუმი,29$,1 $ /მ2,ქირავდება დღიურად 1 ოთახიანი ბინა ბათუმში,არ არის მოწოდებული,ინასარიძე შ. ქ. 64a,40,"30 ივნ, 13:39"
+https://livo.ge/udzravi-qoneba/iyideba-bina/iyideba-2-otaxiani-bina-batumshi-21792498,ბათუმი,96000$,"2,400 $ /მ2",იყიდება 2 ოთახიანი ბინა ბათუმში,არ არის მოწოდებული,ბარათაშვილი ნ. ქ. 26,40,"9 ივლ, 18:02"
+https://livo.ge/udzravi-qoneba/iyideba-bina/iyideba-4-otaxiani-bina-batumshi-21792495,ბათუმი,180000$,"1,885 $ /მ2",იყიდება 4 ოთახიანი ბინა ბათუმში,არ არის მოწოდებული,ბაგრატიონი პ. შეს. 129,95.5,"9 ივლ, 18:02"
