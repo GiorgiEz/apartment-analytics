@@ -38,7 +38,7 @@ class Database:
             cursor.execute(f"""
                 INSERT OR IGNORE INTO {self.apartments_table_name} (
                     url, city, price, price_per_sqm, description,
-                    street_name, street_number, area_m2, upload_date, transaction_type
+                    district_name, street_address, area_m2, upload_date, transaction_type
                 ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """, tuple(row))
 

@@ -35,11 +35,12 @@ class DataAnalysis:
         """ Filters by provided transaction type, if city is provided then also filters by the city,
         and groups by street name, otherwise groups by the city and calculates the average price """
 
-        filtered_df = self.df[self.df['transaction_type'] == transaction_type]
+        filtered_df = self.df[(self.df['transaction_type'] == transaction_type)
+                              & (self.df['district_name'] != "არ არის მოწოდებული")]
 
         if city:
             filtered_df = filtered_df[filtered_df['city'] == city]
-            avg_prices = filtered_df.groupby('street_name')['price'].mean().sort_values(ascending=False).head(10)
+            avg_prices = filtered_df.groupby('district_name')['price'].mean().sort_values(ascending=False).head(10)
         else:
             avg_prices = filtered_df.groupby('city')['price'].mean().sort_values(ascending=False).head(10)
 

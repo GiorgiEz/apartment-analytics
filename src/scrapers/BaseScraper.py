@@ -3,6 +3,10 @@ from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import TimeoutException
+from selenium.webdriver.common.by import By
 
 
 
@@ -10,9 +14,10 @@ class BaseScraper:
     def __init__(self):
         self.user_agent = ("user-agent=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) "
                            "HeadlessBrowser/1.0 Chrome/90.0.4430.85 Safari/537.36")
-        self.headers = ['url', 'city', 'price', 'price_per_sqm', 'description', 'street_name',
-                        'street_number', 'area_m2', 'upload_date']
-        self.raw_apartments_csv_path = 'data_output/raw_apartments.csv'
+        self.headers = ['url', 'city', 'price', 'price_per_sqm', 'description', 'district_name',
+                        'street_address', 'area_m2', 'upload_date']
+        self.raw_apartments_csv_path = ''
+        self.main_url = ''
 
     def configure_chromedriver(self):
         """ Configures the chromedriver and initializes the driver """
@@ -31,6 +36,30 @@ class BaseScraper:
         }
         options.add_experimental_option("prefs", prefs)
         return webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
+
+    def safe_find_element(self, driver, by, value, timeout=0.3):
+        try:
+            return WebDriverWait(driver, timeout).until(EC.presence_of_element_located((by, value)))
+        except TimeoutException:
+            return None
+
+    def wait_for_links(self, driver, substr, min_count=10, selector='a', timeout=3):
+        """
+        Waits until at least `min_count` <a> tags are found where href contains `substr`.
+
+        Args:
+            driver: The Selenium WebDriver instance.
+            min_count: Minimum number of matching <a> tags to wait for.
+            substr: Substring that should be contained in the href.
+            selector: CSS selector or tag name to find <a> tags (default: 'a').
+            timeout: Max time to wait in seconds.
+        """
+        WebDriverWait(driver, timeout).until(
+            lambda d: len([
+                a for a in d.find_elements(By.CSS_SELECTOR, selector)
+                if self.main_url + substr in str(a.get_attribute('href'))
+            ]) >= min_count
+        )
 
     def write_to_csv(self, data):
         """ Writes the list of dictionaries' data to a csv file """
