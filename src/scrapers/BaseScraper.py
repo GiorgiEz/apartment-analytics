@@ -19,6 +19,9 @@ class BaseScraper:
         self.raw_apartments_csv_path = ''
         self.main_url = ''
 
+    def scraper(self):
+        raise NotImplementedError("Subclasses must implement scraper function")
+
     def configure_chromedriver(self):
         """ Configures the chromedriver and initializes the driver """
         options = Options()
@@ -37,7 +40,7 @@ class BaseScraper:
         options.add_experimental_option("prefs", prefs)
         return webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
 
-    def safe_find_element(self, driver, by, value, timeout=0.3):
+    def safe_find_element(self, driver, by, value, timeout=1):
         try:
             return WebDriverWait(driver, timeout).until(EC.presence_of_element_located((by, value)))
         except TimeoutException:
@@ -46,25 +49,24 @@ class BaseScraper:
     def wait_for_links(self, driver, substr, min_count=10, selector='a', timeout=3):
         """
         Waits until at least `min_count` <a> tags are found where href contains `substr`.
-
-        Args:
-            driver: The Selenium WebDriver instance.
-            min_count: Minimum number of matching <a> tags to wait for.
-            substr: Substring that should be contained in the href.
-            selector: CSS selector or tag name to find <a> tags (default: 'a').
-            timeout: Max time to wait in seconds.
+        Returns True if successful, False if timeout occurs.
         """
-        WebDriverWait(driver, timeout).until(
-            lambda d: len([
-                a for a in d.find_elements(By.CSS_SELECTOR, selector)
-                if self.main_url + substr in str(a.get_attribute('href'))
-            ]) >= min_count
-        )
+        try:
+            WebDriverWait(driver, timeout).until(
+                lambda d: len([
+                    a for a in d.find_elements(By.CSS_SELECTOR, selector)
+                    if self.main_url + substr in str(a.get_attribute('href'))
+                ]) >= min_count
+            )
+            return True
+        except TimeoutException:
+            print(f"{self.main_url} - Timeout: Failed to load at least {min_count} <a> tags for substr='{substr}' within {timeout}s")
+            return False
 
     def write_to_csv(self, data):
         """ Writes the list of dictionaries' data to a csv file """
         if not data:
-            print("No data to write.")
+            print(f"{self.main_url} - No data to write.")
             return
 
         with open(self.raw_apartments_csv_path, mode='w', newline='', encoding='utf-8') as csvfile:
@@ -72,4 +74,4 @@ class BaseScraper:
             writer.writeheader()
             writer.writerows(data)
 
-        print(f"Data written to '{self.raw_apartments_csv_path}'")
+        print(f"{self.main_url} - Data written to '{self.raw_apartments_csv_path}'")

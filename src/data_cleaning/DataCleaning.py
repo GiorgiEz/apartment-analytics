@@ -1,8 +1,7 @@
 from .ApartmentsDataFrame import ApartmentsDataFrame
 from ..utils.helpers import get_usd_exchange_rate
 import pandas as pd
-from datetime import datetime
-import re
+from datetime import datetime, timedelta
 
 
 
@@ -43,6 +42,8 @@ class DataCleaning:
                 if '$' in price_str:
                     return float(price_str.replace('$', '').strip())
                 else:
+                    if '₾' in price_str:
+                        price_str = price_str.replace('₾', '').strip()
                     return round(float(price_str) * self.currency_rate)
             except ValueError:
                 return None
@@ -81,26 +82,41 @@ class DataCleaning:
             'ივლ': 7, 'აგვ': 8, 'სექ': 9, 'ოქტ': 10, 'ნოე': 11, 'დეკ': 12
         }
 
-        # Ensure the column is string
         df = self.apartments_df.copy()
         df['upload_date'] = df['upload_date'].astype(str)
+        now = datetime.now()
 
         def parse_date(upload_str):
             try:
                 parts = upload_str.split()
                 if len(parts) != 3:
-                    return None
-                day, geo_month_abbr, time_str = parts
-                month = geo_months.get(geo_month_abbr[:3])
-                if not month:
-                    return None
-                now = datetime.now()
-                return datetime(year=now.year, month=month, day=int(day), hour=int(time_str[:2]),
-                                minute=int(time_str[3:5]))
+                    return 'არ არის მოწოდებული'
+
+                if 'წუთი' in upload_str:
+                    # Example input: '25 წუთის წინ'
+                    new_time = now - timedelta(minutes=int(parts[0]))
+                    return new_time.strftime("%Y-%m-%d %H:%M")
+                elif 'საათი' in upload_str:
+                    # Example input: '13 საათის წინ'
+                    new_time = now - timedelta(hours=int(parts[0]))
+                    return new_time.strftime("%Y-%m-%d %H:%M")
+                elif ':' in upload_str:
+                    # Example input: '09 ივლ 16:20'
+                    day, geo_month_abbr, time_str = [p.strip() for p in parts]
+                    month = geo_months.get(geo_month_abbr[:3])
+                    if not month:
+                        return None
+                    return datetime(year=now.year, month=month, day=int(day), hour=int(time_str[:2]),
+                                    minute=int(time_str[3:5])).strftime("%Y-%m-%d %H:%M")
+                else:
+                    # Example input: "09 ივლ 2025"
+                    day, geo_month_abbr, year = [p.strip() for p in parts]
+                    month = geo_months.get(geo_month_abbr[:3])
+                    return (datetime(year=int(year), month=month, day=int(day), hour=12, minute=0)
+                            .strftime("%Y-%m-%d %H:%M"))
             except:
                 return None
 
-        # Apply to column
         df['upload_date'] = df['upload_date'].apply(parse_date)
         self.apartments_df = df
 
