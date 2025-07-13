@@ -18,8 +18,8 @@ class Database:
                 price INTEGER,
                 price_per_sqm INTEGER,
                 description TEXT,
-                street_name TEXT,
-                street_number TEXT,
+                district_name TEXT,
+                street_address TEXT,
                 area_m2 REAL,
                 upload_date TEXT,
                 transaction_type TEXT

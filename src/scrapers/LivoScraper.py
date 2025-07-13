@@ -7,8 +7,8 @@ class LivoScraper(BaseScraper):
     def __init__(self):
         super().__init__()
         self.main_url = "https://livo.ge/"
-        self.city_id_dict = {"ქუთაისი": 96, 'თბილისი': 1, 'ბათუმი': 15}  # Cities with ids on this website
-        self.number_of_pages_to_scrape = 1
+        self.city_id_dict = {'თბილისი': 1, "ქუთაისი": 96, 'ბათუმი': 15}  # Cities with ids on this website
+        self.number_of_pages_to_scrape = 2
         self.raw_apartments_csv_path = 'data_output/livo_apartments.csv'
 
     def get_url(self, id, page):
@@ -28,7 +28,10 @@ class LivoScraper(BaseScraper):
                     driver.get(self.get_url(city_id, page_counter))
 
                     print(f"{self.main_url} - City: {city_name}, Page: {page_counter}")
-                    self.wait_for_links(driver, 'udzravi-qoneba', selector='a.item-url')
+                    if not self.wait_for_links(driver, 'udzravi-qoneba', selector='a.item-url'):
+                        print(f"Skipping Page: {page_counter} — links not loaded")
+                        page_counter += 1
+                        continue
 
                     a_tags = driver.find_elements(By.CSS_SELECTOR, 'a.item-url')  # finds all <a class=item-url> tags
                     apartments = [a for a in a_tags if self.main_url + 'udzravi-qoneba' in str(a.get_attribute('href'))]
@@ -44,13 +47,13 @@ class LivoScraper(BaseScraper):
 
                             price_el = self.safe_find_element(div_0, By.XPATH, './div/div/div/div[1]')
                             if price_el:
-                                price_text = price_el.text.strip().replace(",", "")  # Remove commas
+                                price_text = price_el.text.strip().replace(",", "")
                                 if price_text.isdigit():
-                                    price = price_text + "$"
+                                    price = price_text + " $"
                                 else:
                                     continue
                             else:
-                                price = None
+                                continue
 
                             square_tag = self.safe_find_element(div_0, By.CLASS_NAME, 'statement__square-tag')
                             price_per_sqm = square_tag.find_element(By.XPATH,
