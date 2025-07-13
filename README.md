@@ -13,7 +13,7 @@
 
 ## Overview
 
-This project is a Real Estate Listing Tracker that scrapes property data from [MyHome.ge](https://www.myhome.ge/), processes and stores the data, and generates visual analytics presented in a web dashboard. It enables ongoing monitoring of real estate trends and prices across different cities and streets in Georgia.
+This project is a Real Estate Listing Tracker that scrapes property data from [MyHome.ge](https://www.myhome.ge/), [Livo.ge](https://livo.ge/) and [Home.ss.ge](https://home.ss.ge/ka/udzravi-qoneba/), processes and stores the data, and generates visual analytics presented in a web dashboard. It enables ongoing monitoring of real estate trends and prices across different cities and districts in Georgia.
 
 ## Features
 
@@ -100,5 +100,4 @@ matplotlib~=3.10.3
 ## Notes
 
 * Scraping takes a couple of minutes to fully complete.
-* Only data from **MyHome.ge** is scraped at this stage.
 * SQLite is used for simplicity and local storage. Might be extended to PostgreSQL or another RDBMS.
