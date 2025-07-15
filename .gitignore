@@ -27,4 +27,5 @@ venv/
 # Backup files
 *~
 *.bak
-backup
+backup/
+data_output/

@@ -10,7 +10,7 @@ class MyHomeScraper(BaseScraper):
         super().__init__()
         self.main_url = "https://www.myhome.ge/"
         self.city_id_dict = {'თბილისი': 1, "ქუთაისი": 96, 'ბათუმი': 15}  # Cities with ids on this website
-        self.number_of_pages_to_scrape = 2
+        self.number_of_pages_to_scrape = 1
         self.raw_apartments_csv_path = 'data_output/myhome_apartments.csv'
 
     def get_url(self, id, page):
@@ -30,13 +30,11 @@ class MyHomeScraper(BaseScraper):
                     driver.get(self.get_url(city_id, page_counter))
 
                     print(f"{self.main_url} - City: {city_name}, Page: {page_counter}")
-                    if not self.wait_for_links(driver, 'pr', timeout=10):
+                    apartments = self.wait_for_links(driver, 'pr', timeout=10)
+                    if len(apartments) == 0:
                         print(f"Skipping Page: {page_counter} — links not loaded")
                         page_counter += 1
                         continue
-
-                    a_tags = driver.find_elements(By.TAG_NAME, 'a')  # finds all <a> tags
-                    apartments = [a for a in a_tags if self.main_url + 'pr' in str(a.get_attribute('href'))]
 
                     for a in apartments:
                         try:
@@ -49,7 +47,6 @@ class MyHomeScraper(BaseScraper):
 
                             except TimeoutException:
                                 print(f"{self.main_url} - Skipping this listing — expected 5 data_div_info elements.")
-
                                 continue
 
                             # The First div of data_div_info contains data about the price and price_per_sqm
@@ -58,16 +55,19 @@ class MyHomeScraper(BaseScraper):
                             price_per_sqm = spans_0[3].text if len(spans_0) > 3 else None
 
                             # The Second div of data_div_info contains data about the description
-                            description_h2 = data_div_info[1].find_element(By.TAG_NAME, "h2")
+                            description_h2 = self.safe_find_element(data_div_info[1], By.TAG_NAME, "h2")
                             description = description_h2.text if description_h2 else None
 
                             # The Third div of data_div_info contains data about the street address
-                            street_address_h3 = data_div_info[2].find_element(By.TAG_NAME, "h3")
+                            street_address_h3 = self.safe_find_element(data_div_info[2], By.TAG_NAME, "h3")
                             street_address = street_address_h3.text if street_address_h3 else None
 
                             # The Fourth div of data_div_info contains data about the area_m2
                             spans_3 = data_div_info[3].find_elements(By.TAG_NAME, "span")
                             area_m2 = (spans_3[-2].text+spans_3[-1].text).strip() if "მ²" in spans_3[-1].text else None
+
+                            floor = spans_3[0].text.strip() if len(spans_0) > 0 else None
+                            bedrooms = None
 
                             # The 5th div of the data_div_info contains data about the district_name and upload_date
                             spans_4 = data_div_info[4].find_elements(By.TAG_NAME, "span")
@@ -83,6 +83,8 @@ class MyHomeScraper(BaseScraper):
                                 'district_name': district_name,
                                 'street_address': street_address,
                                 'area_m2': area_m2,
+                                "bedrooms": bedrooms,
+                                "floor": floor,
                                 'upload_date': upload_date
                             })
 
