@@ -30,7 +30,8 @@ class MyHomeScraper(BaseScraper):
                     driver.get(self.get_url(city_id, page_counter))
 
                     print(f"{self.main_url} - City: {city_name}, Page: {page_counter}")
-                    apartments = self.wait_for_links(driver, 'pr', timeout=10)
+
+                    apartments = self.wait_for_links(driver, 'pr')
                     if len(apartments) == 0:
                         print(f"Skipping Page: {page_counter} — links not loaded")
                         page_counter += 1
@@ -67,7 +68,6 @@ class MyHomeScraper(BaseScraper):
                             area_m2 = (spans_3[-2].text+spans_3[-1].text).strip() if "მ²" in spans_3[-1].text else None
 
                             floor = spans_3[0].text.strip() if len(spans_0) > 0 else None
-                            bedrooms = None
 
                             # The 5th div of the data_div_info contains data about the district_name and upload_date
                             spans_4 = data_div_info[4].find_elements(By.TAG_NAME, "span")
@@ -83,7 +83,7 @@ class MyHomeScraper(BaseScraper):
                                 'district_name': district_name,
                                 'street_address': street_address,
                                 'area_m2': area_m2,
-                                "bedrooms": bedrooms,
+                                "bedrooms": None,
                                 "floor": floor,
                                 'upload_date': upload_date
                             })

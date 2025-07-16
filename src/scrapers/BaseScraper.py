@@ -2,17 +2,15 @@ import csv
 from selenium import webdriver
 from selenium.webdriver.edge.service import Service as EdgeService
 from selenium.webdriver.edge.options import Options as EdgeOptions
-from webdriver_manager.microsoft import EdgeChromiumDriverManager
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.common.by import By
+from ..utils.helpers import get_random_user_agent
 
 
 class BaseScraper:
     def __init__(self):
-        self.user_agent = ("user-agent=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) "
-                           "HeadlessBrowser/1.0 Chrome/90.0.4430.85 Safari/537.36")
         self.headers = ['url', 'city', 'price', 'price_per_sqm', 'description', 'district_name',
                         'street_address', 'area_m2', 'bedrooms', 'floor', 'upload_date']
         self.raw_apartments_csv_path = ''
@@ -24,6 +22,7 @@ class BaseScraper:
     def configure_chromedriver(self):
         """ Configures the webdriver for microsoft-edge browser and initializes the driver """
         options = EdgeOptions()
+        driver_path = 'C:/Program Files (x86)/edgedriver_win64/msedgedriver.exe'  # Webdriver local path
 
         options.add_argument('--start-maximized')
         options.add_argument('--headless')  # uncomment for headless mode
@@ -32,7 +31,7 @@ class BaseScraper:
         options.add_experimental_option('useAutomationExtension', False)
         options.add_argument('--disable-gpu')
         options.add_argument('--no-sandbox')
-        options.add_argument(self.user_agent)
+        options.add_argument(f'--user-agent={get_random_user_agent()}')
         prefs = {
             "profile.managed_default_content_settings.images": 2,
             "profile.managed_default_content_settings.stylesheets": 2,
@@ -40,7 +39,8 @@ class BaseScraper:
             "profile.managed_default_content_settings.notifications": 2,
         }
         options.add_experimental_option("prefs", prefs)
-        return webdriver.Edge(service=EdgeService(EdgeChromiumDriverManager().install()), options=options)
+
+        return webdriver.Edge(service=EdgeService(executable_path=driver_path), options=options)
 
     def safe_find_element(self, driver, by, value, timeout=1):
         try:
