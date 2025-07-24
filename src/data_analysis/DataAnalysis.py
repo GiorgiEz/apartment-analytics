@@ -20,13 +20,17 @@ class DataAnalysis:
 
         city_counts = self.df['city'].value_counts()
 
+        def format_label(pct, all_vals):
+            absolute = int(round(pct / 100 * sum(all_vals)))
+            return f"{pct:.1f}%\n({absolute})"
+
         plt.figure(figsize=(8, 8))
         plt.pie(
-            city_counts, labels=city_counts.index, autopct='%1.1f%%', startangle=140,
+            city_counts, labels=city_counts.index, autopct=lambda pct: format_label(pct, city_counts), startangle=140,
             colors=sns.color_palette('pastel')[:len(city_counts)], textprops={'fontsize': 15}
         )
 
-        plt.title('Apartment Listing Distribution by City')
+        plt.title(f'Apartment Listing Distribution by City. \nApartment amount {len(self.df)}')
         plt.tight_layout()
         plt.savefig(self.image_path + output_path)
         plt.close()

@@ -1,3 +1,4 @@
+import pandas as pd
 from .BaseScraper import BaseScraper
 from selenium.webdriver.common.by import By
 
@@ -8,7 +9,7 @@ class LivoScraper(BaseScraper):
         super().__init__()
         self.main_url = "https://livo.ge/"
         self.city_id_dict = {'თბილისი': 1, "ქუთაისი": 96, 'ბათუმი': 15}  # Cities with ids on this website
-        self.number_of_pages_to_scrape = 2
+        self.number_of_pages_to_scrape = 5
         self.raw_apartments_csv_path = 'data_output/livo_apartments.csv'
 
     def get_url(self, id, page):
@@ -28,13 +29,12 @@ class LivoScraper(BaseScraper):
                     driver.get(self.get_url(city_id, page_counter))
 
                     print(f"{self.main_url} - City: {city_name}, Page: {page_counter}")
-                    if not self.wait_for_links(driver, 'udzravi-qoneba', selector='a.item-url'):
-                        print(f"Skipping Page: {page_counter} — links not loaded")
+
+                    apartments = self.wait_for_links(driver, 'udzravi-qoneba', selector='a.item-url')
+                    if len(apartments) == 0:
+                        print(f"{self.main_url} - Skipping Page: {page_counter} — links not loaded")
                         page_counter += 1
                         continue
-
-                    a_tags = driver.find_elements(By.CSS_SELECTOR, 'a.item-url')  # finds all <a class=item-url> tags
-                    apartments = [a for a in a_tags if self.main_url + 'udzravi-qoneba' in str(a.get_attribute('href'))]
 
                     for a in apartments:
                         try:
@@ -65,11 +65,25 @@ class LivoScraper(BaseScraper):
                             address_el = self.safe_find_element(div_0, By.CLASS_NAME, 'statement__address')
                             street_address = address_el.get_attribute("title").strip() if address_el else None
 
+                            info_class = 'card-additional-info__item'
+
                             try:
-                                area_m2 = div_1.find_element(By.XPATH,
-                                    ".//div[contains(@class, 'card-additional-info__item')][1]").text.split()[1].strip()
+                                area_m2 = self.safe_find_element(div_1, By.XPATH,
+                                f'.//div[contains(@class, {info_class})][1]').text.split()[1].strip()
                             except:
                                 area_m2 = None
+
+                            try:
+                                bedrooms = self.safe_find_element(div_1, By.XPATH,
+                            f'.//div[contains(@class, {info_class}) and contains(text(), "საძ.")]').text.strip()
+                            except:
+                                bedrooms = None
+
+                            try:
+                                floor = self.safe_find_element(div_1, By.XPATH,
+                            f'.//div[contains(@class, {info_class}) and contains(text(), "სართ.")]').text.strip()
+                            except:
+                                floor = None
 
                             try:
                                 spans = div_1.find_elements(By.TAG_NAME, 'span')
@@ -83,8 +97,10 @@ class LivoScraper(BaseScraper):
                                 'price': price,
                                 'price_per_sqm': price_per_sqm,
                                 'description': description,
-                                'district_name': 'არ არის მოწოდებული',
+                                'district_name': pd.NA,
                                 'street_address': street_address,
+                                'bedrooms': bedrooms,
+                                'floor': floor,
                                 'area_m2': area_m2,
                                 'upload_date': upload_date
                             })

@@ -72,8 +72,73 @@ class DataCleaning:
 
     def __fill_district_name_nulls(self):
         """Fills missing values in the district_name column with a default message."""
-        self.apartments_df['district_name'] = self.apartments_df['district_name'].fillna("არ არის მოწოდებული")
+        self.apartments_df['district_name'] = self.apartments_df['district_name'].fillna(pd.NA)
         print("NULL COLUMNS IN DISTRICT_NAME COLUMN HAVE BEEN FILLED")
+
+    def __transform_bedrooms(self):
+        """Cleans raw bedroom values, extracts numeric info from strings like 'საძ. 3',
+        and fills nulls using area as a heuristic."""
+
+        def extract_bedroom_number(val):
+            if isinstance(val, str) and 'საძ' in val:
+                parts = val.strip().split()
+                if len(parts) > 1 and parts[1].isdigit():
+                    return int(parts[1])
+
+            elif not pd.isna(val):
+                return int(val)
+            return pd.NA
+
+        def infer_bedrooms(area):
+            if area is None or pd.isna(area):
+                return pd.NA
+            elif area <= 50:
+                return 1
+            elif area <= 100:
+                return 2
+            elif area <= 150:
+                return 3
+            else:
+                return 4
+
+        self.apartments_df['bedrooms'] = self.apartments_df['bedrooms'].apply(extract_bedroom_number)
+        self.apartments_df['bedrooms'] = self.apartments_df.apply(
+            lambda row: infer_bedrooms(row['area_m2']) if pd.isna(row['bedrooms']) else row['bedrooms'],
+            axis=1
+        )
+        self.apartments_df['bedrooms'] = self.apartments_df['bedrooms'].astype('Int64')
+
+        print("Transformed and filled missing 'bedrooms' column.")
+
+    def __transform_floor(self):
+        """Cleans raw floor values, extracts numeric info from strings like 'სართ. 3' or '8/11', and fills nulls."""
+
+        def extract_floor_number(val):
+            if pd.isna(val) or val is None:
+                return pd.NA
+
+            if isinstance(val, str):
+                val = val.strip()
+                if 'სართ' in val:
+                    parts = val.split()
+                    if len(parts) > 1 and parts[1].isdigit():
+                        return int(parts[1])
+                elif '/' in val and '-' not in val:
+                    parts = val.split('/')
+                    if len(parts) > 0 and parts[0].isdigit():
+                        return int(parts[0])
+                elif val.isdigit():
+                    return int(val)
+                else:
+                    return pd.NA
+
+            elif isinstance(val, (int, float)):
+                return int(val)
+
+            return pd.NA
+
+        self.apartments_df['floor'] = self.apartments_df['floor'].apply(extract_floor_number)
+        self.apartments_df['floor'] = self.apartments_df['floor'].astype('Int64')
 
     def __transform_upload_date(self):
         # Georgian abbreviated month names to numbers
@@ -90,7 +155,7 @@ class DataCleaning:
             try:
                 parts = upload_str.split()
                 if len(parts) != 3:
-                    return 'არ არის მოწოდებული'
+                    return pd.NA
 
                 if 'წუთი' in upload_str:
                     # Example input: '25 წუთის წინ'
@@ -143,7 +208,7 @@ class DataCleaning:
 
     def write_to_csv(self, path="data_output/cleaned_apartments.csv"):
         """ Writes the dataset to a csv file. """
-        self.apartments_df.to_csv(path, index=False)
+        self.apartments_df.to_csv(path, index=False, na_rep='<NA>')
 
     def main(self):
         self.__get_shape()
@@ -155,8 +220,10 @@ class DataCleaning:
         self.__clean_area_m2()
         self.__clean_price_per_sqm()
 
+        self.__transform_bedrooms()
+        self.__transform_floor()
+
         self.__transform_upload_date()
         self.__new_transaction_type_col()
 
         self.__fill_district_name_nulls()
-        self.__get_null_columns()
