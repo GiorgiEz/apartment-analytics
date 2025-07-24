@@ -1,3 +1,4 @@
+import pandas as pd
 from .BaseScraper import BaseScraper
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import StaleElementReferenceException
@@ -8,9 +9,8 @@ class SSHomeScraper(BaseScraper):
     def __init__(self):
         super().__init__()
         self.main_url = "https://home.ss.ge/ka/udzravi-qoneba/"
-        # self.city_id_dict = {'თბილისი': 95, "ქუთაისი": 97, 'ბათუმი': 96}
-        self.city_id_dict = {'თბილისი': 95}  # Cities with ids on this website
-        self.number_of_pages_to_scrape = 1
+        self.city_id_dict = {'თბილისი': 95, "ქუთაისი": 97, 'ბათუმი': 96} # Cities with ids on this website
+        self.number_of_pages_to_scrape = 5
         self.raw_apartments_csv_path = 'data_output/sshome_apartments.csv'
 
     def get_url(self, id, page):
@@ -31,7 +31,7 @@ class SSHomeScraper(BaseScraper):
 
                     print(f"{self.main_url} - City: {city_name}, Page: {page_counter}")
 
-                    try:
+                    try:  # Finding the main div grid where the data about apartments is located
                         listing_container = self.safe_find_element(driver, By.CLASS_NAME, "listing-container")
                         top_grid_lard = self.safe_find_element(listing_container, By.CLASS_NAME, "top-grid-lard")
                         child_divs = top_grid_lard.find_elements(By.TAG_NAME, "div")
@@ -42,7 +42,7 @@ class SSHomeScraper(BaseScraper):
                         continue
 
                     a_tags = self.wait_for_links(grid, '', selector='a')
-                    if len(a_tags) == 0:
+                    if len(a_tags) == 0:  # If there are not a_tags found then we skip the page
                         print(f"{self.main_url} - Skipping Page: {page_counter} — links not loaded")
                         page_counter += 1
                         continue
@@ -83,9 +83,9 @@ class SSHomeScraper(BaseScraper):
                                 'url': href,
                                 'city': city_name,
                                 'price': price,
-                                'price_per_sqm': None,
+                                'price_per_sqm': pd.NA,
                                 'description': description,
-                                'district_name': 'არ არის მოწოდებული',
+                                'district_name': pd.NA,
                                 'street_address': street_address,
                                 'area_m2': area_m2,
                                 "bedrooms": bedrooms,
@@ -94,20 +94,20 @@ class SSHomeScraper(BaseScraper):
                             })
 
                         except StaleElementReferenceException:
-                            print(f"{self.main_url} - Skipped page due to stale element error: "
+                            print(f"{self.main_url} - Skipping apartment... due to stale element error: "
                                   f"{city_name}, Page: {page_counter}")
-                            break
+                            continue
 
                         except Exception as parse_err:
-                            print(f"{self.main_url} - Error parsing apartment card: {parse_err}")
-                            break
+                            print(f"{self.main_url} - Skipping apartment... due to Error: {parse_err}")
+                            continue
 
                     page_counter += 1
 
             self.write_to_csv(apartments_data)
 
         except Exception as e:
-            print(f"{self.main_url} - Failed to load page or parse listings:", str(e))
+            print(f"{self.main_url} - Scraping stopped, Failed to load page or parse listings:", str(e))
 
         finally:
             driver.quit()

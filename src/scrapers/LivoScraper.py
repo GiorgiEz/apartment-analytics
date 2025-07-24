@@ -1,5 +1,7 @@
+import pandas as pd
 from .BaseScraper import BaseScraper
 from selenium.webdriver.common.by import By
+
 
 
 class LivoScraper(BaseScraper):
@@ -7,7 +9,7 @@ class LivoScraper(BaseScraper):
         super().__init__()
         self.main_url = "https://livo.ge/"
         self.city_id_dict = {'თბილისი': 1, "ქუთაისი": 96, 'ბათუმი': 15}  # Cities with ids on this website
-        self.number_of_pages_to_scrape = 1
+        self.number_of_pages_to_scrape = 5
         self.raw_apartments_csv_path = 'data_output/livo_apartments.csv'
 
     def get_url(self, id, page):
@@ -95,7 +97,7 @@ class LivoScraper(BaseScraper):
                                 'price': price,
                                 'price_per_sqm': price_per_sqm,
                                 'description': description,
-                                'district_name': 'არ არის მოწოდებული',
+                                'district_name': pd.NA,
                                 'street_address': street_address,
                                 'bedrooms': bedrooms,
                                 'floor': floor,

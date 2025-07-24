@@ -21,6 +21,8 @@ class Database:
                 district_name TEXT,
                 street_address TEXT,
                 area_m2 REAL,
+                bedrooms INTEGER,
+                floor INTEGER,
                 upload_date TEXT,
                 transaction_type TEXT
             );
@@ -38,8 +40,8 @@ class Database:
             cursor.execute(f"""
                 INSERT OR IGNORE INTO {self.apartments_table_name} (
                     url, city, price, price_per_sqm, description,
-                    district_name, street_address, area_m2, upload_date, transaction_type
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    district_name, street_address, area_m2, bedrooms, floor, upload_date, transaction_type
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """, tuple(row))
 
         conn.commit()

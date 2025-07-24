@@ -19,10 +19,10 @@ if __name__ == "__main__":
     def run_sshome():
         SSHomeScraper().scraper()
 
-    # with ThreadPoolExecutor(max_workers=3) as executor:
-    #     futures = [executor.submit(run_myhome), executor.submit(run_livo), executor.submit(run_sshome)]
-    #     for future in futures:
-    #         future.result()  # Ensures any exceptions are raised
+    with ThreadPoolExecutor(max_workers=3) as executor:
+        futures = [executor.submit(run_myhome), executor.submit(run_livo), executor.submit(run_sshome)]
+        for future in futures:
+            future.result()  # Ensures any exceptions are raised
 
     """ Step 2: Data cleaning and transformation """
     data_cleaning = DataCleaning()
@@ -30,9 +30,9 @@ if __name__ == "__main__":
     data_cleaning.write_to_csv()
 
     """ Step 3: Save data in the database """
-    # database = Database()
-    # database.setup_database()
+    database = Database()
+    database.setup_database()
 
     """ Step 4: Data Analysis """
-    # data_analysis = DataAnalysis()
-    # data_analysis.main()
+    data_analysis = DataAnalysis()
+    data_analysis.main()

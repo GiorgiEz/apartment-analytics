@@ -1,3 +1,4 @@
+import pandas as pd
 from .BaseScraper import BaseScraper
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
@@ -10,7 +11,7 @@ class MyHomeScraper(BaseScraper):
         super().__init__()
         self.main_url = "https://www.myhome.ge/"
         self.city_id_dict = {'თბილისი': 1, "ქუთაისი": 96, 'ბათუმი': 15}  # Cities with ids on this website
-        self.number_of_pages_to_scrape = 1
+        self.number_of_pages_to_scrape = 5
         self.raw_apartments_csv_path = 'data_output/myhome_apartments.csv'
 
     def get_url(self, id, page):
@@ -83,7 +84,7 @@ class MyHomeScraper(BaseScraper):
                                 'district_name': district_name,
                                 'street_address': street_address,
                                 'area_m2': area_m2,
-                                "bedrooms": None,
+                                "bedrooms": pd.NA,
                                 "floor": floor,
                                 'upload_date': upload_date
                             })
