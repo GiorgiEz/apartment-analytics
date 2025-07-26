@@ -13,6 +13,10 @@ __pycache__/
 .vscode/
 .idea/
 
+# npm packages
+/frontend/node_modules/
+/frontend/package-lock.json
+
 # System files
 Thumbs.db
 ehthumbs.db
