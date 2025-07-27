@@ -9,7 +9,7 @@ class SSHomeScraper(BaseScraper):
     def __init__(self):
         super().__init__()
         self.main_url = "https://home.ss.ge/ka/udzravi-qoneba/"
-        self.city_id_dict = {'თბილისი': 95, "ქუთაისი": 97, 'ბათუმი': 96} # Cities with ids on this website
+        self.city_id_dict = {'თბილისი': 95, "ქუთაისი": 97, 'ბათუმი': 96}  # Cities with ids on this website
         self.number_of_pages_to_scrape = 5
         self.raw_apartments_csv_path = 'data_output/sshome_apartments.csv'
 
@@ -93,11 +93,11 @@ class SSHomeScraper(BaseScraper):
 
                 except StaleElementReferenceException:
                     print(f"{self.main_url} - Skipping Page... due to stale element error: "
-                            f"{city_name}, Page: {page_counter}")
+                          f"{city_name}, Page: {page_counter}")
 
                 except Exception as parse_err:
                     print(f"{self.main_url} - Skipping Page... due to Error: {parse_err}")
-                
+
                 finally:
                     page_counter += 1
 

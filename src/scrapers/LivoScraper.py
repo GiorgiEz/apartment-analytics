@@ -1,7 +1,7 @@
 import pandas as pd
 from .BaseScraper import BaseScraper
 from selenium.webdriver.common.by import By
-
+from selenium.common.exceptions import StaleElementReferenceException
 
 
 class LivoScraper(BaseScraper):
@@ -21,11 +21,11 @@ class LivoScraper(BaseScraper):
         driver = self.configure_chromedriver()
         apartments_data = []
 
-        try:
-            for city_name, city_id in self.city_id_dict.items():
-                page_counter = 1
+        for city_name, city_id in self.city_id_dict.items():
+            page_counter = 1
 
-                while page_counter <= self.number_of_pages_to_scrape:
+            while page_counter <= self.number_of_pages_to_scrape:
+                try:
                     driver.get(self.get_url(city_id, page_counter))
 
                     print(f"{self.main_url} - City: {city_name}, Page: {page_counter}")
@@ -37,84 +37,84 @@ class LivoScraper(BaseScraper):
                         continue
 
                     for a in apartments:
-                        try:
-                            parent = a.find_element(By.XPATH, '..')  # Get parent of the <a> tag
-                            siblings = parent.find_elements(By.XPATH, './div')
+                        parent = a.find_element(By.XPATH, '..')  # Get parent of the <a> tag
+                        siblings = parent.find_elements(By.XPATH, './div')
 
-                            # Data is divided in two divs
-                            div_0 = siblings[0]
-                            div_1 = siblings[1]
+                        # Data is divided in two divs
+                        div_0 = siblings[0]
+                        div_1 = siblings[1]
 
-                            price_el = self.safe_find_element(div_0, By.XPATH, './div/div/div/div[1]')
-                            if price_el:
-                                price_text = price_el.text.strip().replace(",", "")
-                                if price_text.isdigit():
-                                    price = price_text + " $"
-                                else:
-                                    continue
+                        price_el = self.safe_find_element(div_0, By.XPATH, './div/div/div/div[1]')
+                        if price_el:
+                            price_text = price_el.text.strip().replace(",", "")
+                            if price_text.isdigit():
+                                price = price_text + " $"
                             else:
                                 continue
-
-                            square_tag = self.safe_find_element(div_0, By.CLASS_NAME, 'statement__square-tag')
-                            price_per_sqm = square_tag.find_element(By.XPATH,
-                                                                    '../..').text.strip() if square_tag else None
-
-                            description_el = self.safe_find_element(div_0, By.CLASS_NAME, 'statement__title')
-                            description = description_el.text.strip() if description_el else None
-
-                            address_el = self.safe_find_element(div_0, By.CLASS_NAME, 'statement__address')
-                            street_address = address_el.get_attribute("title").strip() if address_el else None
-
-                            info_class = 'card-additional-info__item'
-
-                            try:
-                                area_m2 = self.safe_find_element(div_1, By.XPATH,
-                                f'.//div[contains(@class, {info_class})][1]').text.split()[1].strip()
-                            except:
-                                area_m2 = None
-
-                            try:
-                                bedrooms = self.safe_find_element(div_1, By.XPATH,
-                            f'.//div[contains(@class, {info_class}) and contains(text(), "საძ.")]').text.strip()
-                            except:
-                                bedrooms = None
-
-                            try:
-                                floor = self.safe_find_element(div_1, By.XPATH,
-                            f'.//div[contains(@class, {info_class}) and contains(text(), "სართ.")]').text.strip()
-                            except:
-                                floor = None
-
-                            try:
-                                spans = div_1.find_elements(By.TAG_NAME, 'span')
-                                upload_date = spans[1].text if len(spans) > 1 else None
-                            except:
-                                upload_date = None
-
-                            apartments_data.append({
-                                'url': a.get_attribute('href'),
-                                'city': city_name,
-                                'price': price,
-                                'price_per_sqm': price_per_sqm,
-                                'description': description,
-                                'district_name': pd.NA,
-                                'street_address': street_address,
-                                'bedrooms': bedrooms,
-                                'floor': floor,
-                                'area_m2': area_m2,
-                                'upload_date': upload_date
-                            })
-
-                        except Exception as parse_err:
-                            print(f"{self.main_url} - Error parsing apartment card: {parse_err}")
+                        else:
                             continue
 
+                        square_tag = self.safe_find_element(div_0, By.CLASS_NAME, 'statement__square-tag')
+                        price_per_sqm = square_tag.find_element(By.XPATH,
+                                                                '../..').text.strip() if square_tag else None
+
+                        description_el = self.safe_find_element(div_0, By.CLASS_NAME, 'statement__title')
+                        description = description_el.text.strip() if description_el else None
+
+                        address_el = self.safe_find_element(div_0, By.CLASS_NAME, 'statement__address')
+                        street_address = address_el.get_attribute("title").strip() if address_el else None
+
+                        info_class = 'card-additional-info__item'
+
+                        try:
+                            area_m2 = self.safe_find_element(div_1, By.XPATH,
+                                                             f'.//div[contains(@class, {info_class})][1]').text.split()[
+                                1].strip()
+                        except:
+                            area_m2 = None
+
+                        try:
+                            bedrooms = self.safe_find_element(div_1, By.XPATH,
+                                                              f'.//div[contains(@class, {info_class}) and contains(text(), "საძ.")]').text.strip()
+                        except:
+                            bedrooms = None
+
+                        try:
+                            floor = self.safe_find_element(div_1, By.XPATH,
+                                                           f'.//div[contains(@class, {info_class}) and contains(text(), "სართ.")]').text.strip()
+                        except:
+                            floor = None
+
+                        try:
+                            spans = div_1.find_elements(By.TAG_NAME, 'span')
+                            upload_date = spans[1].text if len(spans) > 1 else None
+                        except:
+                            upload_date = None
+
+                        apartments_data.append({
+                            'url': a.get_attribute('href'),
+                            'city': city_name,
+                            'price': price,
+                            'price_per_sqm': price_per_sqm,
+                            'description': description,
+                            'district_name': pd.NA,
+                            'street_address': street_address,
+                            'bedrooms': bedrooms,
+                            'floor': floor,
+                            'area_m2': area_m2,
+                            'upload_date': upload_date
+                        })
+
+                except StaleElementReferenceException:
+                    print(f"{self.main_url} - Skipping Page... due to stale element error: "
+                          f"{city_name}, Page: {page_counter}")
+
+                except Exception as parse_err:
+                    print(f"{self.main_url} - Skipping Page... due to Error: {parse_err}")
+
+                finally:
                     page_counter += 1
 
-            self.write_to_csv(apartments_data)
+        self.write_to_csv(apartments_data)
 
-        except Exception as e:
-            print(f"{self.main_url} -Failed to load page or parse listings:", str(e))
-
-        finally:
-            driver.quit()
+        driver.quit()
