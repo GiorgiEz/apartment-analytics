@@ -3,7 +3,7 @@ from .BaseScraper import BaseScraper
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.common.exceptions import TimeoutException
-
+from selenium.common.exceptions import StaleElementReferenceException
 
 
 class MyHomeScraper(BaseScraper):
@@ -23,11 +23,11 @@ class MyHomeScraper(BaseScraper):
         driver = self.configure_chromedriver()
         apartments_data = []
 
-        try:
-            for city_name, city_id in self.city_id_dict.items():
-                page_counter = 1
+        for city_name, city_id in self.city_id_dict.items():
+            page_counter = 1
 
-                while page_counter <= self.number_of_pages_to_scrape:
+            while page_counter <= self.number_of_pages_to_scrape:
+                try:
                     driver.get(self.get_url(city_id, page_counter))
 
                     print(f"{self.main_url} - City: {city_name}, Page: {page_counter}")
@@ -40,65 +40,64 @@ class MyHomeScraper(BaseScraper):
 
                     for a in apartments:
                         try:
-                            try:
-                                # Wait up to 5 seconds to return 5 div elements
-                                WebDriverWait(a, 5).until(
-                                    lambda driver: len(a.find_elements(By.XPATH, "./div[2]/div")) == 5
-                                )
-                                data_div_info = a.find_elements(By.XPATH, "./div[2]/div")
+                            # Wait up to 5 seconds to return 5 div elements
+                            WebDriverWait(a, 5).until(
+                                lambda driver: len(a.find_elements(By.XPATH, "./div[2]/div")) == 5
+                            )
+                            data_div_info = a.find_elements(By.XPATH, "./div[2]/div")
 
-                            except TimeoutException:
-                                print(f"{self.main_url} - Skipping this listing — expected 5 data_div_info elements.")
-                                continue
-
-                            # The First div of data_div_info contains data about the price and price_per_sqm
-                            spans_0 = data_div_info[0].find_elements(By.TAG_NAME, "span")
-                            price = spans_0[0].text if len(spans_0) > 0 else None
-                            price_per_sqm = spans_0[3].text if len(spans_0) > 3 else None
-
-                            # The Second div of data_div_info contains data about the description
-                            description_h2 = self.safe_find_element(data_div_info[1], By.TAG_NAME, "h2")
-                            description = description_h2.text if description_h2 else None
-
-                            # The Third div of data_div_info contains data about the street address
-                            street_address_h3 = self.safe_find_element(data_div_info[2], By.TAG_NAME, "h3")
-                            street_address = street_address_h3.text if street_address_h3 else None
-
-                            # The Fourth div of data_div_info contains data about the area_m2
-                            spans_3 = data_div_info[3].find_elements(By.TAG_NAME, "span")
-                            area_m2 = (spans_3[-2].text+spans_3[-1].text).strip() if "მ²" in spans_3[-1].text else None
-
-                            floor = spans_3[0].text.strip() if len(spans_0) > 0 else None
-
-                            # The 5th div of the data_div_info contains data about the district_name and upload_date
-                            spans_4 = data_div_info[4].find_elements(By.TAG_NAME, "span")
-                            district_name = spans_4[0].text if len(spans_4) > 0 else None
-                            upload_date = spans_4[1].text if len(spans_4) > 1 else None
-
-                            apartments_data.append({
-                                'url': a.get_attribute('href'),
-                                'city': city_name,
-                                'price': price,
-                                'price_per_sqm': price_per_sqm,
-                                'description': description,
-                                'district_name': district_name,
-                                'street_address': street_address,
-                                'area_m2': area_m2,
-                                "bedrooms": pd.NA,
-                                "floor": floor,
-                                'upload_date': upload_date
-                            })
-
-                        except Exception as parse_err:
-                            print(f"{self.main_url} - Error parsing apartment card: {parse_err}")
+                        except TimeoutException:
+                            print(f"{self.main_url} - Skipping this listing — expected 5 data_div_info elements.")
                             continue
 
+                        # The First div of data_div_info contains data about the price and price_per_sqm
+                        spans_0 = data_div_info[0].find_elements(By.TAG_NAME, "span")
+                        price = spans_0[0].text if len(spans_0) > 0 else None
+                        price_per_sqm = spans_0[3].text if len(spans_0) > 3 else None
+
+                        # The Second div of data_div_info contains data about the description
+                        description_h2 = self.safe_find_element(data_div_info[1], By.TAG_NAME, "h2")
+                        description = description_h2.text if description_h2 else None
+
+                        # The Third div of data_div_info contains data about the street address
+                        street_address_h3 = self.safe_find_element(data_div_info[2], By.TAG_NAME, "h3")
+                        street_address = street_address_h3.text if street_address_h3 else None
+
+                        # The Fourth div of data_div_info contains data about the area_m2
+                        spans_3 = data_div_info[3].find_elements(By.TAG_NAME, "span")
+                        area_m2 = (spans_3[-2].text + spans_3[-1].text).strip() if "მ²" in spans_3[-1].text else None
+
+                        floor = spans_3[0].text.strip() if len(spans_0) > 0 else None
+
+                        # The 5th div of the data_div_info contains data about the district_name and upload_date
+                        spans_4 = data_div_info[4].find_elements(By.TAG_NAME, "span")
+                        district_name = spans_4[0].text if len(spans_4) > 0 else None
+                        upload_date = spans_4[1].text if len(spans_4) > 1 else None
+
+                        apartments_data.append({
+                            'url': a.get_attribute('href'),
+                            'city': city_name,
+                            'price': price,
+                            'price_per_sqm': price_per_sqm,
+                            'description': description,
+                            'district_name': district_name,
+                            'street_address': street_address,
+                            'area_m2': area_m2,
+                            'bedrooms': pd.NA,
+                            'floor': floor,
+                            'upload_date': upload_date
+                        })
+
+                except StaleElementReferenceException:
+                    print(f"{self.main_url} - Skipping Page... due to stale element error: "
+                          f"{city_name}, Page: {page_counter}")
+
+                except Exception as parse_err:
+                    print(f"{self.main_url} - Skipping Page... due to Error: {parse_err}")
+
+                finally:
                     page_counter += 1
 
-            self.write_to_csv(apartments_data)
+        self.write_to_csv(apartments_data)
 
-        except Exception as e:
-            print(f"{self.main_url} - Failed to load page or parse listings:", str(e))
-
-        finally:
-            driver.quit()
+        driver.quit()
