@@ -23,11 +23,12 @@ window.initAnalysisView = function () {
     paths.forEach(path => {
       const img = document.createElement('img');
       img.src = path;
-      img.className = 'max-w-full h-auto max-h-[700px] rounded-lg shadow-md';
+      img.className = 'w-full h-auto max-h-[200px] object-contain rounded-lg shadow-md';
       chartsDiv.appendChild(img);
     });
   }
 
+  // gets all the nav buttons inside a div with id = "analysis-view"
   const buttons = document.getElementById("analysis-view").querySelectorAll("nav button");
 
   function resetButtonStyles() {

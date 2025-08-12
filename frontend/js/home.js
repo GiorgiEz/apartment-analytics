@@ -35,8 +35,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   loadView("analysis", "/js/analysis.js");  // Load analysis by default
 
-  navAnalysis.addEventListener('click', () =>
-      loadView('analysis', "/js/analysis.js"));
-  navPrediction.addEventListener('click', () =>
-      loadView('prediction', "/js/prediction.js"));
+  navAnalysis.addEventListener('click', () => loadView('analysis', "/js/analysis.js"));
+  navPrediction.addEventListener('click', () => loadView('prediction', "/js/prediction.js"));
 });

@@ -19,10 +19,10 @@ if __name__ == "__main__":
     def run_sshome():
         SSHomeScraper().scraper()
 
-    # with ThreadPoolExecutor(max_workers=3) as executor:
-    #     futures = [executor.submit(run_myhome), executor.submit(run_livo), executor.submit(run_sshome)]
-    #     for future in futures:
-    #         future.result()  # Ensures any exceptions are raised
+    with ThreadPoolExecutor(max_workers=3) as executor:
+        futures = [executor.submit(run_myhome), executor.submit(run_livo), executor.submit(run_sshome)]
+        for future in futures:
+            future.result()  # Ensures any exceptions are raised
 
     """ Step 2: Data cleaning and transformation """
     data_cleaning = DataCleaning()
