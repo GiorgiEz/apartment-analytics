@@ -76,17 +76,6 @@
             transform: translateX(0);
             background-color: #10b981;
         }
-
-        .content-area {
-            opacity: 0;
-            transform: translateY(10px);
-            transition: opacity 0.3s ease, transform 0.3s ease;
-        }
-
-        .content-area.active {
-            opacity: 1;
-            transform: translateY(0);
-        }
     </style>
 </head>
 <body class="flex h-screen bg-steel-100">
@@ -98,7 +87,7 @@
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
             </svg>
-            Analysis Dashboard
+            Dashboard
         </button>
         <button id="nav-prediction" class="nav-button text-silver-100 px-4 py-3 rounded-lg text-left bg-steel-700 hover:bg-steel-600 transition-all duration-300 flex items-center">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -113,12 +102,15 @@
 </aside>
 
 <!-- Main Content Area -->
-<main id="main-content" class="flex-1 p-8 overflow-y-auto">
+<main id="main-content" class="flex-1 p-4 overflow-y-auto">
     <!-- Content will be loaded dynamically here -->
 </main>
 
 <!-- JavaScript Files -->
 <script src="./js/components/navbar.js" type="module"></script>
 <script src="./js/main.js" type="module"></script>
+<script src="./js/analysis.js" type="module"></script>
+<script src="./js/prediction.js" type="module"></script>
+
 </body>
 </html>
