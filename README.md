@@ -85,7 +85,16 @@ python main.py
 ```
 
 4. **View the dashboard**
-   Open `index.html` in a web browser.
+    ```bash
+    cd frontend
+    python -m http.server
+    ```
+    Open http://localhost:8000/src/index.html in a web browser.
+
+    To use Tailwind CSS, run:
+    ```bash
+    npx @tailwindcss/cli -i ./src/css/input.css -o ./src/css/output.css --watch
+    ```
 
 ## Requirements
 
