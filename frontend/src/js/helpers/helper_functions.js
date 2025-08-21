@@ -1,4 +1,3 @@
-// Chart paths for analysis
 export const chartPaths = {
     city_distribution: ['./charts/city_distribution_pie.png'],
     avg_price_by_city: [
@@ -29,5 +28,11 @@ export function setupChartButton(buttonId, action) {
             // Execute the action
             action();
         });
+    }
+}
+
+export function insert_icons(button_icons){
+    for (const [id, icon_path] of Object.entries(button_icons)) {
+        document.getElementById(id).insertAdjacentHTML("afterbegin", icon_path);
     }
 }

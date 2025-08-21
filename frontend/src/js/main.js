@@ -1,15 +1,18 @@
 import Navbar from './components/navbar.js';
+import {insert_icons} from "/src/js/helpers/helper_functions.js"
+import {icons} from './helpers/icons.js';
 
 
 class App {
     constructor() {
         new Navbar();
-        this.mainContent = document.getElementById('main-content');
+        this.mainContent = document.getElementById('main-content')
+
+        // Insert dashboard and prediction icons
+        insert_icons({'nav-analysis': icons.dashboard, 'nav-prediction': icons.prediction});
 
         this.loadView('analysis');
-        document.addEventListener('viewChanged', (e) => {
-            this.loadView(e.detail.view);
-        });
+        document.addEventListener('viewChanged', (e) => this.loadView(e.detail.view));
     }
 
     async loadView(view) {

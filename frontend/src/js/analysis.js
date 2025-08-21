@@ -1,11 +1,19 @@
-import {chartPaths, setupChartButton} from "/src/js/helpers/analysis_helper.js"
+import {chartPaths, setupChartButton, insert_icons} from "/src/js/helpers/helper_functions.js"
+import {icons} from "./helpers/icons.js";
 
 
-window.initAnalysisView = function() {
+window.initAnalysisView = function(){
     // Wait for DOM to be fully ready
     setTimeout(() => {
         const chartsDiv = document.getElementById('charts');
         const citySelect = document.getElementById('city-select');
+
+        // Insert icons
+        insert_icons({
+            'btn-distribution': icons.city_distribution, 'btn-price-per-sqm': icons.avg_price_per_m2,
+            'btn-area-bin': icons.price_by_area_bin, 'btn-price-by-city': icons.avg_price_by_city,
+            'btn-price-by-district': icons.avg_price_by_district
+        });
 
         if (!chartsDiv || !citySelect) {
             console.error("Required DOM elements not found");
@@ -56,22 +64,18 @@ window.initAnalysisView = function() {
         }
 
         // Set up chart button event listeners
-        const button_paths = [
-            {"button": 'btn-distribution', "path": chartPaths.city_distribution},
-            {"button": 'btn-price-by-city', "path": chartPaths.avg_price_by_city},
-            {"button": 'btn-price-per-sqm', "path": chartPaths.avg_price_per_sqm_by_city},
-            {"button": 'btn-area-bin', "path": chartPaths.price_by_area_bin_per_city},
-        ];
-
-        for (let i = 0; i < button_paths.length; i++) {
-            setupChartButton(button_paths[i].button, () => {
+        for (const [key, value] of Object.entries({
+            'btn-distribution': chartPaths.city_distribution, 'btn-price-per-sqm': chartPaths.avg_price_per_sqm_by_city,
+            'btn-area-bin': chartPaths.price_by_area_bin_per_city, 'btn-price-by-city': chartPaths.avg_price_by_city,
+        })) {
+            setupChartButton(key, () => {
                 const citySelectParent = citySelect.parentElement;
                 if (citySelectParent) citySelectParent.classList.add('hidden');
-                loadImages(button_paths[i].path);
+                loadImages(value);
             });
         }
 
-        setupChartButton('btn-price-by-street', () => {
+        setupChartButton('btn-price-by-district', () => {
             const citySelectParent = citySelect.parentElement;
             if (citySelectParent) citySelectParent.classList.remove('hidden');
             citySelect.value = 'ქუთაისი';
@@ -85,10 +89,8 @@ window.initAnalysisView = function() {
 
                 const basePath = `./charts/avg_price_by_street/${selectedCity}`;
                 const images = [
-                    `${basePath}/იყიდება.png`,
-                    `${basePath}/ქირავდება დღიურად.png`,
-                    `${basePath}/ქირავდება თვიურად.png`,
-                    `${basePath}/გირავდება.png`
+                    `${basePath}/იყიდება.png`, `${basePath}/ქირავდება დღიურად.png`,
+                    `${basePath}/ქირავდება თვიურად.png`, `${basePath}/გირავდება.png`
                 ];
                 loadImages(images);
             });
