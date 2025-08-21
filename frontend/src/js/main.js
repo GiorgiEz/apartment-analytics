@@ -1,19 +1,12 @@
 import Navbar from './components/navbar.js';
 
-// main.js - Updated with better error handling
+
 class App {
     constructor() {
-        this.navbar = new Navbar();
+        new Navbar();
         this.mainContent = document.getElementById('main-content');
 
-        this.init();
-    }
-
-    init() {
-        // Load default view
         this.loadView('analysis');
-
-        // Listen for view changes
         document.addEventListener('viewChanged', (e) => {
             this.loadView(e.detail.view);
         });
@@ -21,22 +14,12 @@ class App {
 
     async loadView(view) {
         try {
-            // Show loading state
-            this.mainContent.innerHTML = `
-                <div class="flex items-center justify-center h-full">
-                    <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-steel-600"></div>
-                </div>
-            `;
-
-            // Load the appropriate HTML
-            const response = await fetch(`./partials/${view}.html`);
+            const response = await fetch(`./partials/${view}.html`); //Load the appropriate HTML
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
             const html = await response.text();
-
-            // Add fade-in animation class
-            this.mainContent.innerHTML = `<div class="content-area active">${html}</div>`;
+            this.mainContent.innerHTML = `<div class="content-area active">${html}</div>`; //Add fade-in animation class
 
             // Initialize view-specific JavaScript with a small delay
             setTimeout(() => {
@@ -53,7 +36,7 @@ class App {
             this.mainContent.innerHTML = `
                 <div class="flex items-center justify-center h-full">
                     <div class="text-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto text-red-500 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto text-red-500 mb-4" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                         </svg>
                         <h2 class="text-xl font-semibold text-steel-800 mb-2">Failed to load content</h2>
@@ -67,6 +50,4 @@ class App {
 }
 
 // Initialize the app when DOM is loaded
-document.addEventListener('DOMContentLoaded', () => {
-    new App();
-});
+document.addEventListener('DOMContentLoaded', () => new App());
