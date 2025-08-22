@@ -65,7 +65,6 @@ class Database:
         if backups:
             latest_backup_path = os.path.join(self.backup_folder, backups[0])
             latest_backup_mod_time = os.path.getmtime(latest_backup_path)
-            print(f"{db_mod_time} - {latest_backup_mod_time}")
             if db_mod_time == latest_backup_mod_time:
                 print("Database has not changed since last backup. Skipping backup.")
                 return
