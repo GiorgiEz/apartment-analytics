@@ -1,9 +1,9 @@
-from src.scrapers.MyHomeScraper import MyHomeScraper
-from src.scrapers.LivoScraper import LivoScraper
-from src.scrapers.SSHomeScraper import SSHomeScraper
-from src.data_cleaning.DataCleaning import DataCleaning
+from scrape_clean_analyze.scrapers.MyHomeScraper import MyHomeScraper
+from scrape_clean_analyze.scrapers.LivoScraper import LivoScraper
+from scrape_clean_analyze.scrapers.SSHomeScraper import SSHomeScraper
+from scrape_clean_analyze.data_cleaning.DataCleaning import DataCleaning
 from database.Database import Database
-from src.data_analysis.DataAnalysis import DataAnalysis
+from scrape_clean_analyze.data_analysis.DataAnalysis import DataAnalysis
 from concurrent.futures import ThreadPoolExecutor
 
 

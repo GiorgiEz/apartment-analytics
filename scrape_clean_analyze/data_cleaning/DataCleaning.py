@@ -206,7 +206,7 @@ class DataCleaning:
         self.apartments_df['transaction_type'] = self.apartments_df['description'].apply(extract_transaction_type)
         print("New column 'transaction_type' has been created based on descriptions.")
 
-    def write_to_csv(self, path="data_output/cleaned_apartments.csv"):
+    def write_to_csv(self, path="../data_output/cleaned_apartments.csv"):
         """ Writes the dataset to a csv file. """
         self.apartments_df.to_csv(path, index=False, na_rep='<NA>')
 

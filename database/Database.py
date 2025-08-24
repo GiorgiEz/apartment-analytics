@@ -6,8 +6,8 @@ from datetime import datetime, timedelta
 class Database:
     def __init__(self):
         self.apartments_table_name = 'apartments'
-        self.db_path = 'database/apartments.db'
-        self.backup_folder = 'backups'
+        self.db_path = '../database/apartments.db'
+        self.backup_folder = '../database/backups'
         self.backup_retention_days = 30  # Keep backups for 30 days
 
     def __create_table_if_not_exists(self):
@@ -104,6 +104,6 @@ class Database:
         self.__delete_old_backups()  # Always clean old backups
         self.__backup_database()
         self.__create_table_if_not_exists()
-        self.__insert_unique_csv_to_sqlite("data_output/cleaned_apartments.csv")
+        self.__insert_unique_csv_to_sqlite("../data_output/cleaned_apartments.csv")
 
         print(f"Length of the Apartments table in the sqlite database: {self.__apartments_table_length()}")
