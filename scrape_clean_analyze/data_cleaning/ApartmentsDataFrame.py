@@ -7,9 +7,9 @@ class ApartmentsDataFrame:
 
     _instance = None
 
-    def __new__(cls, livo_apartments_csv="data_output/livo_apartments.csv",
-                myhome_apartments_csv="data_output/myhome_apartments.csv",
-                sshome_apartments_csv="data_output/sshome_apartments.csv",):
+    def __new__(cls, livo_apartments_csv="../data_output/livo_apartments.csv",
+                myhome_apartments_csv="../data_output/myhome_apartments.csv",
+                sshome_apartments_csv="../data_output/sshome_apartments.csv",):
         """Ensures only one instance is created."""
         if cls._instance is None:
             cls._instance = super(ApartmentsDataFrame, cls).__new__(cls)

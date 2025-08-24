@@ -31,5 +31,5 @@ venv/
 # Backup files
 *~
 *.bak
-backups/
+database/backups/
 data_output/
