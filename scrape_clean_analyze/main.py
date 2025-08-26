@@ -9,7 +9,7 @@ from concurrent.futures import ThreadPoolExecutor
 
 
 if __name__ == "__main__":
-    """ Step 1: Scrape the data"""
+    """ Step 1: Scraping the data"""
     def run_myhome():
         MyHomeScraper().scraper()
 

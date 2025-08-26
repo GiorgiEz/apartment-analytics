@@ -3,6 +3,7 @@ import requests
 
 
 def get_random_user_agent():
+    """ User agents to use when scraping data """
     user_agents = [
         # Windows - Chrome
         "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
@@ -39,6 +40,7 @@ def get_random_user_agent():
 
 
 def get_usd_exchange_rate():
+    """ Returns the GEL to USD exchange rate """
     response = requests.get("https://api.exchangerate-api.com/v4/latest/GEL")
     data = response.json()
     return data['rates']['USD']
