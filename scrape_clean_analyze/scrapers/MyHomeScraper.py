@@ -11,7 +11,7 @@ class MyHomeScraper(BaseScraper):
         super().__init__()
         self.main_url = "https://www.myhome.ge/"
         self.city_id_dict = {'თბილისი': 1, "ქუთაისი": 96, 'ბათუმი': 15}  # Cities with ids on this website
-        self.number_of_pages_to_scrape = 5
+        self.number_of_pages_to_scrape = 10
         self.raw_apartments_csv_path = '../data_output/myhome_apartments.csv'
 
     def get_url(self, id, page):

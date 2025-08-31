@@ -10,7 +10,7 @@ class SSHomeScraper(BaseScraper):
         super().__init__()
         self.main_url = "https://home.ss.ge/ka/udzravi-qoneba/"
         self.city_id_dict = {'თბილისი': 95, "ქუთაისი": 97, 'ბათუმი': 96}  # Cities with ids on this website
-        self.number_of_pages_to_scrape = 5
+        self.number_of_pages_to_scrape = 10
         self.raw_apartments_csv_path = '../data_output/sshome_apartments.csv'
 
     def get_url(self, id, page):
