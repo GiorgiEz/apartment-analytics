@@ -1,4 +1,4 @@
-# Real Estate Listing Tracker
+# Apartment Analytics
 
 ## Table of Contents
 
@@ -13,7 +13,7 @@
 
 ## Overview
 
-This project is a Real Estate Listing Tracker that scrapes property data from [MyHome.ge](https://www.myhome.ge/), [Livo.ge](https://livo.ge/) and [Home.ss.ge](https://home.ss.ge/ka/udzravi-qoneba/), processes and stores the data, and generates visual analytics presented in a web dashboard. It enables ongoing monitoring of real estate trends and prices across different cities and districts in Georgia.
+This project is an Apartment Listing Tracker that scrapes property data from [MyHome.ge](https://www.myhome.ge/), [Livo.ge](https://livo.ge/) and [Home.ss.ge](https://home.ss.ge/ka/udzravi-qoneba/), processes and stores the data, and generates visual analytics presented in a web dashboard. It enables ongoing monitoring of real estate trends and prices across different cities and districts in Georgia.
 
 ## Features
 
