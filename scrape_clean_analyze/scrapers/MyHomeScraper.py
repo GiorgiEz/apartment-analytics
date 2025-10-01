@@ -54,6 +54,8 @@ class MyHomeScraper(BaseScraper):
                         spans_0 = data_div_info[0].find_elements(By.TAG_NAME, "span")
                         price = spans_0[0].text if len(spans_0) > 0 else None
                         price_per_sqm = spans_0[3].text if len(spans_0) > 3 else None
+                        if not price:
+                            continue
 
                         # The Second div of data_div_info contains data about the description
                         description_h2 = self.safe_find_element(data_div_info[1], By.TAG_NAME, "h2")

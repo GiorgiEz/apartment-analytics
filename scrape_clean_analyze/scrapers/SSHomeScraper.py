@@ -55,6 +55,8 @@ class SSHomeScraper(BaseScraper):
                         if not price_span or ("$" not in price_span.text and "₾" not in price_span.text):
                             continue
                         price = price_span.text
+                        if not price:
+                            continue
 
                         desc_h2 = self.safe_find_element(a, By.CLASS_NAME, 'listing-detailed-item-title')
                         description = desc_h2.text if desc_h2 else None
