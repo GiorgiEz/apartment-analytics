@@ -20,7 +20,7 @@ class MyHomeScraper(BaseScraper):
 
     def scraper(self):
         """ Main function to scrape the data from myhome.ge website """
-        driver = self.configure_chromedriver()
+        driver = self.configure_driver()
         apartments_data = []
 
         for city_name, city_id in self.city_id_dict.items():

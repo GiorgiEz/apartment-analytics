@@ -1,6 +1,5 @@
-import csv
+import csv, winreg, os
 from selenium import webdriver
-from selenium.webdriver.edge.service import Service as EdgeService
 from selenium.webdriver.edge.options import Options as EdgeOptions
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -19,28 +18,19 @@ class BaseScraper:
     def scraper(self):
         raise NotImplementedError("Subclasses must implement scraper function")
 
-    def configure_chromedriver(self):
-        """ Configures the webdriver for microsoft-edge browser and initializes the driver """
-        options = EdgeOptions()
-        driver_path = 'C:/Program Files (x86)/edgedriver_win64/msedgedriver.exe'  # Webdriver local path
+    def configure_driver(self):
+        os.environ["SE_DRIVER_MIRROR_URL"] = "https://msedgedriver.microsoft.com"
 
-        options.add_argument('--start-maximized')
-        options.add_argument('--headless')  # uncomment for headless mode
-        options.add_argument('--disable-blink-features=AutomationControlled')  # avoid detection
+        options = EdgeOptions()
+        options.add_argument("--start-maximized")
+        options.add_argument("--headless")
+        options.add_argument('--disable-blink-features=AutomationControlled')
         options.add_experimental_option("excludeSwitches", ["enable-automation"])
         options.add_experimental_option('useAutomationExtension', False)
-        options.add_argument('--disable-gpu')
-        options.add_argument('--no-sandbox')
-        options.add_argument(f'--user-agent={get_random_user_agent()}')
-        prefs = {
-            "profile.managed_default_content_settings.images": 2,
-            "profile.managed_default_content_settings.stylesheets": 2,
-            "profile.managed_default_content_settings.fonts": 2,
-            "profile.managed_default_content_settings.notifications": 2,
-        }
-        options.add_experimental_option("prefs", prefs)
+        options.add_argument(f"--user-agent={get_random_user_agent()}")
 
-        return webdriver.Edge(service=EdgeService(executable_path=driver_path), options=options)
+        driver = webdriver.Edge(options=options)
+        return driver
 
     def safe_find_element(self, driver, by, value, timeout=1):
         try:
