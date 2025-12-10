@@ -9,7 +9,7 @@ class LivoScraper(BaseScraper):
         super().__init__()
         self.main_url = "https://livo.ge/"
         self.city_id_dict = {'თბილისი': 1, "ქუთაისი": 96, 'ბათუმი': 15}  # Cities with ids on this website
-        self.number_of_pages_to_scrape = 10
+        self.number_of_pages_to_scrape = 1
         self.raw_apartments_csv_path = '../data_output/livo_apartments.csv'
 
     def get_url(self, id, page):
@@ -18,7 +18,7 @@ class LivoScraper(BaseScraper):
 
     def scraper(self):
         """ Main function to scrape the data from livo.ge website """
-        driver = self.configure_chromedriver()
+        driver = self.configure_driver()
         apartments_data = []
 
         for city_name, city_id in self.city_id_dict.items():
@@ -31,6 +31,7 @@ class LivoScraper(BaseScraper):
                     print(f"{self.main_url} - City: {city_name}, Page: {page_counter}")
 
                     apartments = self.wait_for_links(driver, 'udzravi-qoneba', selector='a.item-url')
+
                     if len(apartments) == 0:
                         print(f"{self.main_url} - Skipping Page: {page_counter} — links not loaded")
                         page_counter += 1
@@ -45,6 +46,7 @@ class LivoScraper(BaseScraper):
                         div_1 = siblings[1]
 
                         price_el = self.safe_find_element(div_0, By.XPATH, './div/div/div/div[1]')
+                        print(price_el.text)
                         if price_el:
                             price_text = price_el.text.strip().replace(",", "")
                             if price_text.isdigit():
