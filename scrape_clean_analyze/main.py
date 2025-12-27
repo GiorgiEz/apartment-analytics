@@ -1,4 +1,3 @@
-from scrape_clean_analyze.scrapers.BaseScraper import BaseScraper
 from scrape_clean_analyze.scrapers.MyHomeScraper import MyHomeScraper
 from scrape_clean_analyze.scrapers.LivoScraper import LivoScraper
 from scrape_clean_analyze.scrapers.SSHomeScraper import SSHomeScraper
@@ -23,6 +22,8 @@ if __name__ == "__main__":
     with ThreadPoolExecutor(max_workers=2) as executor:
         for future in [executor.submit(run_myhome), executor.submit(run_sshome)]:
             future.result()  # Ensures any exceptions are raised
+
+    # run_livo()
 
     """ Step 2: Data cleaning and transformation """
     data_cleaning = DataCleaning()

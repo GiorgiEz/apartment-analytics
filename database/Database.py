@@ -1,12 +1,15 @@
 import pandas as pd
 import sqlite3, os, shutil
 from datetime import datetime, timedelta
+from pathlib import Path
+
 
 
 class Database:
     def __init__(self):
         self.apartments_table_name = 'apartments'
         self.db_path = '../database/apartments.db'
+        self.csv_path = '../database/apartments.csv'
         self.backup_folder = '../database/backups'
         self.backup_retention_days = 30  # Keep backups for 30 days
 
@@ -39,6 +42,8 @@ class Database:
         conn = sqlite3.connect(self.db_path)
         cursor = conn.cursor()
 
+        new_rows = []
+
         for _, row in df.iterrows():
             cursor.execute(f"""
                 INSERT OR IGNORE INTO {self.apartments_table_name} (
@@ -47,8 +52,15 @@ class Database:
                 ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """, tuple(row))
 
+            if cursor.rowcount == 1:
+                new_rows.append(row)
+
         conn.commit()
         conn.close()
+
+        if new_rows:
+            new_df = pd.DataFrame(new_rows, columns=df.columns)
+            new_df.to_csv(self.csv_path, mode="a", header=not Path(self.csv_path).exists(), index=False)
 
     def __backup_database(self):
         """Creates a timestamped backup if DB changed"""

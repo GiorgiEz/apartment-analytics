@@ -13,7 +13,7 @@ class LivoScraper(BaseScraper):
         self.raw_apartments_csv_path = '../data_output/livo_apartments.csv'
 
     def get_url(self, id, page):
-        """ URL for apartment listings (not including houses, hotels or other real estate types)"""
+        """ URL for apartment listings (not including houses, hotels or other real estate types) """
         return f'https://livo.ge/s/gancxadebebis-sia?real_estate_types=1&cities={id}&page={page}'
 
     def scraper(self):
