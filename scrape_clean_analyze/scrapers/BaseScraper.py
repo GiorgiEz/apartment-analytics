@@ -1,4 +1,4 @@
-import csv, winreg, os
+import csv, os
 from selenium import webdriver
 from selenium.webdriver.edge.options import Options as EdgeOptions
 from selenium.webdriver.support.ui import WebDriverWait
