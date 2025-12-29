@@ -22,14 +22,38 @@ class BaseScraper:
         os.environ["SE_DRIVER_MIRROR_URL"] = "https://msedgedriver.microsoft.com"
 
         options = EdgeOptions()
-        options.add_argument("--start-maximized")
-        options.add_argument("--headless")
-        options.add_argument('--disable-blink-features=AutomationControlled')
+
+        # Headless & window
+        options.add_argument("--headless=new")
+        options.add_argument("--window-size=1920,1080")
+
+        # Disable images, fonts, media
+        prefs = {
+            "profile.managed_default_content_settings.images": 2,
+            "profile.managed_default_content_settings.stylesheets": 2,
+            "profile.managed_default_content_settings.fonts": 2,
+            "profile.managed_default_content_settings.javascript": 1,  # keep JS enabled
+            "profile.managed_default_content_settings.media": 2,
+        }
+        options.add_experimental_option("prefs", prefs)
+
+        # Anti-detection (minimal)
+        options.add_argument("--disable-blink-features=AutomationControlled")
         options.add_experimental_option("excludeSwitches", ["enable-automation"])
-        options.add_experimental_option('useAutomationExtension', False)
+        options.add_experimental_option("useAutomationExtension", False)
+
+        # Performance flags
+        options.add_argument("--disable-gpu")
+        options.add_argument("--disable-extensions")
+        options.add_argument("--disable-infobars")
+        options.add_argument("--no-sandbox")
+        options.add_argument("--disable-dev-shm-usage")
+
+        # User agent
         options.add_argument(f"--user-agent={get_random_user_agent()}")
 
         driver = webdriver.Edge(options=options)
+
         return driver
 
     def safe_find_element(self, driver, by, value, timeout=1):

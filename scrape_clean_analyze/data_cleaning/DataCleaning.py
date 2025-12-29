@@ -1,5 +1,5 @@
 from .ApartmentsDataFrame import ApartmentsDataFrame
-from ..utils.helpers import get_usd_exchange_rate
+from ..utils.helpers import get_usd_exchange_rate, geo_months
 import pandas as pd
 from datetime import datetime, timedelta
 
@@ -141,12 +141,6 @@ class DataCleaning:
         self.apartments_df['floor'] = self.apartments_df['floor'].astype('Int64')
 
     def __transform_upload_date(self):
-        # Georgian abbreviated month names to numbers
-        geo_months = {
-            'იან': 1, 'თებ': 2, 'მარ': 3, 'აპრ': 4, 'მაი': 5, 'ივნ': 6,
-            'ივლ': 7, 'აგვ': 8, 'სექ': 9, 'ოქტ': 10, 'ნოე': 11, 'დეკ': 12
-        }
-
         df = self.apartments_df.copy()
         df['upload_date'] = df['upload_date'].astype(str)
         now = datetime.now()
