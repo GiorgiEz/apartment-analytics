@@ -34,3 +34,6 @@ venv/
 database/backups/
 database/apartments.csv
 data_output/
+
+# frontend
+frontend/src/charts

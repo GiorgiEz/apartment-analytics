@@ -1,5 +1,5 @@
 from .ApartmentsDataFrame import ApartmentsDataFrame
-from ..utils.helpers import get_usd_exchange_rate
+from ..utils.helpers import get_usd_exchange_rate, geo_months
 import pandas as pd
 from datetime import datetime, timedelta
 
@@ -27,9 +27,9 @@ class DataCleaning:
         print("AMOUNT OF NULL VALUES IN APARTMENTS DATASET: \n", self.apartments_df.isnull().sum(), '\n')
 
     def __clean_area_m2(self):
-        """Clean area_m2 column by removing 'მ²' from strings and converting to numeric"""
+        """Clean area_m2 column by removing 'მ²' or 'მ2' from strings and converting to numeric"""
         self.apartments_df['area_m2'] = self.apartments_df['area_m2'].apply(
-            lambda x: x[:-2] if isinstance(x, str) and x.endswith('მ²') else x
+            lambda x: x[:-2] if isinstance(x, str) and (x.endswith('მ²') or x.endswith('მ2')) else x
         )
         self.apartments_df['area_m2'] = pd.to_numeric(self.apartments_df['area_m2'], errors='coerce')
 
@@ -141,12 +141,6 @@ class DataCleaning:
         self.apartments_df['floor'] = self.apartments_df['floor'].astype('Int64')
 
     def __transform_upload_date(self):
-        # Georgian abbreviated month names to numbers
-        geo_months = {
-            'იან': 1, 'თებ': 2, 'მარ': 3, 'აპრ': 4, 'მაი': 5, 'ივნ': 6,
-            'ივლ': 7, 'აგვ': 8, 'სექ': 9, 'ოქტ': 10, 'ნოე': 11, 'დეკ': 12
-        }
-
         df = self.apartments_df.copy()
         df['upload_date'] = df['upload_date'].astype(str)
         now = datetime.now()
@@ -208,6 +202,9 @@ class DataCleaning:
 
     def write_to_csv(self, path="../data_output/cleaned_apartments.csv"):
         """ Writes the dataset to a csv file. """
+        if self.apartments_df.empty:
+            print(f"No data to write After Performing Data Cleaning")
+            return
         self.apartments_df.to_csv(path, index=False, na_rep='<NA>')
 
     def main(self):

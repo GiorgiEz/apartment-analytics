@@ -67,8 +67,8 @@ Charts are dynamically displayed using JavaScript and loaded from pre-generated 
 1. **Clone the repository**
 
 ```bash
-git clone https://github.com/GiorgiEz/real-estate-listing-tracker
-cd real-estate-listing-tracker
+git clone https://github.com/GiorgiEz/apartment-analytics.git
+cd apartment-analytics
 ```
 
 2. **Install dependencies**
@@ -81,6 +81,7 @@ pip install -r requirements.txt
    Run `main.py`:
 
 ```bash
+cd scrape_clean_analyze
 python main.py
 ```
 
@@ -100,7 +101,6 @@ python main.py
 
 ```text
 selenium~=4.34.0
-webdriver-manager~=4.0.2
 pandas~=2.3.0
 seaborn~=0.13.2
 matplotlib~=3.10.3
