@@ -44,7 +44,7 @@ class LivoScraper(BaseScraper):
                         div_0 = divs[0].find_elements(By.XPATH, './div')[1].text.splitlines()
 
                         price = div_0[0] + '$' if len(div_0) > 0 else pd.NA
-                        price_per_sqm = div_0[3] if len(div_0) > 3 else pd.NA
+                        price_per_sqm = div_0[3] if len(div_0) > 3 and 'მ2' in div_0[3] else pd.NA
                         description = div_0[4] if len(div_0) > 4 else pd.NA
                         street_address = div_0[5] if len(div_0) > 5 else pd.NA
 
@@ -60,6 +60,9 @@ class LivoScraper(BaseScraper):
                                 floor = info
                             elif any(m in info for m in geo_months.keys()):
                                 upload_date = info
+
+                        if pd.isna(price) or pd.isna(street_address) or pd.isna(upload_date):
+                            continue
 
                         apartments_data.append({
                             'url': a.get_attribute('href'),

@@ -27,9 +27,9 @@ class DataCleaning:
         print("AMOUNT OF NULL VALUES IN APARTMENTS DATASET: \n", self.apartments_df.isnull().sum(), '\n')
 
     def __clean_area_m2(self):
-        """Clean area_m2 column by removing 'მ²' from strings and converting to numeric"""
+        """Clean area_m2 column by removing 'მ²' or 'მ2' from strings and converting to numeric"""
         self.apartments_df['area_m2'] = self.apartments_df['area_m2'].apply(
-            lambda x: x[:-2] if isinstance(x, str) and x.endswith('მ²') else x
+            lambda x: x[:-2] if isinstance(x, str) and (x.endswith('მ²') or x.endswith('მ2')) else x
         )
         self.apartments_df['area_m2'] = pd.to_numeric(self.apartments_df['area_m2'], errors='coerce')
 
@@ -202,6 +202,9 @@ class DataCleaning:
 
     def write_to_csv(self, path="../data_output/cleaned_apartments.csv"):
         """ Writes the dataset to a csv file. """
+        if self.apartments_df.empty:
+            print(f"No data to write After Performing Data Cleaning")
+            return
         self.apartments_df.to_csv(path, index=False, na_rep='<NA>')
 
     def main(self):
