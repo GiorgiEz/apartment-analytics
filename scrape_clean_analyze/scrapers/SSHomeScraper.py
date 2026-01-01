@@ -1,8 +1,7 @@
 import pandas as pd
+import re
 from .BaseScraper import BaseScraper
 from selenium.webdriver.common.by import By
-from selenium.common.exceptions import StaleElementReferenceException
-
 
 
 class SSHomeScraper(BaseScraper):
@@ -17,92 +16,70 @@ class SSHomeScraper(BaseScraper):
         """ URL for apartment listings (not including houses, hotels or other real estate types)"""
         return f'https://home.ss.ge/ka/udzravi-qoneba/l/bina?cityIdList={id}&order=1&page={page}'
 
-    def scraper(self):
-        """ Main function to scrape the data from home.ss.ge website """
-        driver = self.configure_driver()
-        apartments_data = []
+    def get_listings(self, driver):
+        try:
+            listing_container = self.safe_find_element(driver, By.CLASS_NAME, "listing-container")
+            if not listing_container:
+                return []
 
-        for city_name, city_id in self.city_id_dict.items():
-            page_counter = 1
+            top_grid_lard = self.safe_find_element(listing_container, By.CLASS_NAME, "top-grid-lard")
+            if not top_grid_lard:
+                return []
 
-            while page_counter <= self.number_of_pages_to_scrape:
-                try:
-                    driver.get(self.get_url(city_id, page_counter))
+            child_divs = top_grid_lard.find_elements(By.TAG_NAME, "div")
+            if not child_divs:
+                return []
 
-                    print(f"{self.main_url} - City: {city_name}, Page: {page_counter}")
+            grid = child_divs[0]
+            return self.wait_for_links(grid, '', selector='a')
 
-                    try:  # Finding the main div grid where the data about apartments is located
-                        listing_container = self.safe_find_element(driver, By.CLASS_NAME, "listing-container")
-                        top_grid_lard = self.safe_find_element(listing_container, By.CLASS_NAME, "top-grid-lard")
-                        child_divs = top_grid_lard.find_elements(By.TAG_NAME, "div")
-                        grid = child_divs[0]
-                    except Exception as e:
-                        print(f"{self.main_url} - Error finding grid at Page: {page_counter}, skipping page: {e}")
-                        page_counter += 1
-                        continue
+        except Exception as e:
+            return []
 
-                    a_tags = self.wait_for_links(grid, '', selector='a')
-                    if len(a_tags) == 0:  # If there are not a_tags found then we skip the page
-                        page_counter += 1
-                        continue
+    def parse_listing(self, apartment, city_name, page):
+        href = str(apartment.get_attribute('href'))
+        if not href or self.main_url not in href:
+            self.skip_listing_message(city_name, page, "href didn't load")
+            return None
 
-                    for a in a_tags:
-                        href = str(a.get_attribute('href'))
-                        if not href or self.main_url not in href:
-                            continue
+        price_span = self.safe_find_element(apartment, By.CLASS_NAME, 'listing-detailed-item-price')
+        price = price_span.text.strip() if price_span else pd.NA
 
-                        price_span = self.safe_find_element(a, By.CLASS_NAME, 'listing-detailed-item-price')
-                        if not price_span or ("$" not in price_span.text and "₾" not in price_span.text):
-                            continue
-                        price = price_span.text
-                        if not price:
-                            continue
+        desc_h2 = self.safe_find_element(apartment, By.CLASS_NAME, 'listing-detailed-item-title')
+        description = desc_h2.text.strip() if desc_h2 else pd.NA
 
-                        desc_h2 = self.safe_find_element(a, By.CLASS_NAME, 'listing-detailed-item-title')
-                        description = desc_h2.text if desc_h2 else None
+        addr_span = self.safe_find_element(apartment, By.CLASS_NAME, 'listing-detailed-item-address')
+        street_address = addr_span.text.strip() if addr_span else pd.NA
 
-                        addr_span = self.safe_find_element(a, By.CLASS_NAME, 'listing-detailed-item-address')
-                        street_address = addr_span.text if addr_span else None
+        area_span = self.safe_find_element(apartment, By.CLASS_NAME, "icon-crop_free")
+        area_span_parent = self.safe_find_element(area_span, By.XPATH, './..') if area_span else None
+        area_m2 = area_span_parent.text.strip() if area_span_parent else pd.NA
 
-                        area_span = self.safe_find_element(a, By.CLASS_NAME, "icon-crop_free")
-                        area_span_parent = area_span.find_element(By.XPATH, './..') if area_span else None
-                        area_m2 = area_span_parent.text if area_span_parent else None
+        bedroom_span = self.safe_find_element(apartment, By.CLASS_NAME, "icon-bed")
+        bedroom_parent = self.safe_find_element(bedroom_span, By.XPATH, './..') if bedroom_span else None
+        bedrooms = bedroom_parent.text.strip() if bedroom_parent else pd.NA
 
-                        bedroom_span = self.safe_find_element(a, By.CLASS_NAME, "icon-bed")
-                        bedroom_parent = bedroom_span.find_element(By.XPATH, './..') if bedroom_span else None
-                        bedrooms = bedroom_parent.text if bedroom_parent else None
+        floor_span = self.safe_find_element(apartment, By.CLASS_NAME, "icon-stairs")
+        floor_span_parent = self.safe_find_element(floor_span, By.XPATH, './..') if floor_span else None
+        floor = floor_span_parent.text.strip() if floor_span_parent else pd.NA
 
-                        floor_span = self.safe_find_element(a, By.CLASS_NAME, "icon-stairs")
-                        floor_span_parent = floor_span.find_element(By.XPATH, './..') if floor_span else None
-                        floor = floor_span_parent.text if floor_span_parent else None
+        create_date = self.safe_find_element(apartment, By.CLASS_NAME, 'create-date')
+        upload_date = create_date.text.strip() if create_date else pd.NA
 
-                        create_date = self.safe_find_element(a, By.CLASS_NAME, 'create-date')
-                        upload_date = create_date.text if create_date else None
+        if pd.isna(price) or not re.search(r"[$₾]", price) or pd.isna(street_address) or pd.isna(area_m2):
+            self.skip_listing_message(city_name, page, "Data is not given")
+            return None
 
-                        apartments_data.append({
-                            'url': href,
-                            'city': city_name,
-                            'price': price,
-                            'price_per_sqm': pd.NA,
-                            'description': description,
-                            'district_name': pd.NA,
-                            'street_address': street_address,
-                            'area_m2': area_m2,
-                            'bedrooms': bedrooms,
-                            'floor': floor,
-                            'upload_date': upload_date
-                        })
-
-                except StaleElementReferenceException:
-                    print(f"{self.main_url} - Skipping Page... due to stale element error: "
-                          f"{city_name}, Page: {page_counter}")
-
-                except Exception as parse_err:
-                    print(f"{self.main_url} - Skipping Page... due to Error: {parse_err}")
-
-                finally:
-                    page_counter += 1
-
-        self.write_to_csv(apartments_data)
-
-        driver.quit()
+        return {
+            'url': href,
+            'city': city_name,
+            'price': price,
+            'price_per_sqm': pd.NA,
+            'description': description,
+            'district_name': pd.NA,
+            'street_address': street_address,
+            'area_m2': area_m2,
+            'bedrooms': bedrooms,
+            'floor': floor,
+            'upload_date': upload_date
+        }
