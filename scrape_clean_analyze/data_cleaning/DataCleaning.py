@@ -1,4 +1,3 @@
-from .ApartmentsDataFrame import ApartmentsDataFrame
 from ..utils.helpers import get_usd_exchange_rate, geo_months
 import pandas as pd
 from datetime import datetime, timedelta
@@ -6,9 +5,9 @@ from datetime import datetime, timedelta
 
 
 class DataCleaning:
-    def __init__(self):
-        self.apartments_df = ApartmentsDataFrame().get_df()
-        self.currency_rate = get_usd_exchange_rate()
+    def __init__(self, apartments_df, currency_rate=None):
+        self.apartments_df = apartments_df
+        self.currency_rate = currency_rate or get_usd_exchange_rate()
 
     def __get_shape(self):
         """ Prints the shape of the dataset. Useful for quickly understanding the size of the dataset. """
@@ -26,30 +25,55 @@ class DataCleaning:
         """ Prints the count of missing (null) values for each column in the dataset. """
         print("AMOUNT OF NULL VALUES IN APARTMENTS DATASET: \n", self.apartments_df.isnull().sum(), '\n')
 
-    def __clean_area_m2(self):
-        """Clean area_m2 column by removing 'მ²' or 'მ2' from strings and converting to numeric"""
-        self.apartments_df['area_m2'] = self.apartments_df['area_m2'].apply(
-            lambda x: x[:-2] if isinstance(x, str) and (x.endswith('მ²') or x.endswith('მ2')) else x
+    def _clean_area_m2(self):
+        """
+        Clean area_m2 column by extracting numeric values and converting to nullable numeric type.
+        Handles:
+        - "50 მ²", "45 მ2", "60"
+        - extra spaces
+        - invalid / missing values -> pd.NA
+        """
+        self.apartments_df['area_m2'] = (
+            self.apartments_df['area_m2']
+            .astype(str)
+            .str.extract(r'(\d+(?:\.\d+)?)')[0]
+            .astype('Float64')
         )
-        self.apartments_df['area_m2'] = pd.to_numeric(self.apartments_df['area_m2'], errors='coerce')
 
-    def __clean_and_transform_price(self):
-        """ Removes the $ sign and converts to USD if in Georgian Lari or marks price as None if it's negotiable. """
-        def parse_price(price):
-            price_str = str(price).replace(',', '').strip().lower()
+    def _clean_and_transform_price(self):
+        """
+        Cleans price column:
+        - USD: "$100,000", "100000$", "100,000 $" -> 100000
+        - GEL: "103,808", "103,808 ₾", "103808" -> converted to USD
+        - Invalid / negotiable / missing -> pd.NA
+        """
+
+        def parse_price(value):
+            if pd.isna(value):
+                return pd.NA
+
+            price_str = str(value).lower().replace(',', '').strip()
 
             try:
+                # USD
                 if '$' in price_str:
-                    return float(price_str.replace('$', '').strip())
-                else:
-                    if '₾' in price_str:
-                        price_str = price_str.replace('₾', '').strip()
-                    return round(float(price_str) * self.currency_rate)
-            except ValueError:
-                return None
-        self.apartments_df['price'] = self.apartments_df['price'].apply(parse_price)
+                    number = price_str.replace('$', '').strip()
+                    return float(number)
 
-    def __clean_price_per_sqm(self):
+                # GEL (explicit symbol or implicit)
+                number = price_str.replace('₾', '').strip()
+                return float(number) * self.currency_rate
+
+            except ValueError:
+                return pd.NA
+
+        self.apartments_df['price'] = (
+            self.apartments_df['price']
+            .apply(parse_price)
+            .astype('Float64')
+        )
+
+    def _clean_price_per_sqm(self):
         def clean_row(row):
             if pd.isna(row['price_per_sqm']):
                 try:
@@ -70,12 +94,7 @@ class DataCleaning:
 
         self.apartments_df['price_per_sqm'] = self.apartments_df.apply(clean_row, axis=1)
 
-    def __fill_district_name_nulls(self):
-        """Fills missing values in the district_name column with a default message."""
-        self.apartments_df['district_name'] = self.apartments_df['district_name'].fillna(pd.NA)
-        print("NULL COLUMNS IN DISTRICT_NAME COLUMN HAVE BEEN FILLED")
-
-    def __transform_bedrooms(self):
+    def _transform_bedrooms(self):
         """Cleans raw bedroom values, extracts numeric info from strings like 'საძ. 3',
         and fills nulls using area as a heuristic."""
 
@@ -110,7 +129,7 @@ class DataCleaning:
 
         print("Transformed and filled missing 'bedrooms' column.")
 
-    def __transform_floor(self):
+    def _transform_floor(self):
         """Cleans raw floor values, extracts numeric info from strings like 'სართ. 3' or '8/11', and fills nulls."""
 
         def extract_floor_number(val):
@@ -140,7 +159,7 @@ class DataCleaning:
         self.apartments_df['floor'] = self.apartments_df['floor'].apply(extract_floor_number)
         self.apartments_df['floor'] = self.apartments_df['floor'].astype('Int64')
 
-    def __transform_upload_date(self):
+    def _transform_upload_date(self):
         df = self.apartments_df.copy()
         df['upload_date'] = df['upload_date'].astype(str)
         now = datetime.now()
@@ -179,7 +198,7 @@ class DataCleaning:
         df['upload_date'] = df['upload_date'].apply(parse_date)
         self.apartments_df = df
 
-    def __new_transaction_type_col(self):
+    def _new_transaction_type_col(self):
         """Extracts the transaction type from description and creates a new column."""
 
         def extract_transaction_type(desc):
@@ -213,14 +232,12 @@ class DataCleaning:
         self.__get_description()
         self.__get_null_columns()
 
-        self.__clean_and_transform_price()
-        self.__clean_area_m2()
-        self.__clean_price_per_sqm()
+        self._clean_and_transform_price()
+        self._clean_area_m2()
+        self._clean_price_per_sqm()
 
-        self.__transform_bedrooms()
-        self.__transform_floor()
+        self._transform_bedrooms()
+        self._transform_floor()
 
-        self.__transform_upload_date()
-        self.__new_transaction_type_col()
-
-        self.__fill_district_name_nulls()
+        self._transform_upload_date()
+        self._new_transaction_type_col()
