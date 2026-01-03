@@ -112,10 +112,10 @@ class Database:
         conn.close()
         return count
 
-    def setup_database(self):
+    def setup_database(self, path="../data_output/cleaned_apartments.csv"):
         self.__delete_old_backups()  # Always clean old backups
         self.__backup_database()
         self.__create_table_if_not_exists()
-        self.__insert_unique_csv_to_sqlite("../data_output/cleaned_apartments.csv")
+        self.__insert_unique_csv_to_sqlite(path)
 
         print(f"Length of the Apartments table in the sqlite database: {self.__apartments_table_length()}")

@@ -2,7 +2,7 @@ import pandas as pd
 from scrape_clean_analyze.data_cleaning.DataCleaning import DataCleaning
 
 
-def test_clean_area_m2_basic_cases():
+def test_normalize_area_m2():
     df = pd.DataFrame({
         'area_m2': [
             '50 მ²',
@@ -15,7 +15,7 @@ def test_clean_area_m2_basic_cases():
     })
 
     cleaner = DataCleaning(df)
-    cleaner._clean_area_m2()
+    cleaner._normalize_area_m2()
 
     result = cleaner.apartments_df['area_m2']
 
@@ -26,4 +26,3 @@ def test_clean_area_m2_basic_cases():
     )
 
     pd.testing.assert_series_equal(result, expected)
-

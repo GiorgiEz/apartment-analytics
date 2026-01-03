@@ -1,5 +1,6 @@
-from ..utils.helpers import get_usd_exchange_rate, geo_months
 import pandas as pd
+import re
+from ..utils.helpers import get_usd_exchange_rate, geo_months
 from datetime import datetime, timedelta
 
 
@@ -25,22 +26,7 @@ class DataCleaning:
         """ Prints the count of missing (null) values for each column in the dataset. """
         print("AMOUNT OF NULL VALUES IN APARTMENTS DATASET: \n", self.apartments_df.isnull().sum(), '\n')
 
-    def _clean_area_m2(self):
-        """
-        Clean area_m2 column by extracting numeric values and converting to nullable numeric type.
-        Handles:
-        - "50 მ²", "45 მ2", "60"
-        - extra spaces
-        - invalid / missing values -> pd.NA
-        """
-        self.apartments_df['area_m2'] = (
-            self.apartments_df['area_m2']
-            .astype(str)
-            .str.extract(r'(\d+(?:\.\d+)?)')[0]
-            .astype('Float64')
-        )
-
-    def _clean_and_transform_price(self):
+    def _normalize_price(self):
         """
         Cleans price column:
         - USD: "$100,000", "100000$", "100,000 $" -> 100000
@@ -58,166 +44,269 @@ class DataCleaning:
                 # USD
                 if '$' in price_str:
                     number = price_str.replace('$', '').strip()
-                    return float(number)
+                    return round(float(number), 2)
 
                 # GEL (explicit symbol or implicit)
                 number = price_str.replace('₾', '').strip()
-                return float(number) * self.currency_rate
+                return round(float(number) * self.currency_rate, 2)
 
             except ValueError:
                 return pd.NA
 
-        self.apartments_df['price'] = (
-            self.apartments_df['price']
-            .apply(parse_price)
+        self.apartments_df['price'] = (self.apartments_df['price'].apply(parse_price).astype('Float64'))
+
+    def _normalize_area_m2(self):
+        """
+        Clean area_m2 column by extracting numeric values and converting to nullable numeric type.
+        Handles:
+        - "50 მ²", "45 მ2", "60"
+        - extra spaces
+        - invalid / missing values -> pd.NA
+        """
+        self.apartments_df['area_m2'] = (
+            self.apartments_df['area_m2']
+            .astype(str)
+            .str.extract(r'(\d+(?:\.\d+)?)')[0]
             .astype('Float64')
         )
 
-    def _clean_price_per_sqm(self):
-        def clean_row(row):
-            if pd.isna(row['price_per_sqm']):
-                try:
-                    return int(row['price']) // int(row['area_m2'])
-                except (TypeError, ZeroDivisionError):
-                    return None
+    def _normalize_price_per_sqm(self):
+        """
+        Cleans price_per_sqm column.
 
-            value = str(row['price_per_sqm']).strip()
-            if '/' in value:
-                value = value.split('/')[0].strip()
+        Handles:
+        - "2,059 $ /მ2"
+        - "4,196 / მ²"  (assumed GEL)
+        - missing / invalid values → computed from price & area_m2
+        """
 
-            if '$' in value:
-                value = value.replace('$', '').replace(',', '').strip()
-                return float(value)
-            else:
-                value = value.replace(',', '').strip()
-                return round(float(value) * self.currency_rate)
+        def parse_row(row):
+            value = row.get('price_per_sqm')
 
-        self.apartments_df['price_per_sqm'] = self.apartments_df.apply(clean_row, axis=1)
+            # 1. Try to parse price_per_sqm directly
+            if pd.notna(value):
+                text = str(value).lower().replace(',', '')
 
-    def _transform_bedrooms(self):
-        """Cleans raw bedroom values, extracts numeric info from strings like 'საძ. 3',
-        and fills nulls using area as a heuristic."""
+                match = re.search(r'\d+(?:\.\d+)?', text)
+                if match:
+                    amount = float(match.group())
 
-        def extract_bedroom_number(val):
-            if isinstance(val, str) and 'საძ' in val:
-                parts = val.strip().split()
-                if len(parts) > 1 and parts[1].isdigit():
-                    return int(parts[1])
+                    # USD
+                    if '$' in text:
+                        return amount
 
-            elif not pd.isna(val):
-                return int(val)
+                    # GEL (explicit or implicit)
+                    return round(amount * self.currency_rate, 2)
+
+            # 2. Fallback: compute from price and area
+            price = row.get('price')
+            area = row.get('area_m2')
+
+            if pd.notna(price) and pd.notna(area) and area != 0:
+                return round(float(price) / float(area), 2)
+
+            return pd.NA
+
+        self.apartments_df['price_per_sqm'] = (self.apartments_df.apply(parse_row, axis=1).astype('Float64'))
+
+    def _normalize_bedrooms(self):
+        """
+        Normalizes bedrooms column.
+
+        Handles:
+        - "საძ. 1", "საძ1", "2"
+        - missing / invalid values → inferred from area_m2
+        """
+
+        def extract_bedrooms(value):
+            if pd.isna(value):
+                return pd.NA
+
+            text = str(value).lower()
+
+            match = re.search(r'\d+', text)
+            if match:
+                return int(match.group())
+
             return pd.NA
 
         def infer_bedrooms(area):
-            if area is None or pd.isna(area):
+            if pd.isna(area):
                 return pd.NA
-            elif area <= 50:
+
+            if area <= 50:
                 return 1
             elif area <= 100:
                 return 2
             elif area <= 150:
                 return 3
             else:
-                return 4
+                return 4  # heuristic upper cap
 
-        self.apartments_df['bedrooms'] = self.apartments_df['bedrooms'].apply(extract_bedroom_number)
-        self.apartments_df['bedrooms'] = self.apartments_df.apply(
-            lambda row: infer_bedrooms(row['area_m2']) if pd.isna(row['bedrooms']) else row['bedrooms'],
-            axis=1
+        # Step 1: extract explicit bedroom values
+        self.apartments_df['bedrooms'] = (
+            self.apartments_df['bedrooms']
+            .apply(extract_bedrooms)
+            .astype('Int64')
         )
-        self.apartments_df['bedrooms'] = self.apartments_df['bedrooms'].astype('Int64')
 
-        print("Transformed and filled missing 'bedrooms' column.")
+        # Step 2: infer missing bedrooms from area
+        self.apartments_df['bedrooms'] = self.apartments_df.apply(
+            lambda row: (
+                infer_bedrooms(row['area_m2'])
+                if pd.isna(row['bedrooms'])
+                else row['bedrooms']
+            ),
+            axis=1
+        ).astype('Int64')
 
-    def _transform_floor(self):
-        """Cleans raw floor values, extracts numeric info from strings like 'სართ. 3' or '8/11', and fills nulls."""
+    def _normalize_floor(self):
+        """
+        Normalizes floor column.
 
-        def extract_floor_number(val):
-            if pd.isna(val) or val is None:
+        Handles:
+        - "სართ. 3"
+        - "8/11"
+        - "5"
+        - missing / invalid values → pd.NA
+        """
+
+        def extract_floor(value):
+            if pd.isna(value):
                 return pd.NA
 
-            if isinstance(val, str):
-                val = val.strip()
-                if 'სართ' in val:
-                    parts = val.split()
-                    if len(parts) > 1 and parts[1].isdigit():
-                        return int(parts[1])
-                elif '/' in val and '-' not in val:
-                    parts = val.split('/')
-                    if len(parts) > 0 and parts[0].isdigit():
-                        return int(parts[0])
-                elif val.isdigit():
-                    return int(val)
-                else:
-                    return pd.NA
+            text = str(value)
 
-            elif isinstance(val, (int, float)):
-                return int(val)
+            match = re.search(r'\d+', text)
+            if match:
+                return int(match.group())
 
             return pd.NA
 
-        self.apartments_df['floor'] = self.apartments_df['floor'].apply(extract_floor_number)
-        self.apartments_df['floor'] = self.apartments_df['floor'].astype('Int64')
+        self.apartments_df['floor'] = (
+            self.apartments_df['floor']
+            .apply(extract_floor)
+            .astype('Int64')
+        )
 
-    def _transform_upload_date(self):
-        df = self.apartments_df.copy()
-        df['upload_date'] = df['upload_date'].astype(str)
-        now = datetime.now()
+    def _normalize_upload_date(self, now=None):
+        """
+        Normalizes upload_date column.
 
-        def parse_date(upload_str):
-            try:
-                parts = upload_str.split()
-                if len(parts) != 3:
-                    return pd.NA
+        Handles:
+        - "1 წუთის წინ"
+        - "23 საათის წინ"
+        - "30 დეკ, 12:02"
+        - "02 იან 12:44"
+        - "01 იან 2026"
+        """
 
-                if 'წუთი' in upload_str:
-                    # Example input: '25 წუთის წინ'
-                    new_time = now - timedelta(minutes=int(parts[0]))
-                    return new_time.strftime("%Y-%m-%d %H:%M")
-                elif 'საათი' in upload_str:
-                    # Example input: '13 საათის წინ'
-                    new_time = now - timedelta(hours=int(parts[0]))
-                    return new_time.strftime("%Y-%m-%d %H:%M")
-                elif ':' in upload_str:
-                    # Example input: '09 ივლ 16:20'
-                    day, geo_month_abbr, time_str = [p.strip() for p in parts]
-                    month = geo_months.get(geo_month_abbr[:3])
-                    if not month:
-                        return None
-                    return datetime(year=now.year, month=month, day=int(day), hour=int(time_str[:2]),
-                                    minute=int(time_str[3:5])).strftime("%Y-%m-%d %H:%M")
+        now = now or datetime.now()
+
+        def parse_date(value):
+            if pd.isna(value):
+                return pd.NA
+
+            # Already-normalized datetime (string or datetime)
+            parsed = pd.to_datetime(value, errors="coerce")
+            if pd.notna(parsed):
+                if parsed <= now:
+                    return parsed.floor("min")
                 else:
-                    # Example input: "09 ივლ 2025"
-                    day, geo_month_abbr, year = [p.strip() for p in parts]
-                    month = geo_months.get(geo_month_abbr[:3])
-                    return (datetime(year=int(year), month=month, day=int(day), hour=12, minute=0)
-                            .strftime("%Y-%m-%d %H:%M"))
-            except:
-                return None
+                    # future timestamps are invalid → roll back one year
+                    return parsed.replace(year=parsed.year - 1).floor("min")
 
-        df['upload_date'] = df['upload_date'].apply(parse_date)
-        self.apartments_df = df
+            text = str(value).strip().lower()
 
-    def _new_transaction_type_col(self):
-        """Extracts the transaction type from description and creates a new column."""
+            try:
+                # 1. Relative minutes: "1 წუთის წინ"
+                if 'წუთ' in text:
+                    minutes = int(re.search(r'\d+', text).group())
+                    return now - timedelta(minutes=minutes)
+
+                # 2. Relative hours: "23 საათის წინ"
+                if 'საათ' in text:
+                    hours = int(re.search(r'\d+', text).group())
+                    return now - timedelta(hours=hours)
+
+                parts = text.replace(',', '').split()
+
+                # 3. Full date with year: "01 იან 2026"
+                if len(parts) == 3 and parts[2].isdigit():
+                    day, geo_month, year = parts
+                    month = geo_months.get(geo_month[:3])
+                    if not month:
+                        return pd.NA
+                    return datetime(int(year), month, int(day), 12, 0)
+
+                # 4. Date + time without year: "30 დეკ 12:02"
+                if len(parts) == 3 and ':' in parts[2]:
+                    day, geo_month, time_str = parts
+                    month = geo_months.get(geo_month[:3])
+                    if not month:
+                        return pd.NA
+
+                    hour, minute = map(int, time_str.split(':'))
+
+                    candidate = datetime(
+                        year=now.year,
+                        month=month,
+                        day=int(day),
+                        hour=hour,
+                        minute=minute
+                    )
+
+                    # FIX: handle year rollover
+                    if candidate > now:
+                        candidate = candidate.replace(year=now.year - 1)
+
+                    return candidate
+
+            except Exception:
+                return pd.NA
+
+            return pd.NA
+
+        self.apartments_df['upload_date'] = (
+            self.apartments_df['upload_date']
+            .apply(parse_date)
+            .astype('datetime64[ns]')
+            .dt.floor('min')
+        )
+
+    def _normalize_transaction_type(self):
+        """
+        Extracts transaction type from description.
+
+        Possible values:
+        - იყიდება
+        - ქირავდება თვიურად
+        - ქირავდება დღიურად
+        - გირავდება
+        """
 
         def extract_transaction_type(desc):
-            if not isinstance(desc, str):
-                return None
-            desc = desc.strip()
-            if "იყიდება" in desc:
-                return "იყიდება"
-            elif "გირავდება" in desc:
-                return "გირავდება"
-            elif "ქირავდება დღიურად" in desc:
-                return "ქირავდება დღიურად"
-            elif "ქირავდება" in desc:
-                return "ქირავდება თვიურად"
-            else:
-                return None
+            if pd.isna(desc):
+                return pd.NA
 
-        self.apartments_df['transaction_type'] = self.apartments_df['description'].apply(extract_transaction_type)
-        print("New column 'transaction_type' has been created based on descriptions.")
+            text = str(desc).lower()
+
+            if "ქირავდება დღიურად" in text:
+                return "ქირავდება დღიურად"
+            if "ქირავდება" in text:
+                return "ქირავდება თვიურად"
+            if "იყიდება" in text:
+                return "იყიდება"
+            if "გირავდება" in text:
+                return "გირავდება"
+
+            return pd.NA
+
+        self.apartments_df['transaction_type'] = (
+            self.apartments_df['description']
+            .apply(extract_transaction_type)
+            .astype('string')
+        )
 
     def write_to_csv(self, path="../data_output/cleaned_apartments.csv"):
         """ Writes the dataset to a csv file. """
@@ -226,18 +315,18 @@ class DataCleaning:
             return
         self.apartments_df.to_csv(path, index=False, na_rep='<NA>')
 
-    def main(self):
+    def normalize(self):
         self.__get_shape()
         self.__get_info()
         self.__get_description()
         self.__get_null_columns()
 
-        self._clean_and_transform_price()
-        self._clean_area_m2()
-        self._clean_price_per_sqm()
+        self._normalize_price()
+        self._normalize_area_m2()
+        self._normalize_price_per_sqm()
 
-        self._transform_bedrooms()
-        self._transform_floor()
+        self._normalize_bedrooms()
+        self._normalize_floor()
 
-        self._transform_upload_date()
-        self._new_transaction_type_col()
+        self._normalize_upload_date()
+        self._normalize_transaction_type()
