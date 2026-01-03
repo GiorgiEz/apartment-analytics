@@ -34,7 +34,8 @@ class MyHomeScraper(BaseScraper):
 
         # The div 0 contains data about price and price_per_sqm
         price_data = data_div[0].text.splitlines()
-        price = price_data[0] if price_data else pd.NA
+        price = price_data[0] + price_data[1] if len(price_data) > 1 else pd.NA
+
         price_per_sqm = price_data[2] if len(price_data) > 2 and 'მ²' in price_data[2] else pd.NA
 
         # The div 1 contains data about the description

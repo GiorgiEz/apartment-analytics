@@ -2,6 +2,7 @@ from scrape_clean_analyze.scrapers.MyHomeScraper import MyHomeScraper
 from scrape_clean_analyze.scrapers.LivoScraper import LivoScraper
 from scrape_clean_analyze.scrapers.SSHomeScraper import SSHomeScraper
 from scrape_clean_analyze.data_cleaning.DataCleaning import DataCleaning
+from data_cleaning.ApartmentsDataFrame import ApartmentsDataFrame
 from database.Database import Database
 from scrape_clean_analyze.data_analysis.RunEDA import RunEDA
 from concurrent.futures import ThreadPoolExecutor
@@ -24,8 +25,9 @@ if __name__ == "__main__":
             future.result()  # Ensures any exceptions are raised
 
     """ Step 2: Data cleaning and transformation """
-    data_cleaning = DataCleaning()
-    data_cleaning.main()
+    apartments_df = ApartmentsDataFrame().get_df()
+    data_cleaning = DataCleaning(apartments_df)
+    data_cleaning.normalize()
     data_cleaning.write_to_csv()
 
     """ Step 3: Save data in the database """
