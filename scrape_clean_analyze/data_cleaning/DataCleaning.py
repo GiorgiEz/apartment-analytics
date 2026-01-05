@@ -308,6 +308,28 @@ class DataCleaning:
             .astype('string')
         )
 
+    def _normalize_source(self):
+        """
+        Extracts Source from url.
+
+        Possible values:
+        - myhome.ge
+        - livo.ge
+        - home.ss.ge
+        """
+        def extract_source(url):
+            if not isinstance(url, str):
+                return pd.NA
+            if "myhome.ge" in url:
+                return "myhome.ge"
+            if "livo.ge" in url:
+                return "livo.ge"
+            if "home.ss.ge" in url or "ss.ge" in url:
+                return "home.ss.ge"
+            return pd.NA
+
+        self.apartments_df["source"] = self.apartments_df["url"].apply(extract_source)
+
     def write_to_csv(self, path="../data_output/cleaned_apartments.csv"):
         """ Writes the dataset to a csv file. """
         if self.apartments_df.empty:
@@ -330,3 +352,4 @@ class DataCleaning:
 
         self._normalize_upload_date()
         self._normalize_transaction_type()
+        self._normalize_source()
