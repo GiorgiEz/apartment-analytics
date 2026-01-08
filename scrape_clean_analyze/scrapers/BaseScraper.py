@@ -5,7 +5,7 @@ from selenium.webdriver.edge.options import Options as EdgeOptions
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
-from selenium.common.exceptions import StaleElementReferenceException, TimeoutException
+from selenium.common.exceptions import StaleElementReferenceException, TimeoutException, WebDriverException
 from ..utils.helpers import get_random_user_agent
 
 
@@ -36,7 +36,17 @@ class BaseScraper(ABC):
 
         for city_name, city_id in self.city_id_dict.items():
             for page in range(1, self.number_of_pages_to_scrape + 1):
-                driver.get(self.get_url(city_id, page))
+                url = self.get_url(city_id, page)
+
+                try:
+                    driver.get(url)
+                except TimeoutException:
+                    print(f"{self.main_url} - City: {city_name}, Page: {page} — Page load timeout")
+                    continue
+                except WebDriverException as e:
+                    print(f"{self.main_url} - City: {city_name}, Page: {page} — WebDriver error: {e}")
+                    continue
+
                 print(f"{self.main_url} - City: {city_name}, Page: {page}")
 
                 listings = self.get_listings(driver)
@@ -62,8 +72,10 @@ class BaseScraper(ABC):
 
     def configure_driver(self):
         os.environ["SE_DRIVER_MIRROR_URL"] = "https://msedgedriver.microsoft.com"
-
         options = EdgeOptions()
+
+        # page loading
+        options.page_load_strategy = "eager"
 
         # Headless & window
         options.add_argument("--headless=new")
@@ -84,17 +96,28 @@ class BaseScraper(ABC):
         options.add_experimental_option("excludeSwitches", ["enable-automation"])
         options.add_experimental_option("useAutomationExtension", False)
 
-        # Performance flags
+        # Performance & stability
         options.add_argument("--disable-gpu")
         options.add_argument("--disable-extensions")
         options.add_argument("--disable-infobars")
         options.add_argument("--no-sandbox")
         options.add_argument("--disable-dev-shm-usage")
+        options.add_argument("--disable-notifications")
+        options.add_argument("--disable-geolocation")
+        options.add_argument("--disable-background-timer-throttling")
+        options.add_argument("--disable-backgrounding-occluded-windows")
+        options.add_argument("--disable-renderer-backgrounding")
 
         # User agent
         options.add_argument(f"--user-agent={get_random_user_agent()}")
 
-        return webdriver.Edge(options=options)
+        driver = webdriver.Edge(options=options)
+
+        driver.set_page_load_timeout(30)  # hard stop for driver.get()
+        driver.set_script_timeout(30)  # async JS execution
+        driver.implicitly_wait(5)  # element lookups
+
+        return driver
 
     def safe_find_element(self, driver, by, value, timeout=1):
         try:

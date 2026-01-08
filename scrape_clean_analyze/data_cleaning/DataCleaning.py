@@ -2,6 +2,7 @@ import pandas as pd
 import re
 from ..utils.helpers import get_usd_exchange_rate, geo_months
 from datetime import datetime, timedelta
+from config import paths
 
 
 
@@ -330,7 +331,16 @@ class DataCleaning:
 
         self.apartments_df["source"] = self.apartments_df["url"].apply(extract_source)
 
-    def write_to_csv(self, path="../data_output/cleaned_apartments.csv"):
+    def _deduplicate_data(self):
+        """ Removes duplicate rows based on the URL column """
+        before = len(self.apartments_df)
+
+        self.apartments_df.drop_duplicates(subset="url", keep="last", inplace=True)
+
+        after = len(self.apartments_df)
+        print(f"Removed {before - after} duplicate rows")
+
+    def write_to_csv(self, path=paths.APARTMENTS_PROCESSED_PATH):
         """ Writes the dataset to a csv file. """
         if self.apartments_df.empty:
             print(f"No data to write After Performing Data Cleaning")
@@ -353,3 +363,5 @@ class DataCleaning:
         self._normalize_upload_date()
         self._normalize_transaction_type()
         self._normalize_source()
+
+        self._deduplicate_data()

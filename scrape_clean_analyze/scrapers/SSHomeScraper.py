@@ -1,7 +1,8 @@
 import pandas as pd
 import re
-from .BaseScraper import BaseScraper
 from selenium.webdriver.common.by import By
+from .BaseScraper import BaseScraper
+from config import paths
 
 
 class SSHomeScraper(BaseScraper):
@@ -10,7 +11,7 @@ class SSHomeScraper(BaseScraper):
         self.main_url = "https://home.ss.ge/ka/udzravi-qoneba/"
         self.city_id_dict = {'თბილისი': 95, "ქუთაისი": 97, 'ბათუმი': 96}  # Cities with ids on this website
         self.number_of_pages_to_scrape = 10
-        self.raw_apartments_csv_path = '../data_output/sshome_apartments.csv'
+        self.raw_apartments_csv_path = paths.SSHOME_APARTMENTS_RAW_PATH
 
     def get_url(self, id, page):
         """ URL for apartment listings (not including houses, hotels or other real estate types)"""

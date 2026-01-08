@@ -4,7 +4,7 @@ __pycache__/
 *.sqlite3
 *.log
 
-# database
+# datastorage
 .env
 *.db
 .env.*
@@ -31,9 +31,9 @@ venv/
 # Backup files
 *~
 *.bak
-database/backups/
-database/apartments.csv
-data_output/
+datastorage/sqlite/sqlite_backups/
+datastorage/csv/apartments.csv
+data/
 
 # frontend
 frontend/src/charts

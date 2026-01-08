@@ -3,7 +3,8 @@ from scrape_clean_analyze.scrapers.LivoScraper import LivoScraper
 from scrape_clean_analyze.scrapers.SSHomeScraper import SSHomeScraper
 from scrape_clean_analyze.data_cleaning.DataCleaning import DataCleaning
 from data_cleaning.ApartmentsDataFrame import ApartmentsDataFrame
-from database.Database import Database
+from datastorage.sqlite.SQLiteDatabase import SQLiteDatabase
+from datastorage.csv.CSV import CSV
 from scrape_clean_analyze.data_analysis.RunEDA import RunEDA
 from concurrent.futures import ThreadPoolExecutor
 
@@ -30,9 +31,12 @@ if __name__ == "__main__":
     data_cleaning.normalize()
     data_cleaning.write_to_csv()
 
-    """ Step 3: Save data in the database """
-    database = Database()
+    """ Step 3: Save data in the datastorage """
+    database = SQLiteDatabase()
     database.setup_database()
+
+    csv = CSV()
+    csv.deduplicate_and_write()
 
     """ Step 4: Data Analysis """
     run_eda = RunEDA()
