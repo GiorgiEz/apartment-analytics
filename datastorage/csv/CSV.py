@@ -21,8 +21,11 @@ class CSV:
             df = new_df
 
         # Deduplicate
-        df = df.dropna(subset=["url"])
-        df = df.drop_duplicates(subset="url", keep="last")
+        df = df.dropna(subset=["url", "upload_date"])
+        df = df.drop_duplicates(
+            subset=["url", "upload_date"],
+            keep="last",
+        )
 
         after_len = len(df)
 
