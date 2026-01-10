@@ -1,3 +1,4 @@
+from datastorage.postgresql.PostgresDatabase import PostgresDatabase
 from scrape_clean_analyze.scrapers.MyHomeScraper import MyHomeScraper
 from scrape_clean_analyze.scrapers.LivoScraper import LivoScraper
 from scrape_clean_analyze.scrapers.SSHomeScraper import SSHomeScraper
@@ -7,6 +8,9 @@ from datastorage.sqlite.SQLiteDatabase import SQLiteDatabase
 from datastorage.csv.CSV import CSV
 from scrape_clean_analyze.data_analysis.RunEDA import RunEDA
 from concurrent.futures import ThreadPoolExecutor
+
+from dotenv import load_dotenv
+load_dotenv()
 
 
 
@@ -32,8 +36,11 @@ if __name__ == "__main__":
     data_cleaning.write_to_csv()
 
     """ Step 3: Save data in the datastorage """
-    database = SQLiteDatabase()
-    database.setup_database()
+    sqlite_database = SQLiteDatabase()
+    sqlite_database.setup_database()
+
+    postgresql_database = PostgresDatabase()
+    postgresql_database.database_insertion()
 
     csv = CSV()
     csv.deduplicate_and_write()

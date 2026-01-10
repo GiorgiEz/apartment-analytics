@@ -1,5 +1,7 @@
 import pandas as pd
 import re
+
+from .NormalizeDistricts import NormalizeDistricts
 from ..utils.helpers import get_usd_exchange_rate, geo_months
 from datetime import datetime, timedelta
 from config import paths
@@ -363,5 +365,8 @@ class DataCleaning:
         self._normalize_upload_date()
         self._normalize_transaction_type()
         self._normalize_source()
+
+        # normalize_districts = NormalizeDistricts(self.apartments_df)
+        # normalize_districts.normalize_districts()
 
         self._deduplicate_data()
