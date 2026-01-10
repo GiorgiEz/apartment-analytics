@@ -2,16 +2,19 @@ import pandas as pd
 import sqlite3, os, shutil
 from datetime import datetime, timedelta
 from pathlib import Path
+from config import paths
 
 
 
-class Database:
+class SQLiteDatabase:
     def __init__(self):
-        self.apartments_table_name = 'apartments'
-        self.db_path = '../database/apartments.db'
-        self.csv_path = '../database/apartments.csv'
-        self.backup_folder = '../database/backups'
-        self.backup_retention_days = 30  # Keep backups for 30 days
+        self.apartments_table_name = "apartments"
+
+        self.db_path = paths.APARTMENTS_SQLITE_DB_PATH
+        self.backup_folder = paths.SQLITE_DB_BACKUPS_DIR
+        self.write_from_csv = paths.APARTMENTS_PROCESSED_PATH
+
+        self.backup_retention_days = 30
 
     def __create_table_if_not_exists(self):
         conn = sqlite3.connect(self.db_path)
@@ -30,42 +33,35 @@ class Database:
                 bedrooms INTEGER,
                 floor INTEGER,
                 upload_date TEXT,
-                transaction_type TEXT
+                transaction_type TEXT,
+                source TEXT
             );
         """)
         conn.commit()
         conn.close()
 
     def __insert_unique_csv_to_sqlite(self, csv_path):
+        """ Inserts Data in both SQLite datastorage and CSV file. """
         df = pd.read_csv(csv_path)
 
         conn = sqlite3.connect(self.db_path)
         cursor = conn.cursor()
 
-        new_rows = []
-
         for _, row in df.iterrows():
             cursor.execute(f"""
                 INSERT OR IGNORE INTO {self.apartments_table_name} (
                     url, city, price, price_per_sqm, description,
-                    district_name, street_address, area_m2, bedrooms, floor, upload_date, transaction_type
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    district_name, street_address, area_m2, bedrooms, floor, upload_date, transaction_type, source
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """, tuple(row))
-
-            if cursor.rowcount == 1:
-                new_rows.append(row)
 
         conn.commit()
         conn.close()
 
-        if new_rows:
-            new_df = pd.DataFrame(new_rows, columns=df.columns)
-            new_df.to_csv(self.csv_path, mode="a", header=not Path(self.csv_path).exists(), index=False)
-
     def __backup_database(self):
         """Creates a timestamped backup if DB changed"""
         if not os.path.exists(self.db_path):
-            print("No database file found to backup.")
+            print("No datastorage file found to backup.")
             return
 
         os.makedirs(self.backup_folder, exist_ok=True)
@@ -78,17 +74,15 @@ class Database:
             latest_backup_path = os.path.join(self.backup_folder, backups[0])
             latest_backup_mod_time = os.path.getmtime(latest_backup_path)
             if db_mod_time == latest_backup_mod_time:
-                print("Database has not changed since last backup. Skipping backup.")
                 return
 
         # Create new backup
         timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
         backup_path = os.path.join(self.backup_folder, f"apartments_backup_{timestamp}.db")
         shutil.copy2(self.db_path, backup_path)
-        print(f"Backup created: {backup_path}")
 
     def __delete_old_backups(self):
-        """Deletes backups older than retention period."""
+        """Deletes sqlite_backups older than retention period."""
         if not os.path.exists(self.backup_folder):
             return
 
@@ -99,12 +93,10 @@ class Database:
                 file_time = datetime.fromtimestamp(os.path.getmtime(file_path))
                 if file_time < cutoff_time:
                     os.remove(file_path)
-                    print(f"Deleted old backup: {file_path}")
 
-        else:
-            print("No backups older than retention period.")
 
     def __apartments_table_length(self):
+        """ Returns the length of the apartments table in the sqlite datastorage """
         conn = sqlite3.connect(self.db_path)
         cursor = conn.cursor()
         cursor.execute(f"SELECT COUNT(*) FROM {self.apartments_table_name}")
@@ -112,10 +104,13 @@ class Database:
         conn.close()
         return count
 
-    def setup_database(self, path="../data_output/cleaned_apartments.csv"):
-        self.__delete_old_backups()  # Always clean old backups
+    def setup_database(self, path: Path | None = None):
+        """ Main SQLite Database setup method """
+        csv_path = path if path is not None else self.write_from_csv
+
+        self.__delete_old_backups()  # Always clean old sqlite_backups
         self.__backup_database()
         self.__create_table_if_not_exists()
-        self.__insert_unique_csv_to_sqlite(path)
+        self.__insert_unique_csv_to_sqlite(csv_path)
 
-        print(f"Length of the Apartments table in the sqlite database: {self.__apartments_table_length()}")
+        print(f"SQLite | apartments table rows: {self.__apartments_table_length()}")
