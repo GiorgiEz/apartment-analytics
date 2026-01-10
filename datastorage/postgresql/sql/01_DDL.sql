@@ -118,6 +118,7 @@ CREATE TABLE IF NOT EXISTS dw.fct_apartments (
         FOREIGN KEY (apartment_surr_id)
         REFERENCES dw.dim_apartments (apartment_surr_id),
 
+    CONSTRAINT uq_dim_apartment_date_surr_id UNIQUE (apartment_surr_id, date_surr_id),
     CONSTRAINT ck_price_non_negative CHECK (price >= 0),
     CONSTRAINT ck_price_per_sqm_non_negative CHECK (price_per_sqm >= 0),
     CONSTRAINT ck_area_non_negative CHECK (area_m2 >= 0),

@@ -27,15 +27,9 @@ class CSV:
         after_len = len(df)
 
         # Reporting
+        print(f"CSV | apartments rows: {after_len}")
         if after_len == before_len:
-            print("No new apartments added. CSV unchanged.")
-            print(f"Length of the apartments CSV file: {after_len}")
             return
-
-        print(
-            f"CSV updated: {after_len - before_len} new apartments added "
-            f"(total: {after_len})"
-        )
 
         # Write back
         df.to_csv(self.csv_path, index=False)

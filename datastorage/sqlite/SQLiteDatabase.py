@@ -74,14 +74,12 @@ class SQLiteDatabase:
             latest_backup_path = os.path.join(self.backup_folder, backups[0])
             latest_backup_mod_time = os.path.getmtime(latest_backup_path)
             if db_mod_time == latest_backup_mod_time:
-                print("Database has not changed since last backup. Skipping backup.")
                 return
 
         # Create new backup
         timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
         backup_path = os.path.join(self.backup_folder, f"apartments_backup_{timestamp}.db")
         shutil.copy2(self.db_path, backup_path)
-        print(f"Backup created: {backup_path}")
 
     def __delete_old_backups(self):
         """Deletes sqlite_backups older than retention period."""
@@ -95,10 +93,7 @@ class SQLiteDatabase:
                 file_time = datetime.fromtimestamp(os.path.getmtime(file_path))
                 if file_time < cutoff_time:
                     os.remove(file_path)
-                    print(f"Deleted old backup: {file_path}")
 
-        else:
-            print("No sqlite_backups older than retention period.")
 
     def __apartments_table_length(self):
         """ Returns the length of the apartments table in the sqlite datastorage """
@@ -118,4 +113,4 @@ class SQLiteDatabase:
         self.__create_table_if_not_exists()
         self.__insert_unique_csv_to_sqlite(csv_path)
 
-        print(f"Length of the Apartments table in the sqlite datastorage: {self.__apartments_table_length()}")
+        print(f"SQLite | apartments table rows: {self.__apartments_table_length()}")
