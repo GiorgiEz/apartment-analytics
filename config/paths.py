@@ -28,6 +28,8 @@ CSV_STORAGE_DIR = DATASTORAGE_DIR / "csv"
 SQLITE_DIR = DATASTORAGE_DIR / "sqlite"
 POSTGRESQL_DIR = DATASTORAGE_DIR / "postgresql"
 
+STREET_TO_DISTRICT_JSON_PATH = DATASTORAGE_DIR / "street_to_district.json"
+
 # Stored CSV (historical / merged)
 APARTMENTS_CSV_PATH = CSV_STORAGE_DIR / "apartments.csv"
 
@@ -36,3 +38,9 @@ APARTMENTS_SQLITE_DB_PATH = SQLITE_DIR / "apartments.db"
 
 # Storage backups
 SQLITE_DB_BACKUPS_DIR = SQLITE_DIR / "sqlite_backups"
+
+# POSTGRESQL scripts directory
+POSTGRESQL_SCRIPTS_DIR = POSTGRESQL_DIR / "sql"
+
+#POSGRESQL script files
+DML_ETL_FROM_STAGING_04_PATH = POSTGRESQL_SCRIPTS_DIR / "04_DML_ETL_FROM_STAGING.sql"
