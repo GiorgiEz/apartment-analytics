@@ -113,8 +113,8 @@ class BaseScraper(ABC):
 
         driver = webdriver.Edge(options=options)
 
-        driver.set_page_load_timeout(30)  # hard stop for driver.get()
-        driver.set_script_timeout(30)  # async JS execution
+        driver.set_page_load_timeout(10)  # hard stop for driver.get()
+        driver.set_script_timeout(10)  # async JS execution
         driver.implicitly_wait(5)  # element lookups
 
         return driver

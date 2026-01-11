@@ -357,5 +357,7 @@ class DataCleaning:
         self._normalize_transaction_type()
         self._normalize_source()
 
-        # normalize_districts = NormalizeDistricts(self.apartments_df)
-        # normalize_districts.normalize_districts()
+        normalize_districts = NormalizeDistricts(self.apartments_df)
+        normalize_districts.normalize_kutaisi_and_batumi_districts()
+        normalize_districts.normalize_tbilisi_districts()
+        self.apartments_df = normalize_districts.apartments_df
