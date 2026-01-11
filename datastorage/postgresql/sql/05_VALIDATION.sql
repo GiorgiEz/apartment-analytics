@@ -57,4 +57,5 @@ INNER JOIN dw.dim_apartments da ON fa.apartment_surr_id = da.apartment_surr_id
 INNER JOIN dw.dim_districts dd ON fa.district_surr_id = dd.district_surr_id
 INNER JOIN dw.dim_dates ddt ON fa.date_surr_id = ddt.date_surr_id
 INNER JOIN dw.dim_transaction_types dtt ON fa.transaction_type_surr_id = dtt.transaction_type_surr_id
-INNER JOIN dw.dim_sources ds ON fa.source_surr_id = ds.source_surr_id;
+INNER JOIN dw.dim_sources ds ON fa.source_surr_id = ds.source_surr_id
+;

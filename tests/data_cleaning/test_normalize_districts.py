@@ -14,7 +14,7 @@ def test_normalize_districts_from_street_mapping():
     })
 
     cleaner = NormalizeDistricts(df)
-    cleaner.normalize_kutaisi_and_batumi_districts()
+    cleaner.normalize_non_tbilisi_districts()
 
     result = cleaner.apartments_df["district_name"].tolist()
 
