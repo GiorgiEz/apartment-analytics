@@ -28,7 +28,8 @@ CSV_STORAGE_DIR = DATASTORAGE_DIR / "csv"
 SQLITE_DIR = DATASTORAGE_DIR / "sqlite"
 POSTGRESQL_DIR = DATASTORAGE_DIR / "postgresql"
 
-STREET_TO_DISTRICT_JSON_PATH = DATASTORAGE_DIR / "street_to_district.json"
+STREET_TO_DISTRICT_JSON_PATH = DATASTORAGE_DIR / "extra_data" / "street_to_district.json"
+TBILISI_CANONICAL_DISTRICTS_PATH = DATASTORAGE_DIR / "extra_data" / "tbilisi_canonical_districts.json"
 
 # Stored CSV (historical / merged)
 APARTMENTS_CSV_PATH = CSV_STORAGE_DIR / "apartments.csv"

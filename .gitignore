@@ -31,7 +31,7 @@ venv/
 # Backup files
 *~
 *.bak
-datastorage/sqlite/sqlite_backups/
+datastorage/csv/backups/
 datastorage/csv/apartments.csv
 data/
 

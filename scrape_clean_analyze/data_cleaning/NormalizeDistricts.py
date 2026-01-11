@@ -6,8 +6,8 @@ from config import paths
 
 
 class NormalizeDistricts:
-    def __init__(self, df):
-        self.apartments_df = df
+    def __init__(self, apartments_df):
+        self.apartments_df = apartments_df
 
         self.__STREET_TOKENS = [
             "ქ.", "ქუჩა", "გამზ.", "გამზირი", "ჩიხ.", "ჩიხი", "შეს.", "შესახვევი", "მოედანი",
@@ -77,7 +77,7 @@ class NormalizeDistricts:
         # Step 1: Extract district from street address
         district_names = set(city_map.values())
 
-        mask = df["district_name"].isna() | (df["district_name"] == df["city"])
+        mask = df["district_name"].isna() | (df["district_name"] == df["city"]) | (df["district_name"] == 'n.a')
         df.loc[mask, "district_name"] = df.loc[mask, "street_address"].apply(
             lambda s: self.__extract_district_from_street(s, district_names)
         )
@@ -91,7 +91,7 @@ class NormalizeDistricts:
 
         df["street_norm"] = df["street_address"].apply(self.__normalize_street)
 
-        mask = df["district_name"].isna() | (df["district_name"] == df["city"])
+        mask = df["district_name"].isna() | (df["district_name"] == df["city"]) | (df["district_name"] == 'n.a')
         df.loc[mask, "district_name"] = df.loc[mask, "street_norm"].map(normalized_map)
 
         # Step 3: token-agnostic base name match (NEW)
@@ -107,19 +107,14 @@ class NormalizeDistricts:
         df.loc[mask, "district_name"] = df.loc[mask, "street_base"].map(base_map)
 
         # Step 4: Final Fallback
-        df["district_name"] = df["district_name"].fillna("Unknown")
+        df["district_name"] = df["district_name"].fillna("n.a")
 
-        df.drop(columns=["street_norm"], inplace=True)
+        df.drop(columns=["street_norm", "street_base"], inplace=True)
+
         return df
 
-    def normalize_districts(self):
+    def normalize_kutaisi_and_batumi_districts(self):
         df = self.apartments_df.copy()
-
-        print("=== BEFORE (GLOBAL) ===")
-        print("Rows:", len(df))
-        print("Distinct districts:", df["district_name"].nunique(dropna=True))
-        print("Null districts:", df["district_name"].isna().sum())
-        print("district_name == city:", (df["district_name"] == df["city"]).sum())
 
         with open(paths.STREET_TO_DISTRICT_JSON_PATH, "r", encoding="utf-8") as f:
             street_districts = json.load(f)
@@ -127,39 +122,51 @@ class NormalizeDistricts:
         result = []
 
         for city, city_df in df.groupby("city", sort=False):
-            print(f"\n--- Processing city: {city} ---")
-            print("Rows:", len(city_df))
-            print("Null districts (before):", city_df["district_name"].isna().sum())
-            print("district_name == city (before):", (city_df["district_name"] == city_df["city"]).sum())
-
             city_map = street_districts.get(city, {})
 
             if not city_map:
                 city_df = city_df.copy()
-                city_df["district_name"] = city_df["district_name"].fillna("Unknown")
+                city_df["district_name"] = city_df["district_name"].fillna("n.a")
                 result.append(city_df)
-                print("No street map → all unresolved set to Unknown")
                 continue
 
             city_df = self.__normalize_districts_single_city(city_df, city_map)
             result.append(city_df)
 
-            print("Null districts (after):", city_df["district_name"].isna().sum())
-            print("district_name == city (after):", (city_df["district_name"] == city_df["city"]).sum())
-            print("district_name == Unknown:", (city_df["district_name"] == "Unknown").sum())
-
-            print((
-                city_df.loc[city_df["district_name"] == "Unknown", "street_address"]
-                .value_counts()
-                .head(20)
-            ))
-
         df_out = pd.concat(result).sort_index()
-
-        print("\n=== AFTER (GLOBAL) ===")
-        print("Rows:", len(df_out))
-        print("Distinct districts:", df_out["district_name"].nunique(dropna=True))
-        print("Null districts:", df_out["district_name"].isna().sum())
-        print("district_name == city:", (df_out["district_name"] == df_out["city"]).sum())
-
         self.apartments_df = df_out
+
+    def normalize_tbilisi_districts(self):
+        df = self.apartments_df.copy()
+
+        # Load canonical district map
+        with open(paths.TBILISI_CANONICAL_DISTRICTS_PATH, "r", encoding="utf-8") as f:
+            tbilisi_districts: dict[str, str] = json.load(f)
+
+        # 1. Filter only Tbilisi
+        is_tbilisi = df["city"].eq("თბილისი")
+
+        # 2. Detect invalid district_name
+        invalid_district = (
+                df["district_name"].isna()
+                | df["district_name"].str.strip().isin({None, "", "n.a", "თბილისი"})
+        )
+
+        mask = is_tbilisi & invalid_district
+
+        # Work only on relevant rows
+        subset = df.loc[mask, "description"].fillna("")
+
+        # 3. Normalize using exact matching
+        def extract_district(description: str) -> str | None:
+            for variant in sorted(tbilisi_districts, key=len, reverse=True):
+                if variant in description:
+                    return tbilisi_districts[variant]
+            return None
+
+        df.loc[mask, "district_name"] = subset.apply(extract_district)
+
+        df["district_name"] = df["district_name"].fillna("n.a")
+
+        self.apartments_df = df
+

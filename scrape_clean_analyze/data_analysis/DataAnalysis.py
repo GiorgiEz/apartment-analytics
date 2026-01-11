@@ -1,14 +1,10 @@
-import sqlite3
-import pandas as pd
-from config import paths
-
+from datastorage.postgresql.PostgresDatabase import PostgresDatabase
 
 
 class DataAnalysis:
     def __init__(self):
-        conn = sqlite3.connect(paths.APARTMENTS_SQLITE_DB_PATH)
-        self.df = pd.read_sql_query("SELECT * FROM apartments", conn)  # Gets all the data from the apartments.db
-        conn.close()
+        db = PostgresDatabase()
+        self.df = db.get_all_apartments()
 
         self.image_path = '../frontend/src/charts/'
 

@@ -2,7 +2,6 @@ from config import paths
 from sqlalchemy import create_engine, text
 import pandas as pd
 import os
-from pathlib import Path
 
 
 class PostgresDatabase:
@@ -31,10 +30,15 @@ class PostgresDatabase:
             with open(path, "r", encoding="utf-8") as f:
                 conn.execute(text(f.read()))
 
-    def __fetch_one(self, query):
+    def _fetch_one(self, query):
         with self.engine.connect() as conn:
             result = conn.execute(text(query))
             return result.scalar()
+
+    def get_all_apartments(self):
+        """ Calls dw.all_apartments VIEW to get all apartments data from postgresql database """
+        query = """SELECT * FROM dw.all_apartments """
+        return pd.read_sql(query, self.engine, parse_dates=["upload_date"])
 
     def database_insertion(self):
         # 1. Load to staging
@@ -45,5 +49,5 @@ class PostgresDatabase:
         self.__run_sql_file(paths.DML_ETL_FROM_STAGING_04_PATH)
 
         # 3. Fetch fact table row count
-        fact_count = self.__fetch_one("SELECT COUNT(*) FROM dw.fct_apartments")
+        fact_count = self._fetch_one("SELECT COUNT(*) FROM dw.fct_apartments")
         print(f"PostgreSQL | fct_apartments rows: {fact_count}")

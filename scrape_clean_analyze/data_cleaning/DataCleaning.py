@@ -333,15 +333,6 @@ class DataCleaning:
 
         self.apartments_df["source"] = self.apartments_df["url"].apply(extract_source)
 
-    def _deduplicate_data(self):
-        """ Removes duplicate rows based on the URL column """
-        before = len(self.apartments_df)
-
-        self.apartments_df.drop_duplicates(subset="url", keep="last", inplace=True)
-
-        after = len(self.apartments_df)
-        print(f"Removed {before - after} duplicate rows")
-
     def write_to_csv(self, path=paths.APARTMENTS_PROCESSED_PATH):
         """ Writes the dataset to a csv file. """
         if self.apartments_df.empty:
@@ -366,7 +357,7 @@ class DataCleaning:
         self._normalize_transaction_type()
         self._normalize_source()
 
-        # normalize_districts = NormalizeDistricts(self.apartments_df)
-        # normalize_districts.normalize_districts()
-
-        self._deduplicate_data()
+        normalize_districts = NormalizeDistricts(self.apartments_df)
+        normalize_districts.normalize_kutaisi_and_batumi_districts()
+        normalize_districts.normalize_tbilisi_districts()
+        self.apartments_df = normalize_districts.apartments_df

@@ -1,2 +1,7 @@
 DROP SCHEMA IF EXISTS dw CASCADE ;
 DROP SCHEMA IF EXISTS sa CASCADE ;
+
+TRUNCATE dw.fct_apartments;
+TRUNCATE dw.dim_dates CASCADE;
+TRUNCATE dw.dim_apartments CASCADE;
+TRUNCATE dw.dim_districts CASCADE;
