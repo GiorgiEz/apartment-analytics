@@ -10,7 +10,6 @@ class PostgresDatabase:
         if not db_url:
             raise RuntimeError("DATABASE_URL not set")
         self.engine = create_engine(db_url)
-        self.write_from_csv = paths.APARTMENTS_PROCESSED_PATH
 
     def __load_to_staging(self, df):
         """ Append processed data into sa.apartments """
@@ -37,12 +36,15 @@ class PostgresDatabase:
 
     def get_all_apartments(self):
         """ Calls dw.all_apartments VIEW to get all apartments data from postgresql database """
-        query = """SELECT * FROM dw.all_apartments """
+        query = """SELECT * FROM dw.all_apartments_view"""
         return pd.read_sql(query, self.engine, parse_dates=["upload_date"])
 
-    def database_insertion(self):
+    def write_all_apartments_data_to_csv(self, path):
+        self.get_all_apartments().to_csv(path, index=False)
+
+    def database_insertion(self, writ_from_path=paths.APARTMENTS_PROCESSED_PATH):
         # 1. Load to staging
-        df = pd.read_csv(self.write_from_csv)
+        df = pd.read_csv(writ_from_path)
         self.__load_to_staging(df)
 
         # 2. Run DML

@@ -8,8 +8,6 @@ select COUNT(*) from dw.dim_apartments;
 
 SELECT COUNT(*) FROM dw.fct_apartments;
 
-SELECT COUNT(*) from dw.all_apartments;
-
 SELECT * FROM dw.fct_apartments limit 10;
 
 SELECT da.url, dd.date_dt, fa.price FROM dw.fct_apartments fa
@@ -17,10 +15,11 @@ INNER JOIN dw.dim_apartments da ON fa.apartment_surr_id = da.apartment_surr_id
 INNER JOIN dw.dim_dates dd on dd.date_surr_id = fa.date_surr_id
 where url = 'https://www.myhome.ge/pr/18379269/qiravdeba-1-otaxiani-bina-qutaisshi/';
 
-SELECT url, COUNT(*) FROM dw.fct_apartments fa
+SELECT url, COUNT(*) as cnt FROM dw.fct_apartments fa
 INNER JOIN dw.dim_apartments da ON fa.apartment_surr_id = da.apartment_surr_id
 INNER JOIN dw.dim_dates dd on dd.date_surr_id = fa.date_surr_id
-GROUP BY da.url having COUNT(*) > 1;
+GROUP BY da.url having COUNT(*) > 1
+ORDER BY cnt DESC;
 
 SELECT
     da.description, da.street_address, dd.district_name, ds.source_name

@@ -32,31 +32,37 @@ class DataCleaning:
     def _normalize_price(self):
         """
         Cleans price column:
-        - USD: "$100,000", "100000$", "100,000 $" -> 100000
-        - GEL: "103,808", "103,808 ₾", "103808" -> converted to USD
-        - Invalid / negotiable / missing -> pd.NA
+
+        Rules:
+        - USD: value must contain '$' and be > 0 → kept as USD
+        - GEL: value must contain '₾' and be > 0 → converted to USD
+        - Zero / invalid / missing → pd.NA
         """
 
         def parse_price(value):
             if pd.isna(value):
                 return pd.NA
 
-            price_str = str(value).lower().replace(',', '').strip()
+            price_str = str(value).lower().replace(",", "").strip()
 
             try:
                 # USD
-                if '$' in price_str:
-                    number = price_str.replace('$', '').strip()
-                    return round(float(number), 2)
+                if "$" in price_str:
+                    number = round(float(price_str.replace("$", "").strip()), 2)
+                    return number if number > 0 else pd.NA
 
-                # GEL (explicit symbol or implicit)
-                number = price_str.replace('₾', '').strip()
-                return round(float(number) * self.currency_rate, 2)
+                # GEL
+                if "₾" in price_str:
+                    number = round(float(price_str.replace("₾", "").strip()), )
+                    return round(number * self.currency_rate, 2) if number > 0 else pd.NA
+
+                # No currency symbol -> keep as-is
+                return round(float(price_str), 2) if round(float(price_str), 2) > 0 else pd.NA
 
             except ValueError:
                 return pd.NA
 
-        self.apartments_df['price'] = (self.apartments_df['price'].apply(parse_price).astype('Float64'))
+        self.apartments_df["price"] = (self.apartments_df["price"].apply(parse_price).astype("Float64"))
 
     def _normalize_area_m2(self):
         """
@@ -77,40 +83,50 @@ class DataCleaning:
         """
         Cleans price_per_sqm column.
 
-        Handles:
-        - "2,059 $ /მ2"
-        - "4,196 / მ²"  (assumed GEL)
-        - missing / invalid values → computed from price & area_m2
+        Rules:
+        - '$' present → USD, extracted as-is if > 0
+        - '₾' present → GEL, converted to USD using currency_rate if > 0
+        - No currency symbol → extracted number as-is if > 0
+        - 0 / invalid → pd.NA
+        - Missing → computed from price / area_m2
         """
 
         def parse_row(row):
-            value = row.get('price_per_sqm')
+            value = row.get("price_per_sqm")
 
             # 1. Try to parse price_per_sqm directly
             if pd.notna(value):
-                text = str(value).lower().replace(',', '')
+                text = str(value).lower().replace(",", "").strip()
 
-                match = re.search(r'\d+(?:\.\d+)?', text)
+                match = re.search(r"\d+(?:\.\d+)?", text)
                 if match:
-                    amount = float(match.group())
+                    amount = round(float(match.group()), 2)
+
+                    if amount <= 0:
+                        return pd.NA
 
                     # USD
-                    if '$' in text:
+                    if "$" in text:
                         return amount
 
-                    # GEL (explicit or implicit)
-                    return round(amount * self.currency_rate, 2)
+                    # GEL
+                    if "₾" in text:
+                        return round(amount * self.currency_rate, 2)
+
+                    # No currency symbol → keep as-is
+                    return amount
 
             # 2. Fallback: compute from price and area
-            price = row.get('price')
-            area = row.get('area_m2')
+            price = row.get("price")
+            area = row.get("area_m2")
 
-            if pd.notna(price) and pd.notna(area) and area != 0:
-                return round(float(price) / float(area), 2)
+            if pd.notna(price) and pd.notna(area) and area > 0:
+                value = round(float(price) / float(area), 2)
+                return value if value > 0 else pd.NA
 
             return pd.NA
 
-        self.apartments_df['price_per_sqm'] = (self.apartments_df.apply(parse_row, axis=1).astype('Float64'))
+        self.apartments_df["price_per_sqm"] = (self.apartments_df.apply(parse_row, axis=1).astype("Float64"))
 
     def _normalize_bedrooms(self):
         """
@@ -143,8 +159,14 @@ class DataCleaning:
                 return 2
             elif area <= 150:
                 return 3
+            elif area <= 175:
+                return 4
+            elif area <= 200:
+                return 5
+            elif area <= 225:
+                return 6
             else:
-                return 4  # heuristic upper cap
+                return 7
 
         # Step 1: extract explicit bedroom values
         self.apartments_df['bedrooms'] = (
