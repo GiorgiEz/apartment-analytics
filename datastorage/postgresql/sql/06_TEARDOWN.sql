@@ -5,3 +5,5 @@ TRUNCATE dw.fct_apartments;
 TRUNCATE dw.dim_dates CASCADE;
 TRUNCATE dw.dim_apartments CASCADE;
 TRUNCATE dw.dim_districts CASCADE;
+
+TRUNCATE TABLE sa.apartments;

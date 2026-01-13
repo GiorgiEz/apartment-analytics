@@ -9,9 +9,10 @@ def test_normalize_price_per_sqm():
             '4,196 / მ²',
             None,
             'negotiable',
+            0,
         ],
-        'price': [None, None, None, 100000, 100000],
-        'area_m2': [None, None, None, 50, 50],
+        'price': [None, None, None, 100000, 100000, 7.05],
+        'area_m2': [None, None, None, 50, 50, 50],
     })
 
     currency_rate = 0.37
@@ -25,6 +26,7 @@ def test_normalize_price_per_sqm():
             4196 * currency_rate,
             2000.0,
             2000.0,
+            0.14
         ],
         name='price_per_sqm',
         dtype='Float64'

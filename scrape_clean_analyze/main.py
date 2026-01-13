@@ -7,6 +7,7 @@ from data_cleaning.ApartmentsDataFrame import ApartmentsDataFrame
 from datastorage.csv.CSV import CSV
 from scrape_clean_analyze.data_analysis.RunEDA import RunEDA
 from concurrent.futures import ThreadPoolExecutor
+from config import paths
 
 from dotenv import load_dotenv
 load_dotenv()
