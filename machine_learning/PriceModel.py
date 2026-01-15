@@ -1,10 +1,12 @@
-from sklearn.model_selection import TimeSeriesSplit
-from sklearn.preprocessing import OneHotEncoder, StandardScaler
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import OneHotEncoder
 from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
-from sklearn.linear_model import LinearRegression
 from sklearn.ensemble import HistGradientBoostingRegressor
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
+import joblib
+from pathlib import Path
+import pandas as pd
 import numpy as np
 
 
@@ -26,10 +28,12 @@ class PriceModel:
         # Drop rows with missing target
         self.df = self.df.dropna(subset=[self.target])
 
+        # Sort only for reproducibility (NOT for splitting logic)
         self.df = self.df.sort_values(
-            ["upload_year", "month_sin", "month_cos"]
+            ["upload_year", "upload_month"]
         ).reset_index(drop=True)
 
+        # Log-transform target
         self.y = np.log1p(self.df[self.target])
         self.X = self.df.drop(columns=[self.target])
 
@@ -39,13 +43,15 @@ class PriceModel:
             "bedrooms",
             "floor",
             "upload_year",
-            "month_sin",
-            "month_cos",
+            "upload_month",
+            "price_per_sqm_district_median",
+            "district_listing_count"
         ]
 
         categorical_features = [
             "city",
             "district_grouped",
+            "floor_bucket"
         ]
 
         preprocessor = ColumnTransformer(
@@ -59,10 +65,10 @@ class PriceModel:
             steps=[
                 ("preprocess", preprocessor),
                 ("model", HistGradientBoostingRegressor(
-                    max_depth=3,
+                    max_depth=4,
                     learning_rate=0.03,
-                    max_iter=500,
-                    min_samples_leaf=20,
+                    max_iter=400,
+                    min_samples_leaf=40,
                     random_state=42
                 )),
             ]
@@ -71,29 +77,52 @@ class PriceModel:
     def train_and_evaluate(self):
         self.build_pipeline()
 
-        tscv = TimeSeriesSplit(n_splits=3)
+        X_train, X_test, y_train, y_test = train_test_split(
+            self.X,
+            self.y,
+            test_size=0.15,
+            random_state=42
+        )
 
-        maes = []
-        rmses = []
-        r2s = []
+        self.pipeline.fit(X_train, y_train)
+        preds = self.pipeline.predict(X_test)
 
-        for train_idx, val_idx in tscv.split(self.X):
-            X_train, X_val = self.X.iloc[train_idx], self.X.iloc[val_idx]
-            y_train, y_val = self.y.iloc[train_idx], self.y.iloc[val_idx]
+        # inverse transform to original scale
+        y_test_orig = np.expm1(y_test)
+        preds_orig = np.expm1(preds)
 
-            self.pipeline.fit(X_train, y_train)
-            preds = self.pipeline.predict(X_val)
+        mae = mean_absolute_error(y_test_orig, preds_orig)
+        rmse = np.sqrt(mean_squared_error(y_test_orig, preds_orig))
+        r2 = r2_score(y_test_orig, preds_orig)
 
-            # inverse transform
-            y_val_orig = np.expm1(y_val)
-            preds_orig = np.expm1(preds)
+        print(f"MAE:  {mae:.2f}")
+        print(f"RMSE: {rmse:.2f}")
+        print(f"R²:   {r2:.3f}")
 
-            maes.append(mean_absolute_error(y_val_orig, preds_orig))
-            rmses.append(np.sqrt(mean_squared_error(y_val_orig, preds_orig)))
-            r2s.append(r2_score(y_val_orig, preds_orig))
+    def save(self, path: str):
+        Path(path).parent.mkdir(parents=True, exist_ok=True)
+        joblib.dump({
+            "pipeline": self.pipeline,
+            "target": self.target
+        }, path)
 
-        print(f"Target: {self.target}")
-        print(f"{'Monthly Rent' if self.target == 'price' else 'For Sale'}")
-        print(f"MAE:  {np.mean(maes):.2f}")
-        print(f"RMSE: {np.mean(rmses):.2f}")
-        print(f"R²:   {np.mean(r2s):.3f}")
+    def predict_single(self, *, city, district, area_m2, bedrooms, floor, year, month):
+        df = pd.DataFrame([{
+            "city": city,
+            "district_grouped": district,
+            "area_m2": area_m2,
+            "bedrooms": bedrooms,
+            "floor": floor,
+            "upload_year": year,
+            "upload_month": month,
+            "floor_bucket": pd.cut(
+                [floor],
+                bins=[-1, 0, 2, 5, 10, 20, 100],
+                labels=["basement", "low", "mid", "high", "very_high", "skyscraper"]
+            )[0],
+            "price_per_sqm_district_median": np.nan,
+            "district_listing_count": np.nan,
+        }])
+
+        pred_log = self.pipeline.predict(df)[0]
+        return np.expm1(pred_log)

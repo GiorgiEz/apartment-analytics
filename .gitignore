@@ -39,5 +39,5 @@ data/
 frontend/src/charts
 
 # machine learning
-
 machine_learning/data/
+machine_learning/models/

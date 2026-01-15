@@ -1,8 +1,7 @@
 from datastorage.postgresql.PostgresDatabase import PostgresDatabase
 from machine_learning.PriceModel import PriceModel
 from Preprocessing import Preprocessing
-import pandas as pd
-import numpy as np
+from PricePredictor import PricePredictor
 
 from dotenv import load_dotenv
 load_dotenv()
@@ -20,8 +19,49 @@ if __name__ == "__main__":
     sale_df = apartments_df[apartments_df["transaction_type"] == "იყიდება"]
     rent_df = apartments_df[apartments_df["transaction_type"] == "ქირავდება თვიურად"]
 
+    print("\n=== SALE (price_per_sqm) ===")
     sale_model = PriceModel(sale_df, target="price_per_sqm")
     sale_model.train_and_evaluate()
+    sale_model.save("models/sale_price_per_sqm.joblib")
 
+    print("\n=== RENT (price) ===")
     rent_model = PriceModel(rent_df, target="price")
     rent_model.train_and_evaluate()
+    rent_model.save("models/rent_price.joblib")
+
+    sale_predictor = PricePredictor("models/sale_price_per_sqm.joblib")
+    rent_predictor = PricePredictor("models/rent_price.joblib")
+
+    city = "ქუთაისი"
+    district = "ავტოქარხანა"
+    area_m2 = 70
+    bedrooms = 2
+    floor = 3
+    year = 0
+    month = 8
+
+    price_per_sqm = sale_predictor.predict_single(
+        city=city,
+        district=district,
+        area_m2=area_m2,
+        bedrooms=bedrooms,
+        floor=floor,
+        year=year,
+        month=month
+    )
+
+    total_sale_price = price_per_sqm * area_m2
+
+    monthly_rent = rent_predictor.predict_single(
+        city=city,
+        district=district,
+        area_m2=area_m2,
+        bedrooms=bedrooms,
+        floor=floor,
+        year=year,
+        month=month
+    )
+
+    print(f"Sale price per sqm: {price_per_sqm:.2f}")
+    print(f"Total sale price: {total_sale_price:.2f}")
+    print(f"Monthly rent: {monthly_rent:.2f}")

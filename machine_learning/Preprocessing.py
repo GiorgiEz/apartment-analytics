@@ -47,10 +47,6 @@ class Preprocessing:
         self.apartments_df["upload_year"] -= self.apartments_df["upload_year"].min()
 
         self.apartments_df["upload_month"] = self.apartments_df["upload_date"].dt.month
-        self.apartments_df["month_sin"] = np.sin(2 * np.pi * self.apartments_df["upload_month"] / 12)
-        self.apartments_df["month_cos"] = np.cos(2 * np.pi * self.apartments_df["upload_month"] / 12)
-
-        self.apartments_df.drop(columns=["upload_month"], inplace=True)
 
     def __handle_floor(self):
         # impute missing floors with city-wise median
@@ -78,6 +74,18 @@ class Preprocessing:
         self.__group_districts_by_frequency()
         self.__extract_year_and_month()
         self.__handle_floor()
+
+        self.apartments_df["floor_bucket"] = pd.cut(
+            self.apartments_df["floor"],
+            bins=[-1, 0, 2, 5, 10, 20, 100],
+            labels=["basement", "low", "mid", "high", "very_high", "skyscraper"]
+        )
+
+        med = self.apartments_df.groupby(["city", "district_grouped"])["price_per_sqm"].median()
+        self.apartments_df = self.apartments_df.join(med, on=["city", "district_grouped"], rsuffix="_district_median")
+
+        counts = self.apartments_df.groupby(["city", "district_grouped"]).size()
+        self.apartments_df["district_listing_count"] = self.apartments_df.set_index(["city", "district_grouped"]).index.map(counts)
 
         self.__drop_unused_columns()
         self.apartments_df.to_csv("data/ml_apartments_processed.csv", index=False)
