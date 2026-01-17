@@ -1,0 +1,5 @@
+# machine learning requirements
+pandas
+numpy
+joblib
+scikit-learn

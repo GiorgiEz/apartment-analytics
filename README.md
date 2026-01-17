@@ -74,7 +74,9 @@ cd apartment-analytics
 2. **Install dependencies**
 
 ```bash
-pip install -r requirements.txt
+pip install -r scrape_clean_analyze/requirements.txt
+pip install -r machine_learning/requirements.txt
+pip install -r datastorage/requirements.txt
 ```
 
 3. **Run the pipeline**

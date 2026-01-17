@@ -105,24 +105,3 @@ class PriceModel:
             "pipeline": self.pipeline,
             "target": self.target
         }, path)
-
-    def predict_single(self, *, city, district, area_m2, bedrooms, floor, year, month):
-        df = pd.DataFrame([{
-            "city": city,
-            "district_grouped": district,
-            "area_m2": area_m2,
-            "bedrooms": bedrooms,
-            "floor": floor,
-            "upload_year": year,
-            "upload_month": month,
-            "floor_bucket": pd.cut(
-                [floor],
-                bins=[-1, 0, 2, 5, 10, 20, 100],
-                labels=["basement", "low", "mid", "high", "very_high", "skyscraper"]
-            )[0],
-            "price_per_sqm_district_median": np.nan,
-            "district_listing_count": np.nan,
-        }])
-
-        pred_log = self.pipeline.predict(df)[0]
-        return np.expm1(pred_log)
