@@ -4,7 +4,7 @@ import pandas as pd
 from pathlib import Path
 
 
-class PricePredictor:
+class LocalPricePredictor:
     def __init__(self, model_path: str, artifacts_dir: str = "models"):
         artifacts_dir = Path(artifacts_dir)
         data = joblib.load(model_path)

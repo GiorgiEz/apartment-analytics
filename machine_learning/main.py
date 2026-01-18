@@ -1,7 +1,7 @@
 from datastorage.postgresql.PostgresDatabase import PostgresDatabase
 from machine_learning.PriceModel import PriceModel
 from Preprocessing import Preprocessing
-from PricePredictor import PricePredictor
+from LocalPricePredictor import LocalPricePredictor
 
 from dotenv import load_dotenv
 load_dotenv()
@@ -29,8 +29,8 @@ if __name__ == "__main__":
     rent_model.train_and_evaluate()
     rent_model.save("models/rent_price.joblib")
 
-    sale_predictor = PricePredictor("models/sale_price_per_sqm.joblib")
-    rent_predictor = PricePredictor("models/rent_price.joblib")
+    sale_predictor = LocalPricePredictor("models/sale_price_per_sqm.joblib")
+    rent_predictor = LocalPricePredictor("models/rent_price.joblib")
 
     city = "ქუთაისი"
     district = "ავტოქარხანა"

@@ -1,0 +1,6 @@
+# requirements.txt
+fastapi
+pydantic
+joblib
+numpy
+pandas
