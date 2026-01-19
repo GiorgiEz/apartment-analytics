@@ -6,11 +6,12 @@ from sklearn.ensemble import HistGradientBoostingRegressor
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 import joblib
 from pathlib import Path
-import pandas as pd
 import numpy as np
 
 
 class PriceModel:
+    """Trains and evaluates a price or price_per_sqm regression model"""
+
     def __init__(self, df, target):
         self.df = df.copy()
         self.target = target
@@ -21,17 +22,15 @@ class PriceModel:
         self._prepare_data()
 
     def _prepare_data(self):
-        # Drop leakage column
+        # Remove leakage: drop alternative price column
         leakage_col = "price_per_sqm" if self.target == "price" else "price"
         self.df.drop(columns=[leakage_col], inplace=True)
 
         # Drop rows with missing target
         self.df = self.df.dropna(subset=[self.target])
 
-        # Sort only for reproducibility (NOT for splitting logic)
-        self.df = self.df.sort_values(
-            ["upload_year", "upload_month"]
-        ).reset_index(drop=True)
+        # Sort for deterministic training runs (not time-aware splitting)
+        self.df = self.df.sort_values(["upload_year", "upload_month"]).reset_index(drop=True)
 
         # Log-transform target
         self.y = np.log1p(self.df[self.target])
@@ -54,6 +53,7 @@ class PriceModel:
             "floor_bucket"
         ]
 
+        # Column-wise preprocessing
         preprocessor = ColumnTransformer(
             transformers=[
                 ("num", "passthrough", numeric_features),
@@ -61,6 +61,7 @@ class PriceModel:
             ]
         )
 
+        # Full pipeline: preprocessing + tree-based regressor
         self.pipeline = Pipeline(
             steps=[
                 ("preprocess", preprocessor),
@@ -85,12 +86,13 @@ class PriceModel:
         )
 
         self.pipeline.fit(X_train, y_train)
-        preds = self.pipeline.predict(X_test)
+        preds = self.pipeline.predict(X_test)  # Predict in log space
 
         # inverse transform to original scale
         y_test_orig = np.expm1(y_test)
         preds_orig = np.expm1(preds)
 
+        # Evaluation metrics in real units
         mae = mean_absolute_error(y_test_orig, preds_orig)
         rmse = np.sqrt(mean_squared_error(y_test_orig, preds_orig))
         r2 = r2_score(y_test_orig, preds_orig)
@@ -99,7 +101,8 @@ class PriceModel:
         print(f"RMSE: {rmse:.2f}")
         print(f"R²:   {r2:.3f}")
 
-    def save(self, path: str):
+    def save(self, path):
+        # Persist trained pipeline and metadata
         Path(path).parent.mkdir(parents=True, exist_ok=True)
         joblib.dump({
             "pipeline": self.pipeline,

@@ -12,24 +12,73 @@ class Preprocessing:
         ].copy()
 
     def __remove_extreme_areas(self):
-        self.apartments_df = self.apartments_df[self.apartments_df["area_m2"] <= 700]
-
-    def __remove_extreme_prices(self):
-        # Sale
-        sale_mask = self.apartments_df["transaction_type"] == "იყიდება"
-        q_sale = self.apartments_df.loc[sale_mask, "price_per_sqm"].quantile(0.995)
+        """ Removes area_m2 values that are too high """
         self.apartments_df = self.apartments_df[
-            ~sale_mask | (self.apartments_df["price_per_sqm"] <= q_sale)
+            (self.apartments_df["area_m2"] >= 15) &
+            (self.apartments_df["area_m2"] <= 500)
             ]
 
-        # Monthly rent
-        rent_mask = self.apartments_df["transaction_type"] == "ქირავდება თვიურად"
-        q_rent = self.apartments_df.loc[rent_mask, "price"].quantile(0.995)
-        self.apartments_df = self.apartments_df[
-            ~rent_mask | (self.apartments_df["price"] <= q_rent)
-            ]
+    def __remove_extreme_price_values(self):
+        """Removes extreme price values for sale and monthly rent apartments"""
+
+        df = self.apartments_df
+
+        def clean_prices(df, transaction_type, price_col, min_price):
+            """Generic price cleaner"""
+
+            mask = df["transaction_type"] == transaction_type
+            sub_df = df.loc[mask].copy()
+
+            # Step 1: Hard sanity filters
+            sub_df = sub_df[(sub_df["area_m2"] >= 15) & (sub_df[price_col] >= min_price)]
+
+            # Step 2: IQR filtering (city + district)
+            grp = sub_df.groupby(["city", "district_grouped"])[price_col]
+
+            q1 = grp.transform("quantile", 0.25)
+            q3 = grp.transform("quantile", 0.75)
+            iqr = q3 - q1
+
+            sub_df = sub_df[(sub_df[price_col] >= q1 - 1.5 * iqr) & (sub_df[price_col] <= q3 + 3.0 * iqr)]
+
+            # Step 3: Winsorization
+            low = grp.transform(lambda x: x.quantile(0.05))
+            high = grp.transform(lambda x: x.quantile(0.95))
+
+            sub_df = sub_df.assign(
+                **{
+                    price_col: sub_df[price_col]
+                    .clip(low, high)
+                    .round(2)
+                }
+            )
+
+            return sub_df
+
+        # Clean sale prices (price_per_sqm)
+        sale_df = clean_prices(df=df, transaction_type="იყიდება", price_col="price_per_sqm", min_price=150)
+
+        # Clean monthly rent prices (price)
+        rent_df = clean_prices(df=df, transaction_type="ქირავდება თვიურად", price_col="price", min_price=100)
+
+        # Merge back
+        df = pd.concat(
+            [
+                df.loc[
+                    ~df["transaction_type"].isin(
+                        ["იყიდება", "ქირავდება თვიურად"]
+                    )
+                ],
+                sale_df,
+                rent_df
+            ],
+            ignore_index=True
+        )
+
+        self.apartments_df = df
 
     def __group_districts_by_frequency(self, min_count=100):
+        """ Only leaves districts with 100+ listings, groups others into 'other' """
         grouped = []
 
         for city, city_df in self.apartments_df.groupby("city", sort=False):
@@ -46,13 +95,14 @@ class Preprocessing:
         self.apartments_df = pd.concat(grouped).reset_index(drop=True)
 
     def __extract_year_and_month(self):
+        """ Extracts upload year and upload month as separate columns, normalizes upload year to 0 """
         self.apartments_df["upload_year"] = self.apartments_df["upload_date"].dt.year
         self.apartments_df["upload_year"] -= self.apartments_df["upload_year"].min()
 
         self.apartments_df["upload_month"] = self.apartments_df["upload_date"].dt.month
 
     def __handle_floor(self):
-        # impute missing floors with city-wise median
+        """Imputes missing floors with city-wise median and creates new column for floor buckets """
         self.apartments_df["floor"] = (
             self.apartments_df
             .groupby("city")["floor"]
@@ -66,14 +116,18 @@ class Preprocessing:
         )
 
     def __price_per_sqm_median_by_districts(self):
+        """Creates new price_per_sqm_median by districts """
         med = self.apartments_df.groupby(["city", "district_grouped"])["price_per_sqm"].median()
         self.apartments_df = self.apartments_df.join(med, on=["city", "district_grouped"], rsuffix="_district_median")
 
     def __district_listing_count(self):
+        """Creates new listing count column by districts """
         counts = self.apartments_df.groupby(["city", "district_grouped"]).size()
-        self.apartments_df["district_listing_count"] = self.apartments_df.set_index(["city", "district_grouped"]).index.map(counts)
+        self.apartments_df["district_listing_count"] = (
+            self.apartments_df.set_index(["city", "district_grouped"]).index.map(counts))
 
     def __drop_unused_columns(self):
+        """Drops unnecessary columns for ML from apartments_df """
         DROP_ALWAYS = {
             "url",
             "description",
@@ -86,6 +140,7 @@ class Preprocessing:
         self.apartments_df.drop(columns=DROP_ALWAYS, errors="ignore", inplace=True)
 
     def __save_inference_artifacts(self, output_dir="models"):
+        """ Saves necessary data for prediction models """
         output_dir = Path(output_dir)
         output_dir.mkdir(parents=True, exist_ok=True)
 
@@ -147,9 +202,11 @@ class Preprocessing:
             json.dump(available_dates, f, ensure_ascii=False)
 
     def run(self):
+        """ Main method to run Preprocessing tasks before model training """
+        # Main preprocessing
         self.__remove_extreme_areas()
-        self.__remove_extreme_prices()
         self.__group_districts_by_frequency()
+        self.__remove_extreme_price_values()
         self.__extract_year_and_month()
         self.__handle_floor()
         self.__price_per_sqm_median_by_districts()

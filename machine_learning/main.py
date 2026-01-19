@@ -1,7 +1,7 @@
 from datastorage.postgresql.PostgresDatabase import PostgresDatabase
-from machine_learning.PriceModel import PriceModel
+from machine_learning.price_prediction_test.PriceModel import PriceModel
 from Preprocessing import Preprocessing
-from LocalPricePredictor import LocalPricePredictor
+from machine_learning.price_prediction_test.LocalPricePredictor import LocalPricePredictor
 
 from dotenv import load_dotenv
 load_dotenv()
@@ -9,9 +9,11 @@ load_dotenv()
 
 
 if __name__ == "__main__":
+    "Step 1: Load the data from the database "
     postgres_db = PostgresDatabase()
     apartments_df = postgres_db.get_all_apartments()
 
+    "Step 2: Prepare data for training "
     preprocessing = Preprocessing(apartments_df)
     preprocessing.run()
     apartments_df = preprocessing.apartments_df
@@ -19,6 +21,7 @@ if __name__ == "__main__":
     sale_df = apartments_df[apartments_df["transaction_type"] == "იყიდება"]
     rent_df = apartments_df[apartments_df["transaction_type"] == "ქირავდება თვიურად"]
 
+    "Step 3: Train, evaluate and save ML models "
     print("\n=== SALE (price_per_sqm) ===")
     sale_model = PriceModel(sale_df, target="price_per_sqm")
     sale_model.train_and_evaluate()
@@ -29,6 +32,7 @@ if __name__ == "__main__":
     rent_model.train_and_evaluate()
     rent_model.save("models/rent_price.joblib")
 
+    "Step 4: Test models"
     sale_predictor = LocalPricePredictor("models/sale_price_per_sqm.joblib")
     rent_predictor = LocalPricePredictor("models/rent_price.joblib")
 
