@@ -109,8 +109,8 @@ window.initPredictionView = function () {
                 city: citySelect.value,
                 district: districtSelect.value,
                 area_m2: area,
-                bedrooms: Number(document.getElementById("bedrooms").value) || 1,
-                floor: Number(document.getElementById("floor").value) || 1,
+                bedrooms: Number(document.getElementById("bedrooms").value),
+                floor: Number(document.getElementById("floor").value),
                 year: Number(yearSelect?.value),
                 month: Number(monthSelect?.value),
                 transaction_type: "sale"   // adjust later if you add toggle

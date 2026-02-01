@@ -19,12 +19,12 @@ class Preprocessing:
             ]
 
     def __remove_extreme_price_values(self):
-        """Removes extreme price values for sale and monthly rent apartments"""
+        """ Removes extreme price values for sale and monthly rent apartments """
 
         df = self.apartments_df
 
         def clean_prices(df, transaction_type, price_col, min_price):
-            """Generic price cleaner"""
+            """ Generic price cleaner """
 
             mask = df["transaction_type"] == transaction_type
             sub_df = df.loc[mask].copy()
@@ -102,7 +102,7 @@ class Preprocessing:
         self.apartments_df["upload_month"] = self.apartments_df["upload_date"].dt.month
 
     def __handle_floor(self):
-        """Imputes missing floors with city-wise median and creates new column for floor buckets """
+        """ Imputes missing floors with city-wise median and creates new column for floor buckets """
         self.apartments_df["floor"] = (
             self.apartments_df
             .groupby("city")["floor"]
@@ -116,18 +116,18 @@ class Preprocessing:
         )
 
     def __price_per_sqm_median_by_districts(self):
-        """Creates new price_per_sqm_median by districts """
+        """ Creates new price_per_sqm_median by districts """
         med = self.apartments_df.groupby(["city", "district_grouped"])["price_per_sqm"].median()
         self.apartments_df = self.apartments_df.join(med, on=["city", "district_grouped"], rsuffix="_district_median")
 
     def __district_listing_count(self):
-        """Creates new listing count column by districts """
+        """ Creates new listing count column by districts """
         counts = self.apartments_df.groupby(["city", "district_grouped"]).size()
         self.apartments_df["district_listing_count"] = (
             self.apartments_df.set_index(["city", "district_grouped"]).index.map(counts))
 
     def __drop_unused_columns(self):
-        """Drops unnecessary columns for ML from apartments_df """
+        """ Drops unnecessary columns for ML from apartments_df """
         DROP_ALWAYS = {
             "url",
             "description",
@@ -140,66 +140,86 @@ class Preprocessing:
         self.apartments_df.drop(columns=DROP_ALWAYS, errors="ignore", inplace=True)
 
     def __save_inference_artifacts(self, output_dir="models"):
-        """ Saves necessary data for prediction models """
+        """ Saves all artifacts required for inference """
+
         output_dir = Path(output_dir)
         output_dir.mkdir(parents=True, exist_ok=True)
 
         # 1. District → grouped district mapping
-        district_map = (
+        district_group_map = (
             self.apartments_df[["city", "district_name", "district_grouped"]]
             .drop_duplicates()
             .set_index(["city", "district_name"])["district_grouped"]
             .to_dict()
         )
 
-        joblib.dump(district_map, output_dir / "district_group_map.joblib")
-
-        # 2. District statistics
-        district_median = (
-            self.apartments_df
-            .groupby(["city", "district_grouped"])["price_per_sqm"]
-            .median()
-            .to_dict()
-        )
-
-        district_count = (
-            self.apartments_df
-            .groupby(["city", "district_grouped"])
-            .size()
-            .to_dict()
-        )
-
-        joblib.dump(
-            {
-                "median_price_per_sqm": district_median,
-                "listing_count": district_count
-            },
-            output_dir / "district_stats.joblib"
-        )
-
-        # 3. Preprocessing config (floor bins, labels, year normalization)
-        preprocessing_config = {
-            "floor_bins": [-1, 0, 2, 5, 10, 20, 100],
-            "floor_labels": ["basement", "low", "mid", "high", "very_high", "skyscraper"],
-            "min_upload_year": int(self.apartments_df["upload_date"].dt.year.min())
+        # 2. District-level statistics
+        district_stats = {
+            "median_price_per_sqm": (
+                self.apartments_df
+                .groupby(["city", "district_grouped"])["price_per_sqm"]
+                .median()
+                .to_dict()
+            ),
+            "listing_count": (
+                self.apartments_df
+                .groupby(["city", "district_grouped"])
+                .size()
+                .to_dict()
+            )
         }
 
-        joblib.dump(preprocessing_config, output_dir / "preprocessing_config.joblib")
+        # 3. Preprocessing configuration
+        preprocessing_config = {
+            "floor_bins": [-1, 0, 2, 5, 10, 20, 100],
+            "floor_labels": [
+                "basement", "low", "mid",
+                "high", "very_high", "skyscraper"
+            ]
+        }
 
-        # 4. Available (year → months)
+        # 4. Available dates (year → months)
         available_dates = (
             self.apartments_df
             .groupby("upload_year")["upload_month"]
             .apply(lambda s: sorted(int(m) for m in s.unique()))
+            .to_dict()
         )
-
+        min_upload_year = int(self.apartments_df["upload_date"].dt.year.min())
         available_dates = {
-            int(year) + int(preprocessing_config["min_upload_year"]): months
+            int(year) + min_upload_year: sorted(months)
             for year, months in available_dates.items()
         }
 
-        with open(output_dir / "available_dates.json", "w", encoding="utf-8") as f:
-            json.dump(available_dates, f, ensure_ascii=False)
+        # 5. Validation bounds (data-driven limits)
+        validation_bounds = {
+            "area_m2": {
+                "min": float(self.apartments_df["area_m2"].quantile(0.01)),
+                "max": float(self.apartments_df["area_m2"].quantile(0.99)),
+            },
+            "bedrooms": {
+                "min": int(self.apartments_df["bedrooms"].min()),
+                "max": int(self.apartments_df["bedrooms"].max()),
+            },
+            "floor": {
+                "min": int(self.apartments_df["floor"].quantile(0.01)),
+                "max": int(self.apartments_df["floor"].quantile(0.99)),
+            }
+        }
+
+        # 6. Save everything in one artifact
+        inference_metadata = {
+            "district_group_map": district_group_map,
+            "district_stats": district_stats,
+            "preprocessing_config": preprocessing_config,
+            "available_dates": available_dates,
+            "validation_bounds": validation_bounds,
+        }
+
+        joblib.dump(
+            inference_metadata,
+            output_dir / "inference_metadata.joblib"
+        )
 
     def run(self):
         """ Main method to run Preprocessing tasks before model training """

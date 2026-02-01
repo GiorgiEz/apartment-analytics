@@ -2,7 +2,7 @@ from datastorage.postgresql.PostgresDatabase import PostgresDatabase
 from machine_learning.price_prediction_test.PriceModel import PriceModel
 from Preprocessing import Preprocessing
 from machine_learning.price_prediction_test.LocalPricePredictor import LocalPricePredictor
-
+import numpy as np
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -36,8 +36,8 @@ if __name__ == "__main__":
     sale_predictor = LocalPricePredictor("models/sale_price_per_sqm.joblib")
     rent_predictor = LocalPricePredictor("models/rent_price.joblib")
 
-    city = "ქუთაისი"
-    district = "ავტოქარხანა"
+    city = "თბილისი"
+    district = "ვაკე"
     area_m2 = 70
     bedrooms = 2
     floor = 3
