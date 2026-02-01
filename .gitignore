@@ -37,3 +37,10 @@ data/
 
 # frontend
 frontend/src/charts
+
+# machine learning
+machine_learning/data/
+machine_learning/models/
+
+# backend
+backend/models/

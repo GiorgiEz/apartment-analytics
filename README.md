@@ -74,7 +74,9 @@ cd apartment-analytics
 2. **Install dependencies**
 
 ```bash
-pip install -r requirements.txt
+pip install -r scrape_clean_analyze/requirements.txt
+pip install -r machine_learning/requirements.txt
+pip install -r datastorage/requirements.txt
 ```
 
 3. **Run the pipeline**
@@ -94,7 +96,7 @@ python main.py
 
     To use Tailwind CSS, run:
     ```bash
-    npx @tailwindcss/cli -i ./scrape_clean_analyze/css/input.css -o ./scrape_clean_analyze/css/output.css --watch
+    npx @tailwindcss/cli -i ./frontend/src/css/input.css -o ./frontend/src/css/output.css --watch
     ```
 
 ## Requirements

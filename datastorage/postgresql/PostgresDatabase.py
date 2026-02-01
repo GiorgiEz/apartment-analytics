@@ -42,9 +42,9 @@ class PostgresDatabase:
     def write_all_apartments_data_to_csv(self, path):
         self.get_all_apartments().to_csv(path, index=False)
 
-    def database_insertion(self, writ_from_path=paths.APARTMENTS_PROCESSED_PATH):
+    def database_insertion(self, write_from_path=paths.APARTMENTS_PROCESSED_PATH):
         # 1. Load to staging
-        df = pd.read_csv(writ_from_path)
+        df = pd.read_csv(write_from_path)
         self.__load_to_staging(df)
 
         # 2. Run DML
