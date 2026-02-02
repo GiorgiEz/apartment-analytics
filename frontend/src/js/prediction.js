@@ -1,10 +1,19 @@
-const API_BASE = "http://127.0.0.1:8000/api";
+import {MONTH_NAMES} from "@helpers/helper_functions.js"
+import {hideLoading, loadLoadingOverlay, showLoading, sleep} from "@components/loading.js";
 
-window.initPredictionView = function () {
+
+window.initPredictionView = async function () {
+    await loadLoadingOverlay();
+
     setTimeout(async () => {
 
         const citySelect = document.getElementById("city");
         const districtSelect = document.getElementById("district");
+
+        const areaSelect = document.getElementById("area_m2");
+        const bedroomsSelect = document.getElementById("bedrooms");
+        const floorSelect = document.getElementById("floor");
+
         const yearSelect = document.getElementById("year");
         const monthSelect = document.getElementById("month");
 
@@ -17,49 +26,31 @@ window.initPredictionView = function () {
             return;
         }
 
-        // Load metadata from backend
-        let availableDates = {};
+        async function fetchWithTimeout(url, options = {}, timeoutMs = 10000) {
+            const controller = new AbortController();
+            const id = setTimeout(() => controller.abort(), timeoutMs);
 
-        try {
-            const [citiesRes, datesRes] = await Promise.all([
-                fetch(`${API_BASE}/cities`),
-                fetch(`${API_BASE}/available-dates`)
-            ]);
-
-            const cities = await citiesRes.json();
-            availableDates = await datesRes.json();
-
-            // Populate cities
-            citySelect.innerHTML = `<option value="">Select city</option>`;
-            cities.forEach(city => {
-                citySelect.add(new Option(city, city));
-            });
-
-            Object.keys(availableDates)
-            .sort((a, b) => Number(a) - Number(b))
-            .forEach(year => {
-                yearSelect.add(new Option(year, year));
-            });
-
-        } catch (err) {
-            console.error("Failed to load metadata:", err);
-            return;
+            try {
+                return await fetch(url, {
+                    ...options,
+                    signal: controller.signal,
+                });
+            } finally {
+                clearTimeout(id);
+            }
         }
 
         // City → District dependency (backend-driven)
         citySelect.addEventListener("change", async () => {
             const city = citySelect.value;
 
-            districtSelect.innerHTML = `<option value="">Select district</option>`;
+            districtSelect.innerHTML = `<option value="">Select District</option>`;
             districtSelect.disabled = !city;
 
             if (!city) return;
 
             try {
-                const res = await fetch(`${API_BASE}/districts/${encodeURIComponent(city)}`);
-                const districts = await res.json();
-
-                districts.forEach(district => {
+                districts_by_city[city].forEach(district => {
                     districtSelect.add(new Option(district, district));
                 });
             } catch (err) {
@@ -67,83 +58,152 @@ window.initPredictionView = function () {
             }
         });
 
-        // Year → Month restriction (optional UX helper)
+        // Year → Month restriction
         yearSelect.addEventListener("change", () => {
-            const year = yearSelect.value;
-            monthSelect.innerHTML = `<option value="">Select Month</option>`;
-            monthSelect.disabled = true;
+            const year = Number(yearSelect.value);
 
-            const MONTH_NAMES = {
-                1: "January",
-                2: "February",
-                3: "March",
-                4: "April",
-                5: "May",
-                6: "June",
-                7: "July",
-                8: "August",
-                9: "September",
-                10: "October",
-                11: "November",
-                12: "December",
-            };
+            // Reset month select
+            monthSelect.innerHTML = "";
+            monthSelect.disabled = true;
 
             if (!availableDates[year]) return;
 
-            availableDates[year].forEach(month => {
-                monthSelect.add(
-                    new Option(MONTH_NAMES[month], month)
-                );
+            availableDates[yearSelect.value].forEach(month => {
+                monthSelect.add(new Option(MONTH_NAMES[month], month));
             });
 
             monthSelect.disabled = false;
+
+            // Auto-select month
+            if (year === defaults.year) {
+                // Initial load case
+                monthSelect.value = String(defaults.month);
+            } else {
+                // User changed year → select latest month for that year
+                const latestMonth = Math.max(...availableDates[year]);
+                monthSelect.value = String(latestMonth);
+            }
         });
+
+        // Load metadata from backend
+        let availableDates = {};
+        let districts_by_city = {};
+        let defaults = {};
+
+        try {
+            const response = await fetch(`/api/model/metadata`)
+            const metadata = await response.json();
+
+            const cities = await metadata["cities"];
+            districts_by_city = await metadata["districts_by_city"];
+            const bounds = await metadata["validation_bounds"];
+            availableDates = await metadata["available_dates"];
+            defaults = await metadata["defaults"];
+
+            // Area (mandatory)
+            areaSelect.innerHTML = `<option value="">Select area</option>`;
+            for (let v = Math.floor(bounds.area_m2.min); v <= Math.ceil(bounds.area_m2.max); v++) {
+                areaSelect.add(new Option(v, v));
+            }
+
+            // Bedrooms (optional, default selected)
+            bedroomsSelect.innerHTML = ``;
+            for (let v = bounds.bedrooms.min; v <= bounds.bedrooms.max; v++) {
+                const opt = new Option(v, v);
+                if (v === defaults.bedrooms) opt.selected = true;
+                bedroomsSelect.add(opt);
+            }
+
+            // Floor (optional, default selected)
+            floorSelect.innerHTML = ``;
+            for (let v = bounds.floor.min; v <= bounds.floor.max; v++) {
+                const opt = new Option(v, v);
+                if (v === defaults.floor) opt.selected = true;
+                floorSelect.add(opt);
+            }
+
+            // Populate cities
+            cities.forEach(city => citySelect.add(new Option(city, city)));
+
+            // Populate years
+            Object.keys(availableDates)
+            .sort((a, b) => Number(a) - Number(b))
+            .forEach(year => yearSelect.add(new Option(year, year)));
+
+            yearSelect.value = defaults.year;
+            yearSelect.dispatchEvent(new Event("change"));
+
+        } catch (err) {
+            console.error("Failed to load metadata:", err);
+            return;
+        }
 
         // Submit → Predict
         form.addEventListener("submit", async (e) => {
             e.preventDefault();
 
-            const area = Number(document.getElementById("area_m2").value);
+            resultBox.classList.add("hidden");
+            showLoading();
+
+            const startTime = Date.now();
 
             const payload = {
                 city: citySelect.value,
                 district: districtSelect.value,
-                area_m2: area,
-                bedrooms: Number(document.getElementById("bedrooms").value),
-                floor: Number(document.getElementById("floor").value),
-                year: Number(yearSelect?.value),
-                month: Number(monthSelect?.value),
-                transaction_type: "sale"   // adjust later if you add toggle
+                area_m2: Number(areaSelect.value),
+                bedrooms: bedroomsSelect.value ? Number(bedroomsSelect.value) : null,
+                floor: floorSelect.value ? Number(floorSelect.value) : null,
+                year: yearSelect.value ? Number(yearSelect.value) : null,
+                month: monthSelect.value ? Number(monthSelect.value) : null,
             };
 
             try {
-                const res = await fetch(`${API_BASE}/predict`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(payload)
-                });
+                const response = await fetchWithTimeout(
+                    `/api/predict`,
+                    {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(payload),
+                    },
+                    10000 // max 10s
+                );
 
-                const data = await res.json();
-
-                // Render Result
-                if (data.price_per_sqm && data.monthly_rent) {
-                    resultText.innerHTML = `
-                        <div class="space-y-1">
-                            <p><strong>Price per sqm:</strong> $${data.price_per_sqm.toFixed(2)}</p>
-                            <p><strong>Total apartment price:</strong> $${data.total_price.toFixed(2)}</p>
-                            <p><strong>Estimated monthly rent:</strong> $${data.monthly_rent.toFixed(2)}</p>
-                        </div>
-                    `;
-                } else {
-                    resultText.textContent = "Unexpected response from server.";
+                if (!response.ok) {
+                    throw new Error(`Server error (${response.status})`);
                 }
+
+                const data = await response.json();
+
+                // Ensure minimum 1s loading time
+                const elapsed = Date.now() - startTime;
+                if (elapsed < 1000) {
+                    await sleep(1000 - elapsed);
+                }
+
+                resultText.innerHTML = `
+                <div class="space-y-1">
+                    <p><strong>Price per sqm:</strong> $${data.price_per_sqm.toFixed(2)}</p>
+                    <p><strong>Total apartment price:</strong> $${data.total_price.toFixed(2)}</p>
+                    <p><strong>Estimated monthly rent:</strong> $${data.monthly_rent.toFixed(2)}</p>
+                </div>
+                `;
 
                 resultBox.classList.remove("hidden");
 
             } catch (err) {
-                console.error("Prediction failed:", err);
-                resultText.textContent = "Prediction failed. Please try again.";
+                const elapsed = Date.now() - startTime;
+                if (elapsed < 1000) {
+                    await sleep(1000 - elapsed);
+                }
+
+                resultText.textContent =
+                    err.name === "AbortError"
+                        ? "Prediction took too long. Please try again."
+                        : "Prediction failed. Please try again.";
+
                 resultBox.classList.remove("hidden");
+            } finally {
+                hideLoading();
             }
         });
     }, 100);

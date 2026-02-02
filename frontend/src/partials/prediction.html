@@ -2,12 +2,10 @@
 
     <!-- Header -->
     <div>
-        <h2 class="text-2xl font-bold text-blue-900">
-            Apartment Price Prediction
-        </h2>
+        <h2 class="text-2xl font-bold text-blue-900">Apartment Price Prediction</h2>
         <p class="text-blue-700 mt-1 text-sm">
             Fields marked with <span class="font-semibold">*</span> are mandatory.
-            Optional fields might improve prediction accuracy if provided.
+            Optional fields are pre-filled with default values.
         </p>
     </div>
 
@@ -15,55 +13,51 @@
 
         <!-- Mandatory Fields -->
         <div class="bg-white p-6 rounded-xl shadow space-y-6">
-            <h3 class="text-lg font-semibold text-blue-800 border-b pb-2">
-                Mandatory Information
-            </h3>
-
+            <h3 class="text-lg font-semibold text-blue-800 border-b pb-2">Mandatory Information</h3>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-
                 <!-- City -->
                 <div>
                     <label class="block text-sm font-semibold mb-1">
                         City <span class="text-red-500">*</span>
                     </label>
                     <select
-                        id="city"
-                        required
-                        class="w-full rounded-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500"
+                            id="city"
+                            required
+                            class="w-full rounded-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500"
                     >
-                        <option value="">Select city</option>
+                        <option value="">Select City</option>
                     </select>
                 </div>
 
                 <!-- District -->
                 <div>
-                    <label class="block text-sm font-semibold mb-1">
-                        District <span class="text-red-500">*</span>
-                    </label>
+                    <label class="block text-sm font-semibold mb-1">District <span class="text-red-500">*</span></label>
                     <select
-                        id="district"
-                        required
-                        disabled
-                        class="w-full rounded-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500"
+                            id="district"
+                            required
+                            disabled
+                            class="
+                            w-full rounded-lg border-gray-300
+                            focus:ring-blue-500 focus:border-blue-500
+                            disabled:bg-gray-100
+                            disabled:text-gray-400
+                            disabled:border-gray-200
+                            disabled:cursor-not-allowed"
                     >
-                        <option value="">Select district</option>
+                        <option value="">Select District</option>
                     </select>
                 </div>
 
                 <!-- Area -->
                 <div>
-                    <label class="block text-sm font-semibold mb-1">
-                        Area (m²) <span class="text-red-500">*</span>
-                    </label>
-                    <input
-                        id="area_m2"
-                        type="number"
-                        min="10"
-                        step="1"
-                        required
-                        placeholder="e.g. 85"
-                        class="w-full rounded-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500"
-                    />
+                    <label class="block text-sm font-semibold mb-1">Area (m²) <span class="text-red-500">*</span></label>
+                    <select
+                            id="area_m2"
+                            required
+                            class="w-full rounded-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500"
+                    >
+                        <option value="">Select Area</option>
+                    </select>
                 </div>
 
             </div>
@@ -71,65 +65,46 @@
 
         <!-- Optional Fields -->
         <div class="bg-blue-50 p-6 rounded-xl border border-blue-200 space-y-6">
-            <h3 class="text-lg font-semibold text-blue-800 border-b pb-2">
-                Optional Information
-            </h3>
-
+            <h3 class="text-lg font-semibold text-blue-800 border-b pb-2">Optional Information</h3>
             <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
 
                 <!-- Bedrooms -->
                 <div>
-                    <label class="block text-sm font-semibold mb-1">
-                        Bedrooms
-                    </label>
-                    <input
-                        id="bedrooms"
-                        type="number"
-                        min="0"
-                        max="10"
-                        placeholder="optional"
-                        class="w-full rounded-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500"
-                    />
+                    <label class="block text-sm font-semibold mb-1">Bedrooms</label>
+                    <select
+                            id="bedrooms"
+                            class="w-full rounded-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500"
+                    >
+                    </select>
                 </div>
 
                 <!-- Floor -->
                 <div>
-                    <label class="block text-sm font-semibold mb-1">
-                        Floor
-                    </label>
-                    <input
-                        id="floor"
-                        type="number"
-                        min="-1"
-                        max="100"
-                        placeholder="optional"
-                        class="w-full rounded-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500"
-                    />
+                    <label class="block text-sm font-semibold mb-1">Floor</label>
+                    <select
+                            id="floor"
+                            class="w-full rounded-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500"
+                    >
+                    </select>
                 </div>
 
                 <!-- Year -->
                 <div>
-                    <label class="block text-sm font-semibold mb-1">
-                        Upload Year
-                    </label>
+                    <label class="block text-sm font-semibold mb-1">Year</label>
                     <select
-                        id="year"
-                        class="w-full rounded-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500"
+                            id="year"
+                            class="w-full rounded-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500"
                     >
-                        <option value="">Select year</option>
                     </select>
                 </div>
 
                 <!-- Month -->
                 <div>
-                    <label class="block text-sm font-semibold mb-1">
-                        Month
-                    </label>
+                    <label class="block text-sm font-semibold mb-1">Month</label>
                     <select
-                        id="month"
-                        class="w-full rounded-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500"
+                            id="month"
+                            class="w-full rounded-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500"
                     >
-                        <option value="">Select Month</option>
                     </select>
                 </div>
 
@@ -139,8 +114,8 @@
         <!-- Submit -->
         <div>
             <button
-                type="submit"
-                class="w-full md:w-1/2 bg-blue-700 hover:bg-blue-600 text-white font-semibold py-3 rounded-lg transition"
+                    type="submit"
+                    class="w-full md:w-1/2 bg-blue-700 hover:bg-blue-600 text-white font-semibold py-3 rounded-lg transition"
             >
                 Predict Price
             </button>
@@ -149,13 +124,8 @@
     </form>
 
     <!-- Result -->
-    <div
-        id="prediction-result"
-        class="hidden bg-white p-6 rounded-xl shadow"
-    >
-        <h3 class="text-lg font-bold mb-2 text-blue-900">
-            Prediction Result
-        </h3>
+    <div id="prediction-result" class="hidden bg-white p-6 rounded-xl shadow">
+        <h3 class="text-lg font-bold mb-2 text-blue-900"> Prediction Result </h3>
         <p id="result-text" class="text-blue-800 text-lg"></p>
     </div>
 

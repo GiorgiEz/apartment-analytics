@@ -35,7 +35,7 @@ class BaseScraper(ABC):
         data = []
 
         for city_name, city_id in self.city_id_dict.items():
-            for page in range(1, self.number_of_pages_to_scrape + 1):
+            for page in range(2, self.number_of_pages_to_scrape + 1):
                 url = self.get_url(city_id, page)
 
                 try:
