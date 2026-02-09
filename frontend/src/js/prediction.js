@@ -6,7 +6,6 @@ window.initPredictionView = async function () {
     await loadLoadingOverlay();
 
     setTimeout(async () => {
-
         const citySelect = document.getElementById("city");
         const districtSelect = document.getElementById("district");
 

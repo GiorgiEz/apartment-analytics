@@ -1,4 +1,4 @@
-from scrape_clean_analyze.data_analysis.DataAnalysis import DataAnalysis
+from scrape_clean_analyze.data_analysis.EDA.DataAnalysis import DataAnalysis
 import seaborn as sns
 import matplotlib.pyplot as plt
 
