@@ -8,13 +8,6 @@ class DataAnalysis(ABC):
         self.df = df
         self.output_dir = Path(output_dir)
 
-        self.transaction_types = {
-            "იყიდება": "For Sale",
-            "ქირავდება დღიურად": "Daily Rent",
-            "ქირავდება თვიურად": "Monthly Rent",
-            "გირავდება": "Mortgage",
-        }
-
     @abstractmethod
     def generate(self):
         """ Every child class should implement this method. """

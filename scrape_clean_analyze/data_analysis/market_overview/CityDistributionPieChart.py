@@ -1,4 +1,4 @@
-from scrape_clean_analyze.data_analysis.EDA.DataAnalysis import DataAnalysis
+from scrape_clean_analyze.data_analysis.DataAnalysis import DataAnalysis
 from scrape_clean_analyze.utils.geo_to_eng_mappings import CITY_MAP
 import matplotlib.pyplot as plt
 
@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 class CityDistributionPieChart(DataAnalysis):
     def __init__(self, df, output_dir):
         super().__init__(df, output_dir)
-        self.image_name = "city_distribution_pie_chart.png"
+        self.image_name = "market_overview/city_distribution_pie_chart.png"
 
     def generate(self):
         """ Generates pie chart, displaying apartment percentage and amount of each city """
