@@ -9,9 +9,13 @@ class CityDistributionPieChart(DataAnalysis):
         self.image_name = "market_overview/city_distribution_pie_chart.png"
 
     def generate(self):
-        """ Generates pie chart, displaying apartment percentage and amount of each city """
+        """
+        Generates a pie chart showing the distribution of apartment listings by city.
+        Displays each city's percentage share and total listing count, providing
+        a high-level overview of market concentration and geographic composition.
+        """
         city_counts = self.df["city"].value_counts()
-        colors = ["#AEC7E8", "#FFBB78", "#98DF8A"][:len(city_counts)]  # light blue, light orange, light green
+        colors = [self.city_colors.get(city, "#CCCCCC") for city in city_counts.index]
 
         fig, ax = plt.subplots(figsize=(8, 8))
 

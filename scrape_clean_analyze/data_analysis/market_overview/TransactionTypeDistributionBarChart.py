@@ -9,7 +9,12 @@ class TransactionTypeDistributionBarChart(DataAnalysis):
         self.image_name = "market_overview/transaction_type_distribution_bar_chart.png"
 
     def generate(self):
-        """ Generates horizontal bar chart displaying market composition by transaction type. """
+        """
+        Generates a horizontal bar chart displaying the distribution of listings
+        by transaction type (Sale, Monthly Rent, Daily Rent, Mortgage).
+        Shows the number of listings per category to provide a clear overview
+        of market composition and dominant transaction activity.
+        """
         # Map Georgian transaction types to English
         mapped_series = self.df["transaction_type"].map(lambda x: TRANSACTION_TYPE_MAP.get(x, x))
         transaction_counts = mapped_series.value_counts()  # Count occurrences
@@ -18,6 +23,7 @@ class TransactionTypeDistributionBarChart(DataAnalysis):
         transaction_counts = transaction_counts.reindex(desired_order).dropna()
 
         fig, ax = plt.subplots(figsize=(10, 6))
+        ax.barh(transaction_counts.index, transaction_counts.values)
 
         # Add value labels to bars
         for i, value in enumerate(transaction_counts.values):
@@ -33,5 +39,6 @@ class TransactionTypeDistributionBarChart(DataAnalysis):
         # Clean layout
         ax.spines["top"].set_visible(False)
         ax.spines["right"].set_visible(False)
+        fig.tight_layout()
 
         self.save_fig(fig, self.image_name)
