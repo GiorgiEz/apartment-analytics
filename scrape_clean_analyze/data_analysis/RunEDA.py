@@ -6,16 +6,14 @@ from scrape_clean_analyze.data_analysis.price_analysis.MedianPricePerCityBarChar
 
 
 class RunEDA:
+    """ Main class to Initialize all visualization objects and generate charts """
     def __init__(self, df, output_dir):
-        self.distribution_by_city = CityDistributionPieChart(df, output_dir)
-        self.transaction_type_distribution = TransactionTypeDistributionBarChart(df, output_dir)
-        self.price_distribution_sale_rent = PriceDistributionHistogram(df, output_dir)
-        self.price_per_sqm = PricePerSqmBoxplot(df, output_dir)
-        self.median_price_per_city = MedianPricePerCityBarChart(df, output_dir)
+        self.vis_objects = [
+            CityDistributionPieChart(df, output_dir), TransactionTypeDistributionBarChart(df, output_dir),
+            PriceDistributionHistogram(df, output_dir), PricePerSqmBoxplot(df, output_dir),
+            MedianPricePerCityBarChart(df, output_dir)
+        ]
 
     def main(self):
-        self.distribution_by_city.generate()
-        self.transaction_type_distribution.generate()
-        self.price_distribution_sale_rent.generate()
-        self.price_per_sqm.generate()
-        self.median_price_per_city.generate()
+        for obj in self.vis_objects:
+            obj.generate()
