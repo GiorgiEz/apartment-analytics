@@ -43,5 +43,7 @@ if __name__ == "__main__":
     csv.deduplicate_and_write()
 
     """ Step 4: Data Analysis """
-    run_eda = RunEDA()
+    df = postgresql_database.get_all_apartments()
+    charts_output_dir = '../scrape_clean_analyze/data_analysis/charts/'
+    run_eda = RunEDA(df=df, output_dir=charts_output_dir)
     run_eda.main()

@@ -1,5 +1,5 @@
-import {chartPaths, setupChartButton, insert_icons} from "/src/js/helpers/helper_functions.js"
-import {icons} from "./helpers/icons.js";
+import {chartPaths, setupChartButton, insert_icons} from "@helpers/helper_functions.js"
+import {icons} from "@helpers/icons.js";
 
 
 window.initAnalysisView = function(){

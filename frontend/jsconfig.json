@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"],
+      "@js/*": ["src/js/*"],
+      "@components/*": ["src/js/components/*"],
+      "@helpers/*": ["src/js/helpers/*"],
+      "@partials/*": ["src/partials/*"],
+      "@css/*": ["src/css/*"],
+      "@charts/*": ["src/charts/*"]
+    }
+  }
+}

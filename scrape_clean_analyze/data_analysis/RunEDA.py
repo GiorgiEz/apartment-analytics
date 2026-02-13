@@ -1,32 +1,41 @@
-from .EDA.DistributionByCity import DistributionByCity
-from .EDA.AveragePricePerSQM import AveragePricePerSQM
-from .EDA.AveragePriceByCity import AveragePriceByCity
-from .EDA.AveragePriceByArea import AveragePriceByArea
+from ..data_analysis.EDA.market_overview.CityDistributionPieChart import CityDistributionPieChart
+from ..data_analysis.EDA.market_overview.TransactionTypeBarChart import TransactionTypeBarChart
+
+from ..data_analysis.EDA.price_analysis.PriceDistributionHistogram import PriceDistributionHistogram
+from ..data_analysis.EDA.price_analysis.PricePerSqmBoxplot import PricePerSqmBoxplot
+from ..data_analysis.EDA.price_analysis.MedianPricePerCityBarChart import MedianPricePerCityBarChart
+
+from ..data_analysis.EDA.apartment_characteristics.AreaDistributionHistogram import AreaDistributionHistogram
+from ..data_analysis.EDA.apartment_characteristics.BedroomsVsPriceBoxplot import BedroomsVsPriceBoxplot
+from ..data_analysis.EDA.apartment_characteristics.FloorDistributionBarChart import FloorDistributionBarChart
+
+from ..data_analysis.EDA.location_insights.ListingsByDistrictBarChart import ListingsByDistrictBarChart
+from ..data_analysis.EDA.location_insights.PricePerSqmByDistrictBoxplot import PricePerSqmByDistrictBoxplot
+
+from ..data_analysis.EDA.time_analysis.ListingsOverTimeLineChart import ListingsOverTimeLineChart
+from ..data_analysis.EDA.time_analysis.MedianPriceTrendOverTime import MedianPriceTrendOverTime
+
 
 
 class RunEDA:
-    def __init__(self):
-        self.distribution_by_city = DistributionByCity()
-        self.average_price_per_sqm = AveragePricePerSQM()
-        self.average_price_by_city = AveragePriceByCity()
-        self.average_price_by_area = AveragePriceByArea()
+    """ Main class to Initialize all visualization objects and generate charts """
+    def __init__(self, df, output_dir):
+        self.vis_objects = [
+            CityDistributionPieChart(df, output_dir), TransactionTypeBarChart(df, output_dir),  # Market Overview
 
-        self.transaction_types = ['იყიდება', 'ქირავდება დღიურად', 'ქირავდება თვიურად', 'გირავდება']
-        self.cities = ['ქუთაისი', 'თბილისი', 'ბათუმი']
+            PriceDistributionHistogram(df, output_dir), PricePerSqmBoxplot(df, output_dir),
+            MedianPricePerCityBarChart(df, output_dir),  # Price Analysis
+
+            AreaDistributionHistogram(df, output_dir), BedroomsVsPriceBoxplot(df, output_dir),
+            FloorDistributionBarChart(df, output_dir),  # Apartment Characteristics
+
+            ListingsByDistrictBarChart(df, output_dir),
+            PricePerSqmByDistrictBoxplot(df, output_dir),  # Location Insights
+
+            ListingsOverTimeLineChart(df, output_dir),
+            MedianPriceTrendOverTime(df, output_dir),
+        ]
 
     def main(self):
-        self.distribution_by_city.run()
-        self.average_price_per_sqm.run()
-
-        for city_name in self.cities:
-            self.average_price_by_area.run(city_name)
-
-        # Compare average apartment prices by cities for every transaction types
-        for transaction_type in self.transaction_types:
-            self.average_price_by_city.run(f'avg_price_by_city/{transaction_type}.png', transaction_type)
-
-        # Compare average apartment prices in a specific city for every transaction types
-        for city_name in self.cities:
-            for transaction_type in self.transaction_types:
-                self.average_price_by_city.run(f'avg_price_by_street/{city_name}/{transaction_type}.png',
-                                               transaction_type, city_name)
+        for obj in self.vis_objects:
+            obj.generate()

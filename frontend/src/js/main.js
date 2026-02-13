@@ -1,6 +1,6 @@
-import Navbar from './components/navbar.js';
-import {insert_icons} from "/src/js/helpers/helper_functions.js"
-import {icons} from './helpers/icons.js';
+import Navbar from '@components/navbar.js';
+import {insert_icons} from "@helpers/helper_functions.js"
+import {icons} from '@helpers/icons.js';
 
 
 class App {

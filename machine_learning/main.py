@@ -38,11 +38,11 @@ if __name__ == "__main__":
 
     city = "თბილისი"
     district = "ვაკე"
-    area_m2 = 70
-    bedrooms = 2
+    area_m2 = 40
+    bedrooms = 1
     floor = 3
-    year = 0
-    month = 8
+    year = 1
+    month = 2
 
     price_per_sqm = sale_predictor.predict_single(
         city=city,

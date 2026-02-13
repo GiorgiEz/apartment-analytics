@@ -35,8 +35,9 @@ datastorage/csv/backups/
 datastorage/csv/apartments.csv
 data/
 
-# frontend
+# charts
 frontend/src/charts
+scrape_clean_analyze/data_analysis/charts
 
 # machine learning
 machine_learning/data/
