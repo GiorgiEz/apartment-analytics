@@ -25,23 +25,26 @@ if __name__ == "__main__":
     def run_sshome():
         SSHomeScraper().scraper()
 
-    with ThreadPoolExecutor(max_workers=3) as executor:
-        for future in [executor.submit(run_myhome), executor.submit(run_sshome), executor.submit(run_livo)]:
-            future.result()  # Ensures any exceptions are raised
-
-    """ Step 2: Data cleaning and transformation """
-    apartments_df = ApartmentsDataFrame().get_df()
-    data_cleaning = DataCleaning(apartments_df)
-    data_cleaning.normalize()
-    data_cleaning.write_to_csv()
-
-    """ Step 3: Save data in the datastorage """
-    postgresql_database = PostgresDatabase()
-    postgresql_database.database_insertion()
-
-    csv = CSV()
-    csv.deduplicate_and_write()
+    # with ThreadPoolExecutor(max_workers=3) as executor:
+    #     for future in [executor.submit(run_myhome), executor.submit(run_sshome), executor.submit(run_livo)]:
+    #         future.result()  # Ensures any exceptions are raised
+    #
+    # """ Step 2: Data cleaning and transformation """
+    # apartments_df = ApartmentsDataFrame().get_df()
+    # data_cleaning = DataCleaning(apartments_df)
+    # data_cleaning.normalize()
+    # data_cleaning.write_to_csv()
+    #
+    # """ Step 3: Save data in the datastorage """
+    # postgresql_database = PostgresDatabase()
+    # postgresql_database.database_insertion()
+    #
+    # csv = CSV()
+    # csv.deduplicate_and_write()
 
     """ Step 4: Data Analysis """
-    run_eda = RunEDA()
+    postgresql_database = PostgresDatabase()
+    df = postgresql_database.get_all_apartments()
+    charts_output_dir = '../scrape_clean_analyze/data_analysis/charts/'
+    run_eda = RunEDA(df=df, output_dir=charts_output_dir)
     run_eda.main()
