@@ -3,7 +3,7 @@ let overlay = null;
 export async function loadLoadingOverlay() {
     if (overlay) return overlay;
 
-    const res = await fetch("partials/loading-overlay.html");
+    const res = await fetch("partials/components/loading-overlay.html");
     const html = await res.text();
 
     document.body.insertAdjacentHTML("beforeend", html);

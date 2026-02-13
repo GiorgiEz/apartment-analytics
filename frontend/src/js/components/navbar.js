@@ -1,45 +1,27 @@
-// Navigation component
-class Navbar {
-    constructor() {
-        this.navAnalysis = document.getElementById('nav-analysis');
-        this.navPrediction = document.getElementById('nav-prediction');
-        this.currentView = 'analysis'; // Default view
+function initNavbar() {
+    const navAnalysis = document.getElementById('nav-analysis');
+    const navPrediction = document.getElementById('nav-prediction');
 
-        this.init();
-    }
+    if (!navAnalysis || !navPrediction) return;
 
-    init() {
-        // Add event listeners
-        this.navAnalysis.addEventListener('click', () => this.setActiveView('analysis'));
-        this.navPrediction.addEventListener('click', () => this.setActiveView('prediction'));
-    }
+    navAnalysis.addEventListener('click', () => setActiveView('analysis'));
+    navPrediction.addEventListener('click', () => setActiveView('prediction'));
 
-    setActiveView(view) {
-        // Update UI
-        this.navAnalysis.classList.remove('active');
-        this.navPrediction.classList.remove('active');
+    function setActiveView(view) {
+        navAnalysis.classList.remove('active');
+        navPrediction.classList.remove('active');
 
         if (view === 'analysis') {
-            this.navAnalysis.classList.add('active');
-            this.navAnalysis.classList.remove('hover:bg-steel-600');
+            navAnalysis.classList.add('active');
+            navAnalysis.classList.remove('hover:bg-steel-600');
         } else {
-            this.navPrediction.classList.add('active');
-            this.navPrediction.classList.remove('hover:bg-steel-600');
+            navPrediction.classList.add('active');
+            navPrediction.classList.remove('hover:bg-steel-600');
         }
 
-        // Update current view
-        this.currentView = view;
-
-        // Dispatch custom event
         document.dispatchEvent(new CustomEvent('viewChanged', {
             detail: { view }
         }));
     }
-
-    getCurrentView() {
-        return this.currentView;
-    }
 }
-
-// Export for use in other modules
-export default Navbar;
+export default initNavbar;
