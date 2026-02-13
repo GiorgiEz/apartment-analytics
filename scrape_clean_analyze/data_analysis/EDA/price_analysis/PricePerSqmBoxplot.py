@@ -48,14 +48,13 @@ class PricePerSqmBoxplot(DataAnalysis):
             return
 
         # Sort cities by median price_per_sqm
-        medians = [np.median(values) for values in city_data]
-        sorted_indices = np.argsort(medians)
+        sorted_indices = np.argsort([np.median(values) for values in city_data])
 
         city_data = [city_data[i] for i in sorted_indices]
         city_labels = [city_labels[i] for i in sorted_indices]
 
         # Create figure
-        fig, ax = plt.subplots(figsize=(10, 6))
+        fig, ax = plt.subplots(figsize=self.figsize)
 
         boxplot = ax.boxplot(city_data, labels=city_labels, showfliers=False, patch_artist=True)
         # Apply city-specific colors

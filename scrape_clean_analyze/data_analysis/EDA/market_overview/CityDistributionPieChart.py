@@ -17,7 +17,7 @@ class CityDistributionPieChart(DataAnalysis):
         city_counts = self.df["city"].value_counts()
         colors = [self.city_colors.get(city, "#CCCCCC") for city in city_counts.index]
 
-        fig, ax = plt.subplots(figsize=(8, 8))
+        fig, ax = plt.subplots(figsize=(10, 10))
 
         ax.pie(
             city_counts.values,

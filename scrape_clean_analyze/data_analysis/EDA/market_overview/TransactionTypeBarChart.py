@@ -3,10 +3,10 @@ from scrape_clean_analyze.utils.geo_to_eng_mappings import TRANSACTION_TYPE_MAP
 import matplotlib.pyplot as plt
 
 
-class TransactionTypeDistributionBarChart(DataAnalysis):
+class TransactionTypeBarChart(DataAnalysis):
     def __init__(self, df, output_dir):
         super().__init__(df, output_dir)
-        self.image_name = "market_overview/transaction_type_distribution_bar_chart.png"
+        self.image_name = "market_overview/transaction_type_bar_chart.png"
 
     def generate(self):
         """
@@ -22,7 +22,7 @@ class TransactionTypeDistributionBarChart(DataAnalysis):
         desired_order = ["For Sale", "Monthly Rent", "Daily Rent", "Mortgage"]  # Logical order
         transaction_counts = transaction_counts.reindex(desired_order).dropna()
 
-        fig, ax = plt.subplots(figsize=(10, 6))
+        fig, ax = plt.subplots(figsize=self.figsize)
         ax.barh(transaction_counts.index, transaction_counts.values)
 
         # Add value labels to bars

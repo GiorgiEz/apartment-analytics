@@ -51,7 +51,7 @@ class MedianPricePerCityBarChart(DataAnalysis):
         # Colors from base class
         colors = [self.city_colors.get(city, "#CCCCCC") for city in cities_sorted]
 
-        fig, ax = plt.subplots(figsize=(10, 6))
+        fig, ax = plt.subplots(figsize=self.figsize)
         bars = ax.bar(city_labels, median_values, color=colors)
 
         # Add value labels

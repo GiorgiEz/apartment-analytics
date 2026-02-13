@@ -9,6 +9,7 @@ class DataAnalysis(ABC):
         self.output_dir = Path(output_dir)
         # light blue, light orange, light green
         self.city_colors = {"თბილისი": "#AEC7E8", "ბათუმი": "#FFBB78", "ქუთაისი": "#98DF8A"}
+        self.figsize = (12, 8)
 
     @abstractmethod
     def generate(self):

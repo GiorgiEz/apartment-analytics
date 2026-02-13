@@ -52,7 +52,7 @@ class PriceDistributionHistogram(DataAnalysis):
                 upper_limit = np.percentile(prices, 99)
                 prices = prices[prices <= upper_limit]
 
-                fig, ax = plt.subplots(figsize=(10, 6))
+                fig, ax = plt.subplots(figsize=self.figsize)
                 ax.hist(prices, bins=40, alpha=0.6, color=color)
 
                 # KDE
