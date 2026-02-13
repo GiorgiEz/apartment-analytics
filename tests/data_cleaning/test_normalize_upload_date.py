@@ -1,6 +1,6 @@
 import pandas as pd
 from datetime import datetime
-from scrape_clean_analyze.data_cleaning.DataCleaning import DataCleaning
+from data_cleaning import DataCleaning
 
 
 # Assumption: upload timestamps must not be in the future.

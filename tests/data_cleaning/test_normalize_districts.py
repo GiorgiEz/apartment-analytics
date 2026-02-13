@@ -1,5 +1,5 @@
 import pandas as pd
-from scrape_clean_analyze.data_cleaning.NormalizeDistricts import NormalizeDistricts
+from data_cleaning import NormalizeDistricts
 
 
 def test_normalize_districts_from_street_mapping():

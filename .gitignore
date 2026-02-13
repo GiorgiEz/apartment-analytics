@@ -33,11 +33,11 @@ venv/
 *.bak
 datastorage/csv/backups/
 datastorage/csv/apartments.csv
-data/
+new_data/
 
 # charts
 frontend/src/charts
-scrape_clean_analyze/data_analysis/charts
+data_analysis/charts
 
 # machine learning
 machine_learning/data/

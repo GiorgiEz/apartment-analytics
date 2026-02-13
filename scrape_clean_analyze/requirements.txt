@@ -1,5 +1,0 @@
-# scrape, clean and analyze requirements
-selenium
-pandas
-matplotlib
-seaborn

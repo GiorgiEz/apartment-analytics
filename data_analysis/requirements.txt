@@ -1,0 +1,4 @@
+# scrape, clean and analyze requirements
+pandas
+matplotlib
+seaborn
