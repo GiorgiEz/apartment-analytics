@@ -5,6 +5,10 @@ body {
     font-family: 'Inter', sans-serif;
 }
 
+button {
+    cursor: pointer;
+}
+
 /* Shared styles */
 .nav-button,
 .chart-button {
