@@ -15,6 +15,7 @@ export async function sidebar() {
 export function initSidebarToggle() {
     const toggleBtn = document.getElementById('sidebar-toggle');
     const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebar-overlay');
 
     const title = document.getElementById('sidebar_title');
     const navAnalysis = document.getElementById('nav-analysis');
@@ -26,8 +27,11 @@ export function initSidebarToggle() {
     let collapsed = window.innerWidth < MOBILE_BREAKPOINT;
 
     function applyDesktopCollapsed() {
+        sidebar.classList.remove('fixed');
         sidebar.classList.remove('w-64');
         sidebar.classList.add('w-14');
+
+        overlay.classList.add('hidden');
 
         title.classList.add('hidden');
         navAnalysis.classList.add('hidden');
@@ -35,8 +39,11 @@ export function initSidebarToggle() {
     }
 
     function applyDesktopExpanded() {
+        sidebar.classList.remove('fixed');
         sidebar.classList.remove('w-14');
         sidebar.classList.add('w-64');
+
+        overlay.classList.add('hidden');
 
         title.classList.remove('hidden');
         navAnalysis.classList.remove('hidden');
@@ -48,6 +55,8 @@ export function initSidebarToggle() {
         sidebar.classList.add('w-14');
         sidebar.classList.remove('fixed');
 
+        overlay.classList.add('hidden');
+
         title.classList.add('hidden');
         navAnalysis.classList.add('hidden');
         navPrediction.classList.add('hidden');
@@ -57,21 +66,13 @@ export function initSidebarToggle() {
         sidebar.classList.remove('w-14');
         sidebar.classList.add('w-64');
 
-        sidebar.classList.add('fixed');
+        sidebar.classList.add('fixed', 'top-0', 'left-0', 'h-full');
+
+        overlay.classList.remove('hidden');
 
         title.classList.remove('hidden');
         navAnalysis.classList.remove('hidden');
         navPrediction.classList.remove('hidden');
-    }
-
-    function updateInitialState() {
-        if (window.innerWidth < MOBILE_BREAKPOINT) {
-            collapsed = true;
-            applyMobileClosed();
-        } else {
-            collapsed = false;
-            applyDesktopExpanded();
-        }
     }
 
     toggleBtn.addEventListener('click', () => {
@@ -86,6 +87,27 @@ export function initSidebarToggle() {
         }
     });
 
-    window.addEventListener('resize', updateInitialState);
-    updateInitialState();
+    overlay.addEventListener('click', () => {
+        if (window.innerWidth < MOBILE_BREAKPOINT) {
+            collapsed = true;
+            applyMobileClosed();
+        }
+    });
+
+    window.addEventListener('resize', () => {
+        if (window.innerWidth < MOBILE_BREAKPOINT) {
+            collapsed = true;
+            applyMobileClosed();
+        } else {
+            collapsed = false;
+            applyDesktopExpanded();
+        }
+    });
+
+    // Initial state
+    if (collapsed) {
+        applyMobileClosed();
+    } else {
+        applyDesktopExpanded();
+    }
 }

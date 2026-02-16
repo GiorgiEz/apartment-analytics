@@ -5,12 +5,18 @@ import {sidebar, initSidebarToggle} from '@components/sidebar.js'
 class App {
     constructor() {
         this.mainContent = document.getElementById('main-content');
+        this.currentView = null;
 
         this.initializeLayout();
         document.addEventListener('viewChanged', (e) => {
-            this.loadView(e.detail.view)
+            const newView = e.detail.view;
+
+            // Prevent reload if already active
+            if (this.currentView === newView) return;
+
+            this.loadView(newView);
         });
-    }
+    };
 
     async initializeLayout() {
         // Load sidebar first
@@ -33,6 +39,8 @@ class App {
 
             const html = await response.text();
             this.mainContent.innerHTML = `<div class="content-area active">${html}</div>`;
+
+            this.currentView = view;
 
             // Initialize view-specific logic
             if (view === 'analysis' && typeof window.initAnalysisView === 'function') {

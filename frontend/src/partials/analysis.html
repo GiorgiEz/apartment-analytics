@@ -1,4 +1,4 @@
-<div id="analysis-view" class="bg-white rounded-2xl shadow-lg p-4 h-full flex flex-col">
+<div id="analysis-view" class="bg-blue-100 rounded-2xl shadow-lg p-4 h-full flex flex-col">
 
     <!-- Sticky header -->
     <div class="sticky top-0 bg-white rounded-t-2xl shadow-md z-2">
@@ -8,27 +8,28 @@
         </h1>
 
         <!-- Section Navigation -->
-        <div class="flex items-center justify-between m-2 px-6">
+        <div class="flex flex-col gap-4 m-2 px-6">
 
-            <!-- Left Button -->
-            <button id="analysis-prev"
-                    class="bg-blue-700 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition">
-                ◀
-            </button>
-
-            <!-- Current Section Title -->
+            <!-- Title Row -->
             <h2 id="analysis-section-title"
-                class="text-2xl font-semibold text-blue-800">
+                class="text-2xl font-semibold text-blue-800 text-center">
                 Market Overview
             </h2>
 
-            <!-- Right Button -->
-            <button id="analysis-next"
-                    class="bg-blue-700 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition">
-                ▶
-            </button>
+            <!-- Buttons Row -->
+            <div class="flex justify-between items-center w-full">
+                <button id="analysis-prev"
+                        class="bg-blue-700 text-white px-2 py-2 rounded-lg hover:bg-blue-600 transition m-1">
+                    ◀
+                </button>
 
+                <button id="analysis-next"
+                        class="bg-blue-700 text-white px-2 py-2 rounded-lg hover:bg-blue-600 transition m-1">
+                    ▶
+                </button>
+            </div>
         </div>
+
     </div>
 
     <!-- Charts container -->
@@ -37,21 +38,17 @@
     </div>
 
     <!-- Modal -->
-    <div id="chart-modal"
-         class="hidden fixed inset-0 bg-black bg-opacity-70
-            overflow-y-auto z-50">
-
+    <div id="chart-modal" class="hidden fixed inset-0 bg-black/20 backdrop-blur-md overflow-y-auto z-50">
         <div class="min-h-screen flex items-center justify-center p-4">
-
-            <div class="relative bg-white rounded-2xl
-                    w-full max-w-6xl max-h-[95vh]
-                    overflow-auto p-4 md:p-6">
-
+            <div id="chart-modal-content"
+                 class="relative bg-white rounded-2xl w-full max-w-6xl max-h-[95vh] overflow-auto p-4 md:p-6">
                 <button id="chart-modal-close"
-                        class="absolute top-3 right-3 text-2xl font-bold">
+                        class="absolute top-3 right-3
+                       text-2xl font-bold
+                       transition-transform duration-200
+                       hover:scale-125">
                     ✕
                 </button>
-
                 <img id="chart-modal-image"
                      class="max-h-[85vh] max-w-full object-contain mx-auto"
                      src=""

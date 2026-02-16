@@ -9,13 +9,12 @@
 
     <body class="flex h-screen bg-blue-100 relative">
         <!-- Sidebar -->
-        <div id="sidebar-container"
-             class="relative transition-all duration-300">
-        </div>
+        <div id="sidebar-container" class="relative transition-all duration-300"></div>
+        <div id="sidebar-overlay" class="hidden fixed inset-0 backdrop-blur-md bg-black/20 z-3"></div>
 
         <!-- Toggle Button (Always Visible) -->
         <button id="sidebar-toggle"
-                class="w-14 fixed z-3 bg-blue-800 text-white hover:bg-blue-600 transition">
+                class="w-14 fixed z-4 bg-blue-800 text-white hover:bg-blue-600 transition">
             <div class="m-4 text-2xl font-bold">☰</div>
         </button>
 
