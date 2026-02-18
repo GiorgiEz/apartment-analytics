@@ -1,36 +1,31 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Apartment-Analytics</title>
-    <link rel="stylesheet" href="./css/output.css" />
-</head>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Apartment-Analytics</title>
+        <link rel="stylesheet" href="./css/output.css" />
+    </head>
 
-<body class="flex h-screen bg-blue-100">
-<!-- Sidebar Navigation -->
-<aside class="w-64 bg-blue-800 shadow-xl p-6 flex flex-col gap-6">
-    <h1 class="text-2xl font-bold text-blue-100">Apartment Price Analysis and Price Prediction</h1>
-    <nav class="flex flex-col gap-4 mt-4">
-        <button id="nav-analysis" class="nav-button active text-blue-100 px-4 py-3 rounded-lg text-left bg-blue-700 transition-all duration-300 flex items-center">
-            Dashboard
+    <body class="flex h-screen bg-blue-100 relative">
+        <!-- Sidebar -->
+        <div id="sidebar-container" class="relative transition-all duration-300"></div>
+        <div id="sidebar-overlay" class="hidden fixed inset-0 backdrop-blur-md bg-black/20 z-3"></div>
+
+        <!-- Toggle Button (Always Visible) -->
+        <button id="sidebar-toggle"
+                class="w-14 fixed z-4 bg-blue-800 text-white hover:bg-blue-600 transition">
+            <div class="m-4 text-2xl font-bold">☰</div>
         </button>
-        <button id="nav-prediction" class="nav-button text-blue-100 px-4 py-3 rounded-lg text-left bg-blue-700 hover:bg-blue-600 transition-all duration-300 flex items-center">
-            Price Prediction
-        </button>
-    </nav>
-</aside>
 
-<!-- Main Content Area -->
-<main id="main-content" class="flex-1 overflow-y-auto">
-    <!-- Content will be loaded dynamically here -->
-</main>
+        <!-- Main Content -->
+        <main id="main-content"
+              class="flex-1 overflow-y-auto transition-all duration-300">
+        </main>
 
-<!-- JavaScript Files -->
-<script src="./js/components/navbar.js" type="module"></script>
-<script src="./js/main.js" type="module"></script>
-<script src="./js/analysis.js" type="module"></script>
-<script src="./js/prediction.js" type="module"></script>
-
-</body>
+        <!-- JavaScript Files -->
+        <script src="./js/main.js" type="module"></script>
+        <script src="./js/analysis.js" type="module"></script>
+        <script src="./js/prediction.js" type="module"></script>
+    </body>
 </html>

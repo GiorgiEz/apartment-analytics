@@ -1,5 +1,5 @@
 import pandas as pd
-from scrape_clean_analyze.data_cleaning.DataCleaning import DataCleaning
+from data_cleaning import DataCleaning
 
 
 def test_normalize_area_m2():

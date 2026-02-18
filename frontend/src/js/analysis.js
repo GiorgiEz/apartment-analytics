@@ -1,103 +1,104 @@
-import {chartPaths, setupChartButton, insert_icons} from "@helpers/helper_functions.js"
-import {icons} from "@helpers/icons.js";
+import {initModal, openModal} from "@components/analysis_modal.js";
+import {ANALYSIS_SECTIONS,
+        marketOverviewCharts, locationInsightsCharts, apartmentCharacteristicsCharts,
+        priceAnalysisCharts, timeAnalysisCharts}
+    from "@helpers/helper_functions"
 
 
-window.initAnalysisView = function(){
-    // Wait for DOM to be fully ready
-    setTimeout(() => {
-        const chartsDiv = document.getElementById('charts');
-        const citySelect = document.getElementById('city-select');
+window.initAnalysisView = function () {
+    initModal();
 
-        // Insert icons
-        insert_icons({
-            'btn-distribution': icons.city_distribution, 'btn-price-per-sqm': icons.avg_price_per_m2,
-            'btn-area-bin': icons.price_by_area_bin, 'btn-price-by-city': icons.avg_price_by_city,
-            'btn-price-by-district': icons.avg_price_by_district
-        });
+    setTimeout(async () => {
+        const sections_len = ANALYSIS_SECTIONS.length
+        let currentIndex = 0;
 
-        if (!chartsDiv || !citySelect) {
-            console.error("Required DOM elements not found");
-            return;
+        const prevBtn = document.getElementById("analysis-prev");
+        const nextBtn = document.getElementById("analysis-next");
+        const title = document.getElementById("analysis-section-title");
+        const chartsContainer = document.getElementById("charts");
+
+        const renderMap = {
+            0: marketOverviewCharts,
+            1: priceAnalysisCharts,
+            2: apartmentCharacteristicsCharts,
+            3: locationInsightsCharts,
+            4: timeAnalysisCharts,
         }
 
-        function loadImages(paths) {
-            chartsDiv.innerHTML = '';
-            paths.forEach(path => {
-                const imgContainer = document.createElement('div');
-                imgContainer.className = 'chart-container p-5 flex flex-col';
+        function renderAnalysisSection(charts) {
+            chartsContainer.innerHTML = "";
+            chartsContainer.className = "flex flex-col gap-10 mt-6";
 
-                const img = document.createElement('img');
-                img.src = path;
-                img.className = 'w-full h-auto max-h-[65vh] object-contain rounded-lg shadow-md';
-                img.alt = 'Data visualization chart';
+            charts.forEach(section => {
+                // Section wrapper (one row group)
+                const sectionWrapper = document.createElement("div");
+                sectionWrapper.className = "flex flex-col gap-4";
 
-                // Add error handling for missing images
-                img.onerror = function() {
-                    console.error("Failed to load image:", path);
-                    imgContainer.innerHTML = `
-                        <div class="flex items-center justify-center h-64 bg-silver-100 rounded-lg">
-                            <div class="text-center text-silver-600">
-                                ${icons.image_placeholder}
-                                <p>Chart not available</p>
-                                <p class="text-sm">${path.split('/').pop()}</p>
-                            </div>
-                        </div>
+                // Title
+                const title = document.createElement("h3");
+                title.className = "text-xl font-semibold text-blue-800";
+                title.textContent = section.title;
+
+                // Images row
+                const imagesRow = document.createElement("div");
+                imagesRow.className = "flex flex-nowrap justify-center items-start gap-4";
+                const imageCount = section.src.length;
+
+                section.src.forEach(src => {
+                    const button = document.createElement("button");
+                    // width calculation
+                    if (imageCount === 1) {
+                        button.style.flex = `0 0 ${50}%`;
+                    }
+                    else {
+                        button.style.flex = `0 0 ${90 / imageCount}%`;
+                    }
+
+                    button.className = `
+                        bg-white rounded-xl shadow-md overflow-hidden
+                        hover:scale-102 transition-transform duration-300
                     `;
-                };
 
-                imgContainer.appendChild(img);
-                chartsDiv.appendChild(imgContainer);
-            });
-        }
+                    button.innerHTML = `
+                        <img src="${src}" class="w-full h-auto object-contain" alt="${section.title}">`;
 
-        // Set up button selection effects
-        const buttons = document.querySelectorAll(".chart-button");
-        if (buttons.length > 0) {
-            buttons.forEach(button => {
-                button.addEventListener('click', function() {
-                    buttons.forEach(btn => btn.classList.remove('active', 'bg-steel-700'));
-                    this.classList.add('active', 'bg-steel-700');
+                    button.addEventListener("click", () => openModal(src));
+                    imagesRow.appendChild(button);
                 });
+
+                sectionWrapper.appendChild(title);
+                sectionWrapper.appendChild(imagesRow);
+                chartsContainer.appendChild(sectionWrapper);
             });
         }
 
-        // Set up chart button event listeners
-        for (const [key, value] of Object.entries({
-            'btn-distribution': chartPaths.city_distribution, 'btn-price-per-sqm': chartPaths.avg_price_per_sqm_by_city,
-            'btn-area-bin': chartPaths.price_by_area_bin_per_city, 'btn-price-by-city': chartPaths.avg_price_by_city,
-        })) {
-            setupChartButton(key, () => {
-                const citySelectParent = citySelect.parentElement;
-                if (citySelectParent) citySelectParent.classList.add('hidden');
-                loadImages(value);
-            });
+        function shorten(text, max = 18) {
+            return text.length > max ? text.slice(0, max) + "…" : text;
         }
 
-        setupChartButton('btn-price-by-district', () => {
-            const citySelectParent = citySelect.parentElement;
-            if (citySelectParent) citySelectParent.classList.remove('hidden');
-            citySelect.value = 'ქუთაისი';
-            citySelect.dispatchEvent(new Event('change'));
+        function renderSection() {
+            const prevIndex = (currentIndex - 1 + sections_len) % sections_len;
+            const nextIndex = (currentIndex + 1) % sections_len;
+
+            title.textContent = ANALYSIS_SECTIONS[currentIndex];
+
+            // Update button labels
+            prevBtn.textContent = `◀ ${shorten(ANALYSIS_SECTIONS[prevIndex])}`;
+            nextBtn.textContent = `${shorten(ANALYSIS_SECTIONS[nextIndex])} ▶`;
+
+            renderAnalysisSection(renderMap[currentIndex]);
+        }
+
+        prevBtn.addEventListener("click", () => {
+            currentIndex = (currentIndex - 1 + sections_len) % sections_len
+            renderSection();
         });
 
-        if (citySelect) {
-            citySelect.addEventListener('change', () => {
-                const selectedCity = citySelect.value;
-                if (!selectedCity) return;
+        nextBtn.addEventListener("click", () => {
+            currentIndex = (currentIndex + 1) % sections_len;
+            renderSection();
+        });
 
-                const basePath = `./charts/avg_price_by_street/${selectedCity}`;
-                const images = [
-                    `${basePath}/იყიდება.png`, `${basePath}/ქირავდება დღიურად.png`,
-                    `${basePath}/ქირავდება თვიურად.png`, `${basePath}/გირავდება.png`
-                ];
-                loadImages(images);
-            });
-        }
-
-        // Activate default chart
-        const defaultButton = document.getElementById('btn-distribution');
-        if (defaultButton) {
-            defaultButton.click();
-        }
-    }, 100); // Small delay to ensure DOM is ready
+        renderSection();
+    }, 100);
 };

@@ -5,6 +5,49 @@ body {
     font-family: 'Inter', sans-serif;
 }
 
+button {
+    cursor: pointer;
+}
+
+@layer components {
+    select {
+        @apply
+        w-full
+        rounded-lg
+        border
+        border-blue-200
+        bg-white
+        text-blue-900
+        px-3
+        py-2
+        shadow-sm
+        transition
+        duration-200
+        outline-none;
+    }
+
+    select:focus {
+        @apply
+        ring-2
+        ring-blue-500
+        border-blue-500;
+    }
+
+    select:disabled {
+        @apply
+        bg-blue-50
+        text-blue-400
+        border-blue-100
+        cursor-not-allowed;
+    }
+}
+
+@layer components {
+    option {
+        @apply text-blue-900 bg-white;
+    }
+}
+
 /* Shared styles */
 .nav-button,
 .chart-button {
