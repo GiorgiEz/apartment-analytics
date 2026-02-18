@@ -39,7 +39,6 @@ class App {
 
             const html = await response.text();
             this.mainContent.innerHTML = `<div class="content-area active">${html}</div>`;
-
             this.currentView = view;
 
             // Initialize view-specific logic

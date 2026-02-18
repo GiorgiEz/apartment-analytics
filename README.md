@@ -96,7 +96,8 @@ python main.py
 
     To use Tailwind CSS, run:
     ```bash
-    npx @tailwindcss/cli -i ./frontend/src/css/input.css -o ./frontend/src/css/output.css --watch
+    cd frontend
+    npx tailwindcss -i ./src/css/input.css -o ./src/css/output.css --watch
     ```
 
 ## Requirements
