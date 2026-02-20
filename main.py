@@ -8,9 +8,6 @@ from datastorage.csv.CSV import CSV
 from data_analysis.RunEDA import RunEDA
 from concurrent.futures import ThreadPoolExecutor
 
-from dotenv import load_dotenv
-load_dotenv()
-
 
 
 if __name__ == "__main__":

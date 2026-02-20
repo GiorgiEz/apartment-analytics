@@ -1,12 +1,11 @@
-from config import paths
+from config import paths, settings
 from sqlalchemy import create_engine, text
 import pandas as pd
-import os
 
 
 class PostgresDatabase:
     def __init__(self):
-        db_url = os.getenv("DATABASE_URL")
+        db_url = settings.DATABASE_URL
         if not db_url:
             raise RuntimeError("DATABASE_URL not set")
         self.engine = create_engine(db_url)

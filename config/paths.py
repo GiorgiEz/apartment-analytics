@@ -3,9 +3,7 @@ from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 
-# ======================
-# Data (CSV lifecycle)
-# ======================
+# ====================== Data (CSV lifecycle)
 DATA_DIR = PROJECT_ROOT / "new_data"
 
 RAW_DATA_DIR = DATA_DIR / "raw"
@@ -19,9 +17,7 @@ SSHOME_APARTMENTS_RAW_PATH = RAW_DATA_DIR / "sshome_apartments.csv"
 # Canonical cleaned CSV
 APARTMENTS_PROCESSED_PATH = PROCESSED_DATA_DIR / "apartments.csv"
 
-# ======================
-# Data storage (serving layer)
-# ======================
+# ====================== Data storage (serving layer)
 DATASTORAGE_DIR = PROJECT_ROOT / "datastorage"
 
 CSV_STORAGE_DIR = DATASTORAGE_DIR / "csv"
