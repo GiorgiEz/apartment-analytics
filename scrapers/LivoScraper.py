@@ -1,7 +1,6 @@
 import pandas as pd
 from selenium.webdriver.common.by import By
-from .BaseScraper import BaseScraper
-from utils.helpers import geo_months
+from scrapers.BaseScraper import BaseScraper
 from config import paths
 
 
@@ -12,6 +11,7 @@ class LivoScraper(BaseScraper):
         self.city_id_dict = {'თბილისი': 1, "ქუთაისი": 96, 'ბათუმი': 15}  # Cities with ids on this website
         self.number_of_pages_to_scrape = 10
         self.raw_apartments_csv_path = paths.LIVO_APARTMENTS_RAW_PATH
+        self.month_abbreviations = ['იან', 'თებ', 'მარ', 'აპრ', 'მაი', 'ივნ','ივლ','აგვ', 'სექ', 'ოქტ', 'ნოე', 'დეკ']
 
     def get_url(self, id, page):
         """ URL for apartment listings (not including houses, hotels or other real estate types) """
@@ -51,7 +51,7 @@ class LivoScraper(BaseScraper):
                 bedrooms = info
             elif 'სართ' in info:
                 floor = info
-            elif any(m in info for m in geo_months.keys()):
+            elif any(m in info for m in self.month_abbreviations):
                 upload_date = info
 
         if pd.isna(price) or pd.isna(street_address) or pd.isna(area_m2):

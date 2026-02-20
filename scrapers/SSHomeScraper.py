@@ -1,7 +1,7 @@
 import pandas as pd
 import re
 from selenium.webdriver.common.by import By
-from .BaseScraper import BaseScraper
+from scrapers.BaseScraper import BaseScraper
 from config import paths
 
 

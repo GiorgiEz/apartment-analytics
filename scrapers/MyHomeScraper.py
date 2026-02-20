@@ -1,5 +1,5 @@
 import pandas as pd
-from .BaseScraper import BaseScraper
+from scrapers.BaseScraper import BaseScraper
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.common.exceptions import TimeoutException
