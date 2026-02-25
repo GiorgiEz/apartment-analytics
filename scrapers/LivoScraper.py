@@ -13,46 +13,47 @@ class LivoScraper(BaseScraper):
         self.raw_apartments_csv_path = paths.LIVO_APARTMENTS_RAW_PATH
         self.month_abbreviations = ['იან', 'თებ', 'მარ', 'აპრ', 'მაი', 'ივნ','ივლ','აგვ', 'სექ', 'ოქტ', 'ნოე', 'დეკ']
 
-    def get_url(self, id, page):
-        """ URL for apartment listings (not including houses, hotels or other real estate types) """
-        return f'https://livo.ge/s/gancxadebebis-sia?real_estate_types=1&cities={id}&page={page}'
+    def get_url(self, city_id, page, deal_type):
+        """ URL for apartment listings (not including houses, hotels or other real estate types).
+            Deal Types 1 - (იყიდება), 2 - (ქირავდება).
+            real_estate_types = 1 (ბინა)
+        """
+        return (f'https://livo.ge/s?deal_types={deal_type}&currency_id=2&real_estate_types=1&cities={city_id}&page={page}&order_by=date&sequence=desc')
 
     def get_listings(self, driver):
-        return self.wait_for_links(driver, 'udzravi-qoneba', selector='a.item-url')
+        return self.wait_for_links(driver, 'udzravi-qoneba', selector='a')
 
     def parse_listing(self, apartment, city_name, page):
-        parent = apartment.find_element(By.XPATH, '..')  # Get parent of the <a> tag
-        divs = parent.find_elements(By.XPATH, './div')
+        child = apartment.find_element(By.XPATH, './div')  # Get child div of the <a> tag
+        divs = child.find_elements(By.XPATH, './div')
 
         if len(divs) < 2:
             self.skip_listing_message(city_name, page, "Outer Div didn't load")
             return None
 
         # 1. div for price, price_per_sqm, description, street_address
-        inner_div_0 = divs[0].find_elements(By.XPATH, './div')
-        if len(inner_div_0) < 2:
+        inner_div = divs[1].find_elements(By.XPATH, './div')
+        if len(inner_div) < 4:
             self.skip_listing_message(city_name, page, "Inner Div didn't load")
             return None
 
-        div_0 = inner_div_0[1].text.splitlines()
+        price_div = inner_div[0].text.strip().split('\n')
+        price_parts = [p.strip() for p in price_div if p.strip()]  # ['234,527 ₾', '4,181/მ²', '₾', '$']
 
-        price = div_0[0] + '$' if div_0 else pd.NA
-        price_per_sqm = div_0[3] if len(div_0) > 3 and 'მ2' in div_0[3] else pd.NA
-        description = div_0[4] if len(div_0) > 4 else pd.NA
-        street_address = div_0[5] if len(div_0) > 5 else pd.NA
+        price = price_parts[0]  # '234,527 ₾'
+        currency_label = "₾" if "₾" in price else "$"
+        price_per_sqm = price_parts[1] + f" {currency_label}"  # '4,181/მ²'
 
-        # 2. div for area, bedrooms, floor and upload date
-        area_m2, bedrooms, floor, upload_date = pd.NA, pd.NA, pd.NA, pd.NA
-        div_1 = divs[1].text.splitlines()
-        for info in div_1:
-            if 'მ2' in info:
-                area_m2 = info
-            elif 'საძ' in info:
-                bedrooms = info
-            elif 'სართ' in info:
-                floor = info
-            elif any(m in info for m in self.month_abbreviations):
-                upload_date = info
+        description = divs[1].find_element(By.XPATH, './span').text.strip()  # იყიდება 3 ოთახიანი ბინა დიდუბეში
+        street_address = inner_div[1].text.strip()  # მირიან მეფის ქ.
+
+        area_m2_floor_bedroom = inner_div[2].find_elements(By.XPATH, './div')
+        area_m2 = area_m2_floor_bedroom[0].text.strip()  # 105 მ²
+        floor = area_m2_floor_bedroom[1].text.strip()  # 15
+
+        district_upload_date = inner_div[3].find_elements(By.XPATH, './div')
+        district_name = district_upload_date[0].text.strip() if city_name != "თბილისი" else pd.NA  # ვაკე-საბურთალო
+        upload_date = district_upload_date[1].text.strip()  # 24 თებ. 19:24
 
         if pd.isna(price) or pd.isna(street_address) or pd.isna(area_m2):
             self.skip_listing_message(city_name, page, "Data is not given")
@@ -64,9 +65,9 @@ class LivoScraper(BaseScraper):
             'price': price,
             'price_per_sqm': price_per_sqm,
             'description': description,
-            'district_name': pd.NA,
+            'district_name': district_name,
             'street_address': street_address,
-            'bedrooms': bedrooms,
+            'bedrooms': pd.NA,
             'floor': floor,
             'area_m2': area_m2,
             'upload_date': upload_date

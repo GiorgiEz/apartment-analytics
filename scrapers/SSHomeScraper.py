@@ -13,9 +13,9 @@ class SSHomeScraper(BaseScraper):
         self.number_of_pages_to_scrape = 10
         self.raw_apartments_csv_path = paths.SSHOME_APARTMENTS_RAW_PATH
 
-    def get_url(self, id, page):
+    def get_url(self, city_id, page, deal_type):
         """ URL for apartment listings (not including houses, hotels or other real estate types)"""
-        return f'https://home.ss.ge/ka/udzravi-qoneba/l/bina?cityIdList={id}&order=1&page={page}'
+        return f'https://home.ss.ge/ka/udzravi-qoneba/l/bina?cityIdList={city_id}&order=1&page={page}'
 
     def get_listings(self, driver):
         try:
