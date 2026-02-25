@@ -1,5 +1,5 @@
 import pandas as pd
-from .BaseScraper import BaseScraper
+from scrapers.BaseScraper import BaseScraper
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.common.exceptions import TimeoutException
@@ -14,9 +14,9 @@ class MyHomeScraper(BaseScraper):
         self.number_of_pages_to_scrape = 5
         self.raw_apartments_csv_path = paths.MYHOME_APARTMENTS_RAW_PATH
 
-    def get_url(self, id, page):
+    def get_url(self, city_id, page, deal_type):
         """ URL for apartment listings (not including houses, hotels or other real estate types)"""
-        return f'https://www.myhome.ge/s/?CardView=1&real_estate_types=1&cities={id}&page={page}'
+        return f'https://www.myhome.ge/s/?CardView=1&real_estate_types=1&cities={city_id}&page={page}'
 
     def get_listings(self, driver):
         return self.wait_for_links(driver, 'pr')

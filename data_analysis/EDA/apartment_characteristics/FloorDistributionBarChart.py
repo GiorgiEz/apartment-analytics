@@ -1,5 +1,5 @@
 from data_analysis.DataAnalysis import DataAnalysis
-from utils.geo_to_eng_mappings import CITY_MAP
+from data_analysis.geo_to_eng_mappings import CITY_MAP
 import matplotlib.pyplot as plt
 
 

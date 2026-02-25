@@ -2,9 +2,6 @@ from datastorage.postgresql.PostgresDatabase import PostgresDatabase
 from machine_learning.price_prediction_test.PriceModel import PriceModel
 from Preprocessing import Preprocessing
 from machine_learning.price_prediction_test.LocalPricePredictor import LocalPricePredictor
-import numpy as np
-from dotenv import load_dotenv
-load_dotenv()
 
 
 

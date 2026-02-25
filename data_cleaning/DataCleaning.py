@@ -1,8 +1,7 @@
-import pandas as pd
 import re
-
+import pandas as pd
 from data_cleaning.NormalizeDistricts import NormalizeDistricts
-from utils.helpers import get_usd_exchange_rate, geo_months
+from data_cleaning.utils.get_usd_exchange_rate import get_usd_exchange_rate
 from datetime import datetime, timedelta
 from config import paths
 
@@ -12,6 +11,10 @@ class DataCleaning:
     def __init__(self, apartments_df, currency_rate=None):
         self.apartments_df = apartments_df
         self.currency_rate = currency_rate or get_usd_exchange_rate()
+        self.geo_months = {
+            'იან': 1, 'თებ': 2, 'მარ': 3, 'აპრ': 4, 'მაი': 5, 'ივნ': 6,
+            'ივლ': 7, 'აგვ': 8, 'სექ': 9, 'ოქტ': 10, 'ნოე': 11, 'დეკ': 12
+        }
 
     def __get_shape(self):
         """ Prints the shape of the dataset. Useful for quickly understanding the size of the dataset. """
@@ -94,7 +97,7 @@ class DataCleaning:
         def parse_row(row):
             value = row.get("price_per_sqm")
 
-            # 1. Try to parse price_per_sqm directly
+            # Try to parse price_per_sqm directly
             if pd.notna(value):
                 text = str(value).lower().replace(",", "").strip()
 
@@ -113,10 +116,10 @@ class DataCleaning:
                     if "₾" in text:
                         return round(amount * self.currency_rate, 2)
 
-                    # No currency symbol → keep as-is
+                    # No currency symbol = "$" → keep as-is
                     return amount
 
-            # 2. Fallback: compute from price and area
+            # Fallback: compute from price and area
             price = row.get("price")
             area = row.get("area_m2")
 
@@ -129,12 +132,8 @@ class DataCleaning:
         self.apartments_df["price_per_sqm"] = (self.apartments_df.apply(parse_row, axis=1).astype("Float64"))
 
     def _normalize_bedrooms(self):
-        """
-        Normalizes bedrooms column.
-
-        Handles:
-        - "საძ. 1", "საძ1", "2"
-        - missing / invalid values → inferred from area_m2
+        """ Normalizes bedrooms column.
+            Handles:"საძ. 1", "საძ1", "2". missing / invalid values → inferred from area_m2
         """
 
         def extract_bedrooms(value):
@@ -168,14 +167,10 @@ class DataCleaning:
             else:
                 return 7
 
-        # Step 1: extract explicit bedroom values
-        self.apartments_df['bedrooms'] = (
-            self.apartments_df['bedrooms']
-            .apply(extract_bedrooms)
-            .astype('Int64')
-        )
+        # extract explicit bedroom values
+        self.apartments_df['bedrooms'] = self.apartments_df['bedrooms'].apply(extract_bedrooms).astype('Int64')
 
-        # Step 2: infer missing bedrooms from area
+        # infer missing bedrooms from area
         self.apartments_df['bedrooms'] = self.apartments_df.apply(
             lambda row: (
                 infer_bedrooms(row['area_m2'])
@@ -186,14 +181,8 @@ class DataCleaning:
         ).astype('Int64')
 
     def _normalize_floor(self):
-        """
-        Normalizes floor column.
-
-        Handles:
-        - "სართ. 3"
-        - "8/11"
-        - "5"
-        - missing / invalid values → pd.NA
+        """ Normalizes floor column.
+            Handles: "სართ. 3", "8/11", "5". missing / invalid values → pd.NA
         """
 
         def extract_floor(value):
@@ -201,29 +190,17 @@ class DataCleaning:
                 return pd.NA
 
             text = str(value)
-
             match = re.search(r'\d+', text)
             if match:
                 return int(match.group())
 
             return pd.NA
 
-        self.apartments_df['floor'] = (
-            self.apartments_df['floor']
-            .apply(extract_floor)
-            .astype('Int64')
-        )
+        self.apartments_df['floor'] = self.apartments_df['floor'].apply(extract_floor).astype('Int64')
 
     def _normalize_upload_date(self, now=None):
-        """
-        Normalizes upload_date column.
-
-        Handles:
-        - "1 წუთის წინ"
-        - "23 საათის წინ"
-        - "30 დეკ, 12:02"
-        - "02 იან 12:44"
-        - "01 იან 2026"
+        """ Normalizes upload_date column.
+            Handles: "1 წუთის წინ", "23 საათის წინ", "30 დეკ, 12:02", "02 იან 12:44", "01 იან 2026"
         """
 
         now = now or datetime.now()
@@ -244,44 +221,37 @@ class DataCleaning:
             text = str(value).strip().lower()
 
             try:
-                # 1. Relative minutes: "1 წუთის წინ"
+                # Relative minutes: "1 წუთის წინ"
                 if 'წუთ' in text:
                     minutes = int(re.search(r'\d+', text).group())
                     return now - timedelta(minutes=minutes)
 
-                # 2. Relative hours: "23 საათის წინ"
+                # Relative hours: "23 საათის წინ"
                 if 'საათ' in text:
                     hours = int(re.search(r'\d+', text).group())
                     return now - timedelta(hours=hours)
 
                 parts = text.replace(',', '').split()
 
-                # 3. Full date with year: "01 იან 2026"
+                # Full date with year: "01 იან 2026"
                 if len(parts) == 3 and parts[2].isdigit():
                     day, geo_month, year = parts
-                    month = geo_months.get(geo_month[:3])
+                    month = self.geo_months.get(geo_month[:3])
                     if not month:
                         return pd.NA
                     return datetime(int(year), month, int(day), 12, 0)
 
-                # 4. Date + time without year: "30 დეკ 12:02"
+                # Date + time without year: "30 დეკ 12:02"
                 if len(parts) == 3 and ':' in parts[2]:
                     day, geo_month, time_str = parts
-                    month = geo_months.get(geo_month[:3])
+                    month = self.geo_months.get(geo_month[:3])
                     if not month:
                         return pd.NA
 
                     hour, minute = map(int, time_str.split(':'))
+                    candidate = datetime(year=now.year, month=month, day=int(day), hour=hour, minute=minute)
 
-                    candidate = datetime(
-                        year=now.year,
-                        month=month,
-                        day=int(day),
-                        hour=hour,
-                        minute=minute
-                    )
-
-                    # FIX: handle year rollover
+                    # Handles year rollover
                     if candidate > now:
                         candidate = candidate.replace(year=now.year - 1)
 
@@ -294,20 +264,12 @@ class DataCleaning:
 
         self.apartments_df['upload_date'] = (
             self.apartments_df['upload_date']
-            .apply(parse_date)
-            .astype('datetime64[ns]')
-            .dt.floor('min')
+            .apply(parse_date).astype('datetime64[ns]').dt.floor('min')
         )
 
     def _normalize_transaction_type(self):
-        """
-        Extracts transaction type from description.
-
-        Possible values:
-        - იყიდება
-        - ქირავდება თვიურად
-        - ქირავდება დღიურად
-        - გირავდება
+        """ Extracts transaction type from description.
+            Possible values: იყიდება, ქირავდება თვიურად, ქირავდება დღიურად, გირავდება
         """
 
         def extract_transaction_type(desc):
@@ -327,21 +289,14 @@ class DataCleaning:
 
             return pd.NA
 
-        self.apartments_df['transaction_type'] = (
-            self.apartments_df['description']
-            .apply(extract_transaction_type)
-            .astype('string')
-        )
+        self.apartments_df['transaction_type'] = (self.apartments_df['description'].
+                                                  apply(extract_transaction_type).astype('string'))
 
     def _normalize_source(self):
+        """ Extracts Source from url.
+            Possible values: myhome.ge, livo.ge, home.ss.ge
         """
-        Extracts Source from url.
 
-        Possible values:
-        - myhome.ge
-        - livo.ge
-        - home.ss.ge
-        """
         def extract_source(url):
             if not isinstance(url, str):
                 return pd.NA

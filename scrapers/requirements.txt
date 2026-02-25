@@ -1,3 +1,5 @@
 # scrape requirements
 selenium
 pandas
+requests
+psycopg2-binary
