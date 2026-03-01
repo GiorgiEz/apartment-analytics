@@ -21,7 +21,7 @@ if __name__ == "__main__":
     def run_sshome():
         SSHomeScraper().scraper(deal_types=[1])
 
-    with ThreadPoolExecutor(max_workers=4) as executor:
+    with ThreadPoolExecutor(max_workers=3) as executor:
         for future in [executor.submit(run_myhome), executor.submit(run_sshome), executor.submit(run_livo)]:
             future.result()  # Ensures any exceptions are raised
 
