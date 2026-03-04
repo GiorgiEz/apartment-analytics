@@ -45,3 +45,6 @@ machine_learning/models/
 
 # backend
 backend/models/
+
+# mac files
+*.DS_Store
