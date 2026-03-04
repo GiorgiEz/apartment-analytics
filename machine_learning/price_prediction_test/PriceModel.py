@@ -1,4 +1,3 @@
-from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
@@ -12,29 +11,30 @@ import numpy as np
 class PriceModel:
     """Trains and evaluates a price or price_per_sqm regression model"""
 
-    def __init__(self, df, target):
-        self.df = df.copy()
-        self.target = target
-
-        if target not in {"price", "price_per_sqm"}:
-            raise ValueError("target must be 'price' or 'price_per_sqm'")
+    def __init__(self, train_df, test_df):
+        self.train_df = train_df.copy()
+        self.test_df = test_df.copy()
+        self.target = 'price'
 
         self._prepare_data()
 
     def _prepare_data(self):
-        # Remove leakage: drop alternative price column
-        leakage_col = "price_per_sqm" if self.target == "price" else "price"
-        self.df.drop(columns=[leakage_col], inplace=True)
+        """Prepare train and test data for modeling"""
+        # Remove rows with missing target
+        self.train_df = self.train_df.dropna(subset=[self.target])
+        self.test_df = self.test_df.dropna(subset=[self.target])
 
-        # Drop rows with missing target
-        self.df = self.df.dropna(subset=[self.target])
+        # Sort by time (safety)
+        self.train_df = self.train_df.sort_values(["upload_year", "upload_month"]).reset_index(drop=True)
+        self.test_df = self.test_df.sort_values(["upload_year", "upload_month"]).reset_index(drop=True)
 
-        # Sort for deterministic training runs (not time-aware splitting)
-        self.df = self.df.sort_values(["upload_year", "upload_month"]).reset_index(drop=True)
+        # Targets
+        self.y_train = np.log1p(self.train_df[self.target])
+        self.y_test = np.log1p(self.test_df[self.target])
 
-        # Log-transform target
-        self.y = np.log1p(self.df[self.target])
-        self.X = self.df.drop(columns=[self.target])
+        # Features
+        self.X_train = self.train_df.drop(columns=[self.target])
+        self.X_test = self.test_df.drop(columns=[self.target])
 
     def build_pipeline(self):
         numeric_features = [
@@ -42,15 +42,12 @@ class PriceModel:
             "bedrooms",
             "floor",
             "upload_year",
-            "upload_month",
-            "price_per_sqm_district_median",
-            "district_listing_count"
+            "upload_month"
         ]
 
         categorical_features = [
             "city",
-            "district_grouped",
-            "floor_bucket"
+            "district_name"
         ]
 
         # Column-wise preprocessing
@@ -76,27 +73,28 @@ class PriceModel:
         )
 
     def train_and_evaluate(self):
+        """Train model and evaluate on test set"""
+
         self.build_pipeline()
 
-        X_train, X_test, y_train, y_test = train_test_split(
-            self.X,
-            self.y,
-            test_size=0.15,
-            random_state=42
-        )
+        # Train model
+        self.pipeline.fit(self.X_train, self.y_train)
 
-        self.pipeline.fit(X_train, y_train)
-        preds = self.pipeline.predict(X_test)  # Predict in log space
+        # Predict (log space)
+        preds = self.pipeline.predict(self.X_test)
 
-        # inverse transform to original scale
-        y_test_orig = np.expm1(y_test)
+        # Convert back to original scale
+        y_test_orig = np.expm1(self.y_test)
         preds_orig = np.expm1(preds)
 
-        # Evaluation metrics in real units
+        # Metrics
         mae = mean_absolute_error(y_test_orig, preds_orig)
         rmse = np.sqrt(mean_squared_error(y_test_orig, preds_orig))
         r2 = r2_score(y_test_orig, preds_orig)
 
+        print("Evaluation (time-based split)")
+        print(f"Train samples: {len(self.X_train)}")
+        print(f"Test samples:  {len(self.X_test)}")
         print(f"MAE:  {mae:.2f}")
         print(f"RMSE: {rmse:.2f}")
         print(f"R²:   {r2:.3f}")
@@ -104,7 +102,4 @@ class PriceModel:
     def save(self, path):
         # Persist trained pipeline and metadata
         Path(path).parent.mkdir(parents=True, exist_ok=True)
-        joblib.dump({
-            "pipeline": self.pipeline,
-            "target": self.target
-        }, path)
+        joblib.dump({"pipeline": self.pipeline, "target": self.target}, path)

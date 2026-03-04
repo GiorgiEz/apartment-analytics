@@ -6,32 +6,45 @@ from machine_learning.price_prediction_test.LocalPricePredictor import LocalPric
 
 
 if __name__ == "__main__":
-    "Step 1: Load the data from the database "
+    "Step 1: Load the data from the database"
+    def time_split(df, ratio=0.85):
+        df = df.sort_values("upload_date").reset_index(drop=True)
+        split_index = int(len(df) * ratio)
+
+        train = df.iloc[:split_index].copy()
+        test = df.iloc[split_index:].copy()
+
+        return train, test
+
     postgres_db = PostgresDatabase()
-    apartments_df = postgres_db.get_all_apartments()
+    sale_df = postgres_db.get_apartments_by_transaction('იყიდება')
+    rent_df = postgres_db.get_apartments_by_transaction('ქირავდება თვიურად')
 
-    "Step 2: Prepare data for training "
-    preprocessing = Preprocessing(apartments_df)
+    sale_train, sale_test = time_split(sale_df)
+    rent_train, rent_test = time_split(rent_df)
+
+    "Step 2: Prepare data for training"
+    preprocessing = Preprocessing(sale_train=sale_train, rent_train=rent_train, sale_test=sale_test, rent_test=rent_test)
     preprocessing.run()
-    apartments_df = preprocessing.apartments_df
 
-    sale_df = apartments_df[apartments_df["transaction_type"] == "იყიდება"]
-    rent_df = apartments_df[apartments_df["transaction_type"] == "ქირავდება თვიურად"]
+    sale_train = preprocessing.sale_train
+    rent_train = preprocessing.rent_train
+    sale_test = preprocessing.sale_test
+    rent_test = preprocessing.rent_test
 
-    "Step 3: Train, evaluate and save ML models "
-    print("\n=== SALE (price_per_sqm) ===")
-    sale_model = PriceModel(sale_df, target="price_per_sqm")
+    "Step 3: Train, evaluate and save ML models"
+    print("\n=== FOR SALE APARTMENTS (price) ===")
+    sale_model = PriceModel(sale_train, sale_test)
     sale_model.train_and_evaluate()
-    sale_model.save("models/sale_price_per_sqm.joblib")
+    sale_model.save("models/sale_prediction.joblib")
 
-    print("\n=== RENT (price) ===")
-    rent_model = PriceModel(rent_df, target="price")
+    print("\n=== MONTHLY RENT APARTMENTS (price) ===")
+    rent_model = PriceModel(rent_train, rent_test)
     rent_model.train_and_evaluate()
-    rent_model.save("models/rent_price.joblib")
+    rent_model.save("models/rent_prediction.joblib")
 
     "Step 4: Test models"
-    sale_predictor = LocalPricePredictor("models/sale_price_per_sqm.joblib")
-    rent_predictor = LocalPricePredictor("models/rent_price.joblib")
+    predictor = LocalPricePredictor()
 
     city = "თბილისი"
     district = "ვაკე"
@@ -41,7 +54,7 @@ if __name__ == "__main__":
     year = 1
     month = 2
 
-    price_per_sqm = sale_predictor.predict_single(
+    prices = predictor.predict_single(
         city=city,
         district=district,
         area_m2=area_m2,
@@ -51,18 +64,5 @@ if __name__ == "__main__":
         month=month
     )
 
-    total_sale_price = price_per_sqm * area_m2
-
-    monthly_rent = rent_predictor.predict_single(
-        city=city,
-        district=district,
-        area_m2=area_m2,
-        bedrooms=bedrooms,
-        floor=floor,
-        year=year,
-        month=month
-    )
-
-    print(f"Sale price per sqm: {price_per_sqm:.2f}")
-    print(f"Total sale price: {total_sale_price:.2f}")
-    print(f"Monthly rent: {monthly_rent:.2f}")
+    print(f"\nTotal sale price: {prices['sale_price']}")
+    print(f"Monthly rent: {prices['rent_price']}")
