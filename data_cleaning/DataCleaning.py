@@ -116,9 +116,6 @@ class DataCleaning:
                     if "₾" in text:
                         return round(amount * self.currency_rate, 2)
 
-                    # No currency symbol = "$" → keep as-is
-                    return amount
-
             # Fallback: compute from price and area
             price = row.get("price")
             area = row.get("area_m2")

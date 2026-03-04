@@ -37,7 +37,10 @@ class MyHomeScraper(BaseScraper):
         price_data = data_div[0].text.splitlines()
         price = price_data[0] + price_data[1] if len(price_data) > 1 else pd.NA
 
-        price_per_sqm = price_data[2] if len(price_data) > 2 and 'მ²' in price_data[2] else pd.NA
+        if '₾' in price:
+            price_per_sqm = price_data[2] + '₾' if len(price_data) > 2 and 'მ²' in price_data[2] else pd.NA
+        else:
+            price_per_sqm = price_data[2] + '$' if len(price_data) > 2 and 'მ²' in price_data[2] else pd.NA
 
         # The div 1 contains data about the description
         description_text = data_div[1].text.strip()
@@ -48,9 +51,28 @@ class MyHomeScraper(BaseScraper):
         street_address = street_address_text if street_address_text else pd.NA
 
         # The div 3 contains data about the area_m2 and floor
-        area_floor_data = data_div[3].text.splitlines()
-        area_m2 = area_floor_data[-2] if len(area_floor_data) > 1 and area_floor_data[-1] == 'მ²' else pd.NA
-        floor = area_floor_data[0] if area_floor_data else pd.NA
+        area_m2, floor, bedrooms = pd.NA, pd.NA, pd.NA
+
+        for child_div in data_div[3].find_elements(By.XPATH, "./div"):
+            txt = child_div.text.replace('\n', ' ').strip()
+
+            if 'მ²' in txt:
+                area_m2 = txt
+                continue
+
+            try:
+                path_d = child_div.find_element(By.XPATH, ".//*[name()='svg']//*[name()='path']").get_attribute('d')
+
+                # Bedrooms icon
+                if path_d.startswith('M14.1176 5.25056V2.31853C14.1176'):
+                    bedrooms = txt
+
+                # Floor icon
+                elif path_d.startswith('M4 1H10C11.6569 1'):
+                    floor = txt
+
+            except:
+                pass
 
         # The div 4 contains data about the district_name and upload_date
         district_upload_data = data_div[4].text.splitlines()
@@ -70,7 +92,7 @@ class MyHomeScraper(BaseScraper):
                 'district_name': district_name,
                 'street_address': street_address,
                 'area_m2': area_m2,
-                'bedrooms': pd.NA,
+                'bedrooms': bedrooms,
                 'floor': floor,
                 'upload_date': upload_date
             }

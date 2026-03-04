@@ -38,6 +38,20 @@ class PostgresDatabase:
         query = """SELECT * FROM dw.all_apartments_view"""
         return pd.read_sql(query, self.engine, parse_dates=["upload_date"])
 
+    def get_apartments_by_transaction(self, transaction_type):
+        query = text("""
+                     SELECT *
+                     FROM dw.all_apartments_view
+                     WHERE transaction_type = :transaction_type
+                     """)
+
+        return pd.read_sql(
+            query,
+            self.engine,
+            params={"transaction_type": transaction_type},
+            parse_dates=["upload_date"]
+        )
+
     def write_all_apartments_data_to_csv(self, path):
         self.get_all_apartments().to_csv(path, index=False)
 
