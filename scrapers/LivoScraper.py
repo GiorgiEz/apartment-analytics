@@ -48,8 +48,29 @@ class LivoScraper(BaseScraper):
         street_address = inner_div[1].text.strip()  # მირიან მეფის ქ.
 
         area_m2_floor_bedroom = inner_div[2].find_elements(By.XPATH, './div')
-        area_m2 = area_m2_floor_bedroom[0].text.strip()  # 105 მ²
-        floor = area_m2_floor_bedroom[1].text.strip()  # 15
+
+        area_m2, floor, bedrooms = pd.NA, pd.NA, pd.NA
+
+        for child_div in area_m2_floor_bedroom:
+            txt = child_div.text.strip()
+
+            if 'მ²' in txt:
+                area_m2 = txt
+                continue
+
+            try:
+                path_d = child_div.find_element(By.XPATH, ".//*[name()='svg']//*[name()='path']").get_attribute('d')
+
+                # Bedrooms icon
+                if path_d.startswith('M14.118 6.25V3.318'):
+                    bedrooms = txt
+
+                # Floor icon
+                elif path_d.startswith('M13.134 1C14.164 1'):
+                    floor = txt
+
+            except:
+                pass
 
         district_upload_date = inner_div[3].find_elements(By.XPATH, './div')
         district_name = district_upload_date[0].text.strip() if city_name != "თბილისი" else pd.NA  # ვაკე-საბურთალო
@@ -67,7 +88,7 @@ class LivoScraper(BaseScraper):
             'description': description,
             'district_name': district_name,
             'street_address': street_address,
-            'bedrooms': pd.NA,
+            'bedrooms': bedrooms,
             'floor': floor,
             'area_m2': area_m2,
             'upload_date': upload_date
