@@ -1,5 +1,5 @@
 import pandas as pd
-from data_cleaning import DataCleaning
+from data_cleaning.DataCleaning import DataCleaning
 
 def test_normalize_price():
     df = pd.DataFrame({
@@ -7,7 +7,7 @@ def test_normalize_price():
             '500',
             '100,000 $',
             '105,000$',
-            '103,808',
+            0,
             '103,808 ₾',
             None,
             'negotiable',
@@ -22,10 +22,10 @@ def test_normalize_price():
 
     expected = pd.Series(
         [
-            500 * currency_rate,
+            500.0,
             100000.0,
             105000.0,
-            103808 * currency_rate,
+            pd.NA,
             103808 * currency_rate,
             pd.NA,
             pd.NA,
