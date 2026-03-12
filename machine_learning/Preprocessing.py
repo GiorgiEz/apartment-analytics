@@ -12,23 +12,52 @@ class Preprocessing:
         self.rent_train = rent_train
         self.rent_test = rent_test
 
+    def __remove_missing_rows(self):
+        """ Removes rows with missing values for the following columns """
+        for attr in ["sale_train", "rent_train", "sale_test", "rent_test"]:
+            df = getattr(self, attr)
+            df = df.dropna(subset=["price", "area_m2", "district_name", "upload_date", "floor"])
+            setattr(self, attr, df)
+
     def __remove_extreme_areas(self):
         """ Removes area_m2 values that are too high or low"""
-        self.sale_train = self.sale_train[(self.sale_train["area_m2"] >= 15) & (self.sale_train["area_m2"] <= 500)]
-        self.sale_test = self.sale_test[(self.sale_test["area_m2"] >= 15) & (self.sale_test["area_m2"] <= 500)]
+        for attr in ["sale_train", "rent_train", "sale_test", "rent_test"]:
+            df = getattr(self, attr)
+            df = df[(df["area_m2"] >= 20) & (df["area_m2"] <= 400)]
+            setattr(self, attr, df)
 
-        self.rent_train = self.rent_train[(self.rent_train["area_m2"] >= 15) & (self.rent_train["area_m2"] <= 500)]
-        self.rent_test = self.rent_test[(self.rent_test["area_m2"] >= 15) & (self.rent_test["area_m2"] <= 500)]
+    def __remove_extreme_price_per_sqm(self):
+        sale_lower = self.sale_train["price_per_sqm"].quantile(0.02)
+        sale_upper = self.sale_train["price_per_sqm"].quantile(0.99)
+
+        rent_lower = self.rent_train["price_per_sqm"].quantile(0.01)
+        rent_upper = self.rent_train["price_per_sqm"].quantile(0.99)
+
+        # Removes too low or too high price_per_sqm values
+        self.sale_train = self.sale_train[(self.sale_train["price_per_sqm"] > sale_lower) & (self.sale_train["price_per_sqm"] < sale_upper)]
+        self.sale_test = self.sale_test[(self.sale_test["price_per_sqm"] > sale_lower) & (self.sale_test["price_per_sqm"] < sale_upper)]
+        self.rent_train = self.rent_train[(self.rent_train["price_per_sqm"] > rent_lower) & (self.rent_train["price_per_sqm"] < rent_upper)]
+        self.rent_test = self.rent_test[(self.rent_test["price_per_sqm"] > rent_lower) & (self.rent_test["price_per_sqm"] < rent_upper)]
+
+    def __remove_extreme_bedrooms(self):
+        """ Removes bedrooms values that are too high or low"""
+        for attr in ["sale_train", "rent_train", "sale_test", "rent_test"]:
+            df = getattr(self, attr)
+            df = df[(df["bedrooms"] > 0) & (df["bedrooms"] <= 10)]
+            setattr(self, attr, df)
+
+    def __remove_extreme_floors(self):
+        """ Removes floor values that are too high or low"""
+        for attr in ["sale_train", "rent_train", "sale_test", "rent_test"]:
+            df = getattr(self, attr)
+            df = df[(df["floor"] > 0) & (df["floor"] <= 60)]
+            setattr(self, attr, df)
 
     def __remove_extreme_prices(self):
         """ Removes extreme price values for sale and monthly rent apartments """
 
-        def clean_prices(train, test, min_price):
+        def clean_prices(train, test):
             price_col = "price"
-
-            # remove impossible prices
-            train = train[train[price_col] >= min_price]
-            test = test[test[price_col] >= min_price]
 
             # compute bounds from train
             grp = train.groupby(["city", "district_name"])[price_col]
@@ -54,8 +83,21 @@ class Preprocessing:
 
             return train, test
 
-        self.sale_train, self.sale_test = clean_prices(self.sale_train, self.sale_test, min_price=5000)
-        self.rent_train, self.rent_test = clean_prices(self.rent_train, self.rent_test, min_price=50)
+        self.sale_train, self.sale_test = clean_prices(self.sale_train, self.sale_test)
+        self.rent_train, self.rent_test = clean_prices(self.rent_train, self.rent_test)
+
+    def __check_logical_relationships(self):
+        # Removes row if there is impossible relationship between Area and bedrooms
+        for attr in ["sale_train", "rent_train", "sale_test", "rent_test"]:
+            df = getattr(self, attr)
+            df = df[(df["bedrooms"] == 0) | (df["area_m2"] / df["bedrooms"] >= 15)]
+            setattr(self, attr, df)
+
+    def __remove_duplicates(self):
+        for attr in ["sale_train", "rent_train", "sale_test", "rent_test"]:
+            df = getattr(self, attr)
+            df.drop_duplicates(subset=["price", "area_m2", "district_name", "floor", "street_address"])
+            setattr(self, attr, df)
 
     def __extract_year_and_month(self):
         """Extract year and month, normalize year using train minimum"""
@@ -148,8 +190,23 @@ class Preprocessing:
     def run(self):
         """ Main method to run Preprocessing tasks before model training """
         # Main preprocessing
+        before_sum_sale = len(self.sale_train) + len(self.sale_test)
+        before_sum_rent = len(self.rent_train) + len(self.rent_test)
+        print("Before Preprocessing (Sale): ", before_sum_sale)
+        print("Before Preprocessing (Rent): ", before_sum_rent)
+
+        self.__remove_missing_rows()
+
+        self.__check_logical_relationships()
+
         self.__remove_extreme_areas()
         self.__remove_extreme_prices()
+        self.__remove_extreme_bedrooms()
+        self.__remove_extreme_floors()
+        self.__remove_extreme_price_per_sqm()
+
+        self.__remove_duplicates()
+
         self.__extract_year_and_month()
 
         # Save inference artifacts
@@ -158,3 +215,8 @@ class Preprocessing:
         self.__drop_unused_columns()
         self.sale_train.to_csv("data/sale_ml_apartments_processed.csv", index=False)
         self.rent_train.to_csv("data/rent_ml_apartments_processed.csv", index=False)
+
+        after_sale_sum = len(self.sale_train) + len(self.sale_test)
+        after_rent_sum = len(self.rent_train) + len(self.rent_test)
+        print(f"After Preprocessing (Sale): {after_sale_sum} -> Rows Removed: {before_sum_sale - after_sale_sum}")
+        print(f"After Preprocessing (Rent): {after_rent_sum} -> Rows Removed: {before_sum_rent - after_rent_sum}")
