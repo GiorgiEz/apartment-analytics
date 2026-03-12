@@ -8,10 +8,10 @@ class LocalPricePredictor:
 
     def __init__(self):
         # Load trained model bundle
-        sale_model_data = joblib.load("../models/sale_prediction.joblib")
+        sale_model_data = joblib.load("../models_metadata/sale_prediction.joblib")
         self.sale_pipeline = sale_model_data
 
-        rent_model_data = joblib.load("../models/rent_prediction.joblib")
+        rent_model_data = joblib.load("../models_metadata/rent_prediction.joblib")
         self.rent_pipeline = rent_model_data
 
     def predict_single(self, *, city: str, district: str, area_m2: float,

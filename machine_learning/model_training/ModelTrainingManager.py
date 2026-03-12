@@ -4,6 +4,7 @@ from machine_learning.model_training.LinearRegressionTraining import LinearRegre
 from machine_learning.model_training.RandomForestTraining import RandomForestTraining
 from machine_learning.model_training.DecisionTreeTraining import DecisionTreeTraining
 from machine_learning.Preprocessing import Preprocessing
+import pandas as pd
 
 
 
@@ -30,12 +31,27 @@ class ModelTrainingManager:
 
         return train, test
 
+    def display_metrics(self, results_sale, results_rent):
+        """ Display the metrics of sale, rent trained models_metadata as table """
+        pd.set_option("display.max_rows", None)
+        pd.set_option("display.max_columns", None)
+        pd.set_option("display.width", None)
+        pd.set_option("display.max_colwidth", None)
+
+        sale_df = pd.DataFrame(results_sale).T
+        rent_df = pd.DataFrame(results_rent).T
+
+        print(f"\nSale Model Comparison\n {sale_df}")
+        print(f"\nRent Model Comparison\n {rent_df}")
+
     def run(self):
         """Main ML pipeline: split → preprocess → train → evaluate → save"""
 
+        # Split (85 - 15)
         sale_train, sale_test = self.time_split(self.sale_df)
         rent_train, rent_test = self.time_split(self.rent_df)
 
+        # Preprocessing
         preprocessing = Preprocessing(sale_train=sale_train, rent_train=rent_train,
                                       sale_test=sale_test, rent_test=rent_test)
         preprocessing.run()
@@ -45,40 +61,29 @@ class ModelTrainingManager:
         sale_test = preprocessing.sale_test
         rent_test = preprocessing.rent_test
 
-        # HistGradientBoosting
-        print("\n=== FOR SALE APARTMENTS (price) - HistGradientBoosting ===")
-        sale_hist_gradient_boosting = HistGradientBoostingTraining(sale_train, sale_test)
-        sale_hist_gradient_boosting.run()
-        sale_hist_gradient_boosting.save("models/sale_prediction.joblib")
+        # Train and save metrics for display
+        results_sale = {}
+        results_rent = {}
 
-        print("\n=== MONTHLY RENT APARTMENTS (price) - HistGradientBoosting ===")
-        rent_hist_gradient_boosting = HistGradientBoostingTraining(rent_train, rent_test)
-        rent_hist_gradient_boosting.run()
-        rent_hist_gradient_boosting.save("models/rent_prediction.joblib")
+        sale_array = [
+            HistGradientBoostingTraining(sale_train, sale_test),
+            RandomForestTraining(sale_train, sale_test),
+            DecisionTreeTraining(sale_train, sale_test),
+            LinearRegressionTraining(sale_train, sale_test)
+        ]
 
-        # LinearRegression
-        print("\n=== FOR SALE APARTMENTS (price) - LinearRegression ===")
-        sale_linear_regression = LinearRegressionTraining(sale_train, sale_test)
-        sale_linear_regression.run()
+        rent_array = [
+            HistGradientBoostingTraining(rent_train, rent_test),
+            RandomForestTraining(rent_train, rent_test),
+            DecisionTreeTraining(rent_train, rent_test),
+            LinearRegressionTraining(rent_train, rent_test)
+        ]
 
-        print("\n=== MONTHLY RENT APARTMENTS (price) - LinearRegression ===")
-        rent_linear_regression = LinearRegressionTraining(rent_train, rent_test)
-        rent_linear_regression.run()
+        for sale_regressor in sale_array:
+            results_sale[sale_regressor.name] = sale_regressor.run()
 
-        # RandomForestRegression
-        print("\n=== FOR SALE APARTMENTS (price) - RandomForestRegression ===")
-        sale_random_forest_regression = RandomForestTraining(sale_train, sale_test)
-        sale_random_forest_regression.run()
+        for rent_regressor in rent_array:
+            results_rent[rent_regressor.name] = rent_regressor.run()
 
-        print("\n=== MONTHLY RENT APARTMENTS (price) - RandomForestRegression ===")
-        rent_random_forest_regression = RandomForestTraining(rent_train, rent_test)
-        rent_random_forest_regression.run()
-
-        # DecisionTreeRegression
-        print("\n=== FOR SALE APARTMENTS (price) - DecisionTreeRegression ===")
-        sale_decision_tree_regression = DecisionTreeTraining(sale_train, sale_test)
-        sale_decision_tree_regression.run()
-
-        print("\n=== MONTHLY RENT APARTMENTS (price) - DecisionTreeRegression ===")
-        rent_decision_tree_regression = DecisionTreeTraining(rent_train, rent_test)
-        rent_decision_tree_regression.run()
+        # Displays MAE, RMSE and R2 metrics for all models_metadata
+        self.display_metrics(results_sale, results_rent)

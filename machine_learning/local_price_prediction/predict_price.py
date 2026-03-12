@@ -3,7 +3,7 @@ from machine_learning.local_price_prediction.LocalPricePredictor import LocalPri
 
 
 if __name__ == "__main__":
-    "Test models"
+    "Test models_metadata"
     predictor = LocalPricePredictor()
 
     city = "თბილისი"

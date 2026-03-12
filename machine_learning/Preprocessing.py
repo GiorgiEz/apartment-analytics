@@ -91,7 +91,7 @@ class Preprocessing:
         for df in [self.sale_train, self.sale_test, self.rent_train, self.rent_test]:
             df.drop(columns=DROP_ALWAYS, errors="ignore", inplace=True)
 
-    def __save_inference_artifacts(self, output_dir="models"):
+    def __save_inference_artifacts(self, output_dir="models_metadata"):
         """ Saves all artifacts required for inference """
 
         output_dir = Path(output_dir)
@@ -153,7 +153,7 @@ class Preprocessing:
         self.__extract_year_and_month()
 
         # Save inference artifacts
-        self.__save_inference_artifacts(output_dir="models")
+        self.__save_inference_artifacts(output_dir="models_metadata")
 
         self.__drop_unused_columns()
         self.sale_train.to_csv("data/sale_ml_apartments_processed.csv", index=False)

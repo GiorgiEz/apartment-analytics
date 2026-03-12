@@ -8,6 +8,7 @@ from sklearn.tree import DecisionTreeRegressor
 class DecisionTreeTraining(BaseModelTraining):
     def __init__(self, train_df, test_df):
         super().__init__(train_df, test_df)
+        self.name = "DecisionTreeRegressor"
 
     def build_model(self):
 
@@ -22,7 +23,7 @@ class DecisionTreeTraining(BaseModelTraining):
             steps=[
                 ("preprocess", preprocessor),
                 ("model", DecisionTreeRegressor(
-                    max_depth=12,
+                    max_depth=25,
                     min_samples_leaf=10,
                     random_state=42
                 )),
