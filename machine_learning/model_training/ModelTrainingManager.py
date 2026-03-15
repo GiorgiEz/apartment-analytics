@@ -21,30 +21,14 @@ class ModelTrainingManager:
         # Train/test split ratio (85% train, 15% test)
         self.test_train_split_ratio = 0.85
 
-    def time_split(self, df, min_test_samples=3000):
-        """
-        Prefer time-based split using last 14 days as test set.
-        If test set is too small, fall back to 85/15 chronological split.
-        """
+    def time_split(self, df):
+        """Split dataset into train and test sets based on upload_date"""
 
         df = df.sort_values("upload_date").reset_index(drop=True)
-        df["upload_date"] = pd.to_datetime(df["upload_date"], errors="coerce")
+        split_index = int(len(df) * self.test_train_split_ratio)
 
-        # try last 14 days split
-        cutoff_date = df["upload_date"].max() - timedelta(days=14)
-
-        train = df[df["upload_date"] < cutoff_date].copy()
-        test = df[df["upload_date"] >= cutoff_date].copy()
-
-        # check if test set is large enough
-        if len(test) < min_test_samples:
-            split_index = int(len(df) * self.test_train_split_ratio)
-
-            train = df.iloc[:split_index].copy()
-            test = df.iloc[split_index:].copy()
-            print("\n Using 85-15 time based train/test split \n")
-        else:
-            print("\n Using data from the past 14 days for test \n")
+        train = df.iloc[:split_index].copy()
+        test = df.iloc[split_index:].copy()
 
         return train, test
 
