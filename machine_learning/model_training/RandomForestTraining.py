@@ -11,7 +11,6 @@ class RandomForestTraining(BaseModelTraining):
         self.name = "RandomForestRegressor"
 
     def build_model(self):
-
         preprocessor = ColumnTransformer(
             transformers=[
                 ("num", "passthrough", self.numeric_features),

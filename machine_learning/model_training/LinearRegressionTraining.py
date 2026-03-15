@@ -12,7 +12,6 @@ class LinearRegressionTraining(BaseModelTraining):
         self.name = "LinearRegressor"
 
     def build_model(self):
-
         preprocessor = ColumnTransformer(
             transformers=[
                 (

@@ -32,9 +32,6 @@ class BaseModelTraining(ABC):
 
     def _prepare_data(self):
         """Prepare X/y datasets and apply log transformation to target"""
-        self.train_df.dropna(subset=[self.target], inplace=True)
-        self.test_df.dropna(subset=[self.target], inplace=True)
-
         self.X_train = self.train_df.drop(columns=[self.target])
         self.y_train = np.log1p(self.train_df[self.target])
 
