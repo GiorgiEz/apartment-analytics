@@ -31,7 +31,7 @@ class ModelTrainingManager:
         df["upload_date"] = pd.to_datetime(df["upload_date"], errors="coerce")
 
         # try last 14 days split
-        cutoff_date = pd.Timestamp.now() - timedelta(days=14)
+        cutoff_date = df["upload_date"].max() - timedelta(days=14)
 
         train = df[df["upload_date"] < cutoff_date].copy()
         test = df[df["upload_date"] >= cutoff_date].copy()
