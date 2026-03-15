@@ -56,7 +56,7 @@ class DataCleaning:
 
                 # GEL
                 if "₾" in price_str:
-                    number = round(float(price_str.replace("₾", "").strip()), )
+                    number = round(float(price_str.replace("₾", "").strip()), 2)
                     return round(number * self.currency_rate, 2) if number > 0 else pd.NA
 
                 # No currency symbol -> keep as-is
@@ -90,7 +90,7 @@ class DataCleaning:
         - '$' present → USD, extracted as-is if > 0
         - '₾' present → GEL, converted to USD using currency_rate if > 0
         - No currency symbol → extracted number as-is if > 0
-        - 0 / invalid → pd.NA
+        - 0 / computed from price / area_m2
         - Missing → computed from price / area_m2
         """
 
@@ -104,9 +104,6 @@ class DataCleaning:
                 match = re.search(r"\d+(?:\.\d+)?", text)
                 if match:
                     amount = round(float(match.group()), 2)
-
-                    if amount <= 0:
-                        return pd.NA
 
                     # USD
                     if "$" in text:

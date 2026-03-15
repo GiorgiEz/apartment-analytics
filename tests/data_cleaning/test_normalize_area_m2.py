@@ -1,5 +1,5 @@
 import pandas as pd
-from data_cleaning import DataCleaning
+from data_cleaning.DataCleaning import DataCleaning
 
 
 def test_normalize_area_m2():

@@ -7,6 +7,7 @@ from pathlib import Path
 
 class BaseModelTraining(ABC):
     def __init__(self, train_df, test_df):
+        self.name = "BaseModel"
         self.train_df = train_df.copy()
         self.test_df = test_df.copy()
 
@@ -31,9 +32,6 @@ class BaseModelTraining(ABC):
 
     def _prepare_data(self):
         """Prepare X/y datasets and apply log transformation to target"""
-        self.train_df.dropna(subset=[self.target], inplace=True)
-        self.test_df.dropna(subset=[self.target], inplace=True)
-
         self.X_train = self.train_df.drop(columns=[self.target])
         self.y_train = np.log1p(self.train_df[self.target])
 
@@ -42,7 +40,7 @@ class BaseModelTraining(ABC):
 
     @abstractmethod
     def build_model(self):
-        """Child classes must implement this"""
+        """Child classes must implement this method"""
         pass
 
     def train(self):
@@ -61,11 +59,13 @@ class BaseModelTraining(ABC):
         rmse = np.sqrt(mean_squared_error(y_test_orig, preds_orig))
         r2 = r2_score(y_test_orig, preds_orig)
 
-        print(f"Train samples: {len(self.X_train)}")
-        print(f"Test samples:  {len(self.X_test)}")
-        print(f"MAE:  {mae:.2f}")
-        print(f"RMSE: {rmse:.2f}")
-        print(f"R²:   {r2:.3f}")
+        return {
+            "MAE": round(mae, 2),
+            "RMSE": round(rmse, 2),
+            "R2": round(r2, 2),
+            "Train samples": len(self.X_train),
+            "Test samples": len(self.X_test)
+        }
 
     def save(self, path):
         """Save trained model pipeline"""
@@ -75,4 +75,4 @@ class BaseModelTraining(ABC):
     def run(self):
         """Full training pipeline: train → evaluate"""
         self.train()
-        self.evaluate()
+        return self.evaluate()
