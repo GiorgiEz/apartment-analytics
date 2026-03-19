@@ -13,6 +13,7 @@ PROCESSED_DATA_DIR = DATA_DIR / "processed"
 LIVO_APARTMENTS_RAW_PATH = RAW_DATA_DIR / "livo_apartments.csv"
 MYHOME_APARTMENTS_RAW_PATH = RAW_DATA_DIR / "myhome_apartments.csv"
 SSHOME_APARTMENTS_RAW_PATH = RAW_DATA_DIR / "sshome_apartments.csv"
+ALL_RAW_DATA_PATH = RAW_DATA_DIR / "all_data.csv"
 
 # Canonical cleaned CSV
 APARTMENTS_PROCESSED_PATH = PROCESSED_DATA_DIR / "apartments.csv"

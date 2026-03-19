@@ -57,6 +57,39 @@ class ApartmentsDataFrame:
 
         print(f"DataFrame loaded with {len(self.df)} records.")
 
+        # Save raw combined data
+        self.save_raw_data()
+
+    def save_raw_data(self):
+        """Append current DataFrame to raw storage and deduplicate by URL."""
+        path = paths.ALL_RAW_DATA_PATH
+
+        # Load existing data if file exists
+        if os.path.exists(path) and os.path.getsize(path) > 0:
+            try:
+                existing_df = pd.read_csv(path)
+            except Exception as e:
+                print(f"[WARN] Failed to read existing raw data: {e}. Starting fresh.")
+                existing_df = pd.DataFrame()
+        else:
+            existing_df = pd.DataFrame()
+
+        # Combine existing + new data
+        combined_df = pd.concat([existing_df, self.df], ignore_index=True)
+
+        # Deduplicate by URL (keep latest)
+        if "url" in combined_df.columns:
+            combined_df = combined_df.drop_duplicates(subset=["url"], keep="last")
+        else:
+            print("[WARN] 'url' column not found. Skipping deduplication.")
+
+        # Save back to CSV
+        try:
+            combined_df.to_csv(path, index=False)
+            print(f"[INFO] Raw data saved. Total records: {len(combined_df)}")
+        except Exception as e:
+            print(f"[ERROR] Failed to save raw data: {e}")
+
     def get_df(self):
         """Returns the DataFrame instance."""
         return self.df

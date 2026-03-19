@@ -4,7 +4,6 @@ from machine_learning.model_training.LinearRegressionTraining import LinearRegre
 from machine_learning.model_training.RandomForestTraining import RandomForestTraining
 from machine_learning.model_training.DecisionTreeTraining import DecisionTreeTraining
 from machine_learning.Preprocessing import Preprocessing
-from datetime import timedelta
 import pandas as pd
 
 
