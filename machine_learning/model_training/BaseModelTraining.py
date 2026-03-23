@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
+from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score, mean_absolute_percentage_error
 import numpy as np
 import joblib
 from pathlib import Path
@@ -18,12 +18,17 @@ class BaseModelTraining(ABC):
             "bedrooms",
             "floor",
             "upload_year",
-            "upload_month"
+            "upload_month",
+            "district_median_price_per_sqm",
+            "district_listing_count"
         ]
 
         self.categorical_features = [
             "city",
-            "district_name"
+            "floor_bucket",
+            "district_grouped",
+            "area_bucket",
+            "city_district"
         ]
 
         self.pipeline = None
@@ -55,14 +60,16 @@ class BaseModelTraining(ABC):
         y_test_orig = np.expm1(self.y_test)
         preds_orig = np.expm1(preds)
 
-        mae = mean_absolute_error(y_test_orig, preds_orig)
-        rmse = np.sqrt(mean_squared_error(y_test_orig, preds_orig))
-        r2 = r2_score(y_test_orig, preds_orig)
+        mae = f'{round(mean_absolute_error(y_test_orig, preds_orig), 2)} $'
+        mape = f'{round(mean_absolute_percentage_error(y_test_orig, preds_orig) * 100, 2)} %'
+        rmse = f'{round(np.sqrt(mean_squared_error(y_test_orig, preds_orig)), 2)} $'
+        r2 = round(r2_score(y_test_orig, preds_orig), 2)
 
         return {
-            "MAE": round(mae, 2),
-            "RMSE": round(rmse, 2),
-            "R2": round(r2, 2),
+            "MAE": mae,
+            "MAPE(%)": mape,
+            "RMSE": rmse,
+            "R2": r2,
             "Train samples": len(self.X_train),
             "Test samples": len(self.X_test)
         }
