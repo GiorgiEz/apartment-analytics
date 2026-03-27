@@ -83,7 +83,10 @@ class ApartmentsDataFrame:
 
         # Combine
         combined_df = pd.concat([existing_df, df_with_time], ignore_index=True)
-
+        combined_df["scraped_at"] = pd.to_datetime(
+            combined_df["scraped_at"],
+            errors="coerce"
+        )
         # Deduplicate by URL (keep latest scrape)
         if "url" in combined_df.columns:
             combined_df = combined_df.sort_values(by="scraped_at", ascending=True)

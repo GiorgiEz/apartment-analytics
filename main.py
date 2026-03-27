@@ -13,7 +13,7 @@ from concurrent.futures import ThreadPoolExecutor
 if __name__ == "__main__":
     """ Step 1: Scraping the data"""
     def run_myhome():
-        MyHomeScraper().scraper(deal_types=[1])
+        MyHomeScraper().scraper(deal_types=[1,2])
 
     def run_livo():
         LivoScraper().scraper(deal_types=[1,2])

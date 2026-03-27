@@ -15,11 +15,13 @@ INNER JOIN dw.dim_apartments da ON fa.apartment_surr_id = da.apartment_surr_id
 INNER JOIN dw.dim_dates dd on dd.date_surr_id = fa.date_surr_id
 where url = 'https://www.myhome.ge/pr/18379269/qiravdeba-1-otaxiani-bina-qutaisshi/';
 
-SELECT url, COUNT(*) as cnt FROM dw.fct_apartments fa
+SELECT fa.area_m2, fa.price, tt.transaction_type
+FROM dw.fct_apartments fa
 INNER JOIN dw.dim_apartments da ON fa.apartment_surr_id = da.apartment_surr_id
 INNER JOIN dw.dim_dates dd on dd.date_surr_id = fa.date_surr_id
-GROUP BY da.url having COUNT(*) > 1
-ORDER BY cnt DESC;
+inner join dw.dim_transaction_types tt on tt.transaction_type_surr_id = fa.transaction_type_surr_id
+where tt.transaction_type = "იყიდება"
+ORDER BY fa.price ASC;
 
 SELECT
     da.description, da.street_address, dd.district_name, ds.source_name
