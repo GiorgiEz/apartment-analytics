@@ -1,4 +1,3 @@
-import pandas as pd
 
 
 
@@ -10,13 +9,13 @@ class Preprocessing:
         self.rent_train = rent_train.copy()
         self.rent_test = rent_test.copy()
 
+    def get_dfs(self):
+        return self.sale_train, self.sale_test, self.rent_train, self.rent_test
+
     def _apply_to_all(self, func):
         """ Helper function that applies the given function to all dataframes """
         for df_attr in ["sale_train", "rent_train", "sale_test", "rent_test"]:
             setattr(self, df_attr, func(getattr(self, df_attr)))
-
-    def get_dfs(self):
-        return self.sale_train, self.sale_test, self.rent_train, self.rent_test
 
     def __remove_missing_rows(self):
         """ Removes rows with missing values for the following columns """
@@ -84,27 +83,6 @@ class Preprocessing:
         self.sale_train, self.sale_test = clean_prices(self.sale_train, self.sale_test)
         self.rent_train, self.rent_test = clean_prices(self.rent_train, self.rent_test)
 
-    def __extract_year_and_month(self):
-        """Extract year and month, normalize year using train minimum"""
-
-        def extract(df, min_year):
-            df["upload_date"] = pd.to_datetime(df["upload_date"], errors="coerce")
-
-            df["upload_year"] = df["upload_date"].dt.year - min_year
-            df["upload_month"] = df["upload_date"].dt.month
-
-        # compute rule from train
-        sale_min_year = pd.to_datetime(self.sale_train["upload_date"], errors='coerce').dt.year.min()
-        rent_min_year = pd.to_datetime(self.rent_train["upload_date"], errors='coerce').dt.year.min()
-
-        # apply to train
-        extract(self.sale_train, sale_min_year)
-        extract(self.rent_train, rent_min_year)
-
-        # apply same rule to test
-        extract(self.sale_test, sale_min_year)
-        extract(self.rent_test, rent_min_year)
-
     def run(self):
         """ Main method to run Preprocessing tasks before model training """
         self.__remove_missing_rows()
@@ -117,5 +95,3 @@ class Preprocessing:
 
         self.__remove_extreme_price_per_sqm()
         self.__remove_extreme_prices()
-
-        self.__extract_year_and_month()

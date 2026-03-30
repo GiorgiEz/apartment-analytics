@@ -20,7 +20,8 @@ class BaseModelTraining(ABC):
             "upload_year",
             "upload_month",
             "district_median_price_per_sqm",
-            "district_listing_count"
+            "district_listing_count",
+            "area_per_bedroom",
         ]
 
         self.categorical_features = [

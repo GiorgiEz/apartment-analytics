@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 
 
+
 class FeatureEngineering:
     def __init__(self, sale_train, rent_train, sale_test, rent_test):
         self.sale_train = sale_train.copy()
@@ -10,13 +11,13 @@ class FeatureEngineering:
         self.rent_train = rent_train.copy()
         self.rent_test = rent_test.copy()
 
+    def get_dfs(self):
+        return self.sale_train, self.sale_test, self.rent_train, self.rent_test
+
     def _apply_to_all(self, func):
         """ Helper function that applies the given function to all dataframes """
         for df_attr in ["sale_train", "rent_train", "sale_test", "rent_test"]:
             setattr(self, df_attr, func(getattr(self, df_attr)))
-
-    def get_dfs(self):
-        return self.sale_train, self.sale_test, self.rent_train, self.rent_test
 
     def __floor_buckets(self):
         """ Creates the following floor buckets: low, mid, high, very_high """
@@ -100,12 +101,12 @@ class FeatureEngineering:
 
             return df
 
-        # --- SALE ---
+        # SALE
         sale_mapping = compute_mapping(self.sale_train)
         self.sale_train = apply_mapping(self.sale_train, sale_mapping)
         self.sale_test = apply_mapping(self.sale_test, sale_mapping)
 
-        # --- RENT ---
+        # RENT
         rent_mapping = compute_mapping(self.rent_train)
         self.rent_train = apply_mapping(self.rent_train, rent_mapping)
         self.rent_test = apply_mapping(self.rent_test, rent_mapping)
@@ -120,15 +121,36 @@ class FeatureEngineering:
             df["district_listing_count"] = np.log1p(df["district_listing_count"])
             return df
 
-        # --- SALE ---
+        # SALE
         sale_counts = compute_counts(self.sale_train)
         self.sale_train = apply_counts(self.sale_train, sale_counts)
         self.sale_test = apply_counts(self.sale_test, sale_counts)
 
-        # --- RENT ---
+        # RENT
         rent_counts = compute_counts(self.rent_train)
         self.rent_train = apply_counts(self.rent_train, rent_counts)
         self.rent_test = apply_counts(self.rent_test, rent_counts)
+
+    def __extract_year_and_month(self):
+        """Extract year and month, normalize year using train minimum"""
+
+        def extract(df, min_year):
+            df["upload_date"] = pd.to_datetime(df["upload_date"], errors="coerce")
+
+            df["upload_year"] = df["upload_date"].dt.year - min_year
+            df["upload_month"] = df["upload_date"].dt.month
+
+        # compute rule from train
+        sale_min_year = pd.to_datetime(self.sale_train["upload_date"], errors='coerce').dt.year.min()
+        rent_min_year = pd.to_datetime(self.rent_train["upload_date"], errors='coerce').dt.year.min()
+
+        # apply to train
+        extract(self.sale_train, sale_min_year)
+        extract(self.rent_train, rent_min_year)
+
+        # apply same rule to test
+        extract(self.sale_test, sale_min_year)
+        extract(self.rent_test, rent_min_year)
 
     def __drop_unused_columns(self):
         DROP_ALWAYS = {
@@ -152,6 +174,7 @@ class FeatureEngineering:
         self.__city_district()
         self.__district_median_price_per_sqm()
         self.__district_listing_count()
+        self.__extract_year_and_month()
 
         self.__drop_unused_columns()
 
