@@ -6,8 +6,8 @@ from sklearn.ensemble import HistGradientBoostingRegressor
 
 
 class HistGradientBoostingTraining(BaseModelTraining):
-    def __init__(self, train_df, test_df):
-        super().__init__(train_df, test_df)
+    def __init__(self, train_df, validation_df, test_df):
+        super().__init__(train_df, validation_df, test_df)
         self.name = "HistGradientBoostingRegressor"
 
     def build_model(self):

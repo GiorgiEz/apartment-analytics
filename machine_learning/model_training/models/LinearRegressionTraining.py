@@ -7,8 +7,8 @@ from machine_learning.model_training.BaseModelTraining import BaseModelTraining
 
 
 class LinearRegressionTraining(BaseModelTraining):
-    def __init__(self, train_df, test_df):
-        super().__init__(train_df, test_df)
+    def __init__(self, train_df, validation_df, test_df):
+        super().__init__(train_df, validation_df, test_df)
         self.name = "LinearRegressor"
 
     def build_model(self):

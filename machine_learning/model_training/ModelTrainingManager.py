@@ -17,14 +17,17 @@ class ModelTrainingManager:
         self.sale_df = postgres_db.get_apartments_by_transaction('იყიდება')
         self.rent_df = postgres_db.get_apartments_by_transaction('ქირავდება თვიურად')
 
-        self.test_train_split_ratio = 0.85  # Train/test split ratio (85% train, 15% test)
-
     def __time_split(self, df):
-        """Split dataset into train and test sets based on upload_date"""
+        """Split dataset into train, validation and test sets based on upload_date (70-15-15)"""
         df = df.sort_values("upload_date").reset_index(drop=True)
-        split_index = int(len(df) * self.test_train_split_ratio)
 
-        return df.iloc[:split_index].copy(), df.iloc[split_index:].copy()
+        n = len(df)
+
+        train = df.iloc[:int(0.7 * n)].copy()
+        validation = df.iloc[int(0.7 * n):int(0.85 * n)].copy()
+        test = df.iloc[int(0.85 * n):].copy()
+
+        return train, validation, test
 
     def __deduplicate(self):
         self.sale_df = (
@@ -55,38 +58,43 @@ class ModelTrainingManager:
         """Main ML pipeline: split → preprocess → train → evaluate → save"""
         self.__deduplicate()  # Remove duplicates before split
 
-        # Split (85 - 15)
-        sale_train, sale_test = self.__time_split(self.sale_df)
-        rent_train, rent_test = self.__time_split(self.rent_df)
+        # Split (70 - 15 - 15)
+        sale_train, sale_validation, sale_test = self.__time_split(self.sale_df)
+        rent_train, rent_validation, rent_test = self.__time_split(self.rent_df)
 
         # Preprocessing
-        preprocessing = Preprocessing(sale_train=sale_train, rent_train=rent_train,
-                                      sale_test=sale_test, rent_test=rent_test)
-        preprocessing.run()
-        sale_train, sale_test, rent_train, rent_test = preprocessing.get_dfs()
+        sale_preprocessing = Preprocessing(train_df=sale_train, validation_df=sale_validation, test_df=sale_test)
+        sale_preprocessing.run()
+        sale_train, sale_validation, sale_test = sale_preprocessing.get_dataframes()
+
+        rent_preprocessing = Preprocessing(train_df=rent_train, validation_df=rent_validation, test_df=rent_test)
+        rent_preprocessing.run()
+        rent_train, rent_validation, rent_test = rent_preprocessing.get_dataframes()
 
         # Feature Engineering
-        feature_engineering = FeatureEngineering(sale_train=sale_train, rent_train=rent_train,
-                                                 sale_test=sale_test, rent_test=rent_test)
+        sale_feature_engineering = FeatureEngineering(train_df=sale_train, validation_df=sale_validation, test_df=sale_test)
+        sale_feature_engineering.run()
+        sale_train, sale_validation, sale_test = sale_feature_engineering.get_dataframes()
 
-        feature_engineering.run()
-        sale_train, sale_test, rent_train, rent_test = feature_engineering.get_dfs()
+        rent_feature_engineering = FeatureEngineering(train_df=rent_train, validation_df=rent_validation, test_df=rent_test)
+        rent_feature_engineering.run()
+        rent_train, rent_validation, rent_test = rent_feature_engineering.get_dataframes()
 
         # Train and save metrics for display
         results_sale, results_rent = {}, {}
 
         sale_array = [
-            HistGradientBoostingTraining(sale_train, sale_test),
-            RandomForestTraining(sale_train, sale_test),
-            DecisionTreeTraining(sale_train, sale_test),
-            LinearRegressionTraining(sale_train, sale_test)
+            HistGradientBoostingTraining(sale_train, sale_validation, sale_test),
+            RandomForestTraining(sale_train, sale_validation, sale_test, "sale"),
+            DecisionTreeTraining(sale_train, sale_validation, sale_test),
+            LinearRegressionTraining(sale_train, sale_validation, sale_test)
         ]
 
         rent_array = [
-            HistGradientBoostingTraining(rent_train, rent_test),
-            RandomForestTraining(rent_train, rent_test),
-            DecisionTreeTraining(rent_train, rent_test),
-            LinearRegressionTraining(rent_train, rent_test)
+            HistGradientBoostingTraining(rent_train, rent_validation, rent_test),
+            RandomForestTraining(rent_train, rent_validation, rent_test, "rent"),
+            DecisionTreeTraining(rent_train, rent_validation, rent_test),
+            LinearRegressionTraining(rent_train, rent_validation, rent_test)
         ]
 
         for sale_regressor in sale_array:
@@ -95,5 +103,5 @@ class ModelTrainingManager:
         for rent_regressor in rent_array:
             results_rent[rent_regressor.name] = rent_regressor.run()
 
-        # Displays MAE, RMSE and R2 metrics for all models_metadata
+        # Displays MAE, MAPE, RMSE and R2 metrics for all models_metadata
         self.__display_metrics(results_sale, results_rent)

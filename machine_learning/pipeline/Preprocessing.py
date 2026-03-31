@@ -2,96 +2,106 @@
 
 
 class Preprocessing:
-    def __init__(self, sale_train, rent_train, sale_test, rent_test):
-        self.sale_train = sale_train.copy()
-        self.sale_test = sale_test.copy()
+    def __init__(self, train_df, validation_df, test_df):
+        self.train_df = train_df
+        self.validation_df = validation_df
+        self.test_df = test_df
 
-        self.rent_train = rent_train.copy()
-        self.rent_test = rent_test.copy()
-
-    def get_dfs(self):
-        return self.sale_train, self.sale_test, self.rent_train, self.rent_test
+    def get_dataframes(self):
+        return self.train_df, self.validation_df, self.test_df
 
     def _apply_to_all(self, func):
         """ Helper function that applies the given function to all dataframes """
-        for df_attr in ["sale_train", "rent_train", "sale_test", "rent_test"]:
-            setattr(self, df_attr, func(getattr(self, df_attr)))
+        for df_attr in ["train_df", "validation_df", "test_df"]:
+            df = getattr(self, df_attr)
+            df = func(df.copy())
+            setattr(self, df_attr, df)
 
-    def __remove_missing_rows(self):
+    def _remove_missing_rows(self):
         """ Removes rows with missing values for the following columns """
         self._apply_to_all(lambda df: df.dropna(subset=["price", "area_m2", "district_name", "upload_date", "floor"]))
 
-    def __remove_extreme_areas(self):
+    def _remove_extreme_areas(self):
         """ Removes area_m2 values that are too high or low"""
         self._apply_to_all(lambda df: df[(df["area_m2"] >= 20) & (df["area_m2"] <= 500)])
 
-    def __remove_extreme_bedrooms(self):
+    def _remove_extreme_bedrooms(self):
         """ Removes bedrooms values that are too high or low"""
         self._apply_to_all(lambda df: df[(df["bedrooms"] > 0) & (df["bedrooms"] <= 10)])
 
-    def __remove_extreme_floors(self):
+    def _remove_extreme_floors(self):
         """ Removes floor values that are too high or low"""
         self._apply_to_all(lambda df: df[(df["floor"] > 0) & (df["floor"] <= 60)])
 
-    def __check_logical_relationships(self):
+    def _check_logical_relationships(self):
         # Removes row if there is impossible relationship between Area and bedrooms
         self._apply_to_all(lambda df: df[(df["bedrooms"] == 0) | (df["area_m2"] / df["bedrooms"] >= 15)])
 
-    def __remove_extreme_price_per_sqm(self):
-        sale_lower = self.sale_train["price_per_sqm"].quantile(0.02)
-        sale_upper = self.sale_train["price_per_sqm"].quantile(0.99)
-
-        rent_lower = self.rent_train["price_per_sqm"].quantile(0.02)
-        rent_upper = self.rent_train["price_per_sqm"].quantile(0.99)
+    def _remove_extreme_price_per_sqm(self):
+        train_lower = self.train_df["price_per_sqm"].quantile(0.02)
+        train_upper = self.train_df["price_per_sqm"].quantile(0.99)
 
         # Removes too low or too high price_per_sqm values
-        self.sale_train = self.sale_train[(self.sale_train["price_per_sqm"] > sale_lower) & (self.sale_train["price_per_sqm"] < sale_upper)]
-        self.sale_test = self.sale_test[(self.sale_test["price_per_sqm"] > sale_lower) & (self.sale_test["price_per_sqm"] < sale_upper)]
-        self.rent_train = self.rent_train[(self.rent_train["price_per_sqm"] > rent_lower) & (self.rent_train["price_per_sqm"] < rent_upper)]
-        self.rent_test = self.rent_test[(self.rent_test["price_per_sqm"] > rent_lower) & (self.rent_test["price_per_sqm"] < rent_upper)]
+        self._apply_to_all(
+            lambda df: df[
+                df["price_per_sqm"].notna() &
+                (df["price_per_sqm"] >= train_lower) &
+                (df["price_per_sqm"] <= train_upper)
+                ]
+        )
 
-    def __remove_extreme_prices(self):
-        """ Removes extreme price values for sale and monthly rent apartments """
+    def _remove_extreme_prices(self):
+        lower = self.train_df["price"].quantile(0.001)
+        upper = self.train_df["price"].quantile(0.999)
 
-        def clean_prices(train, test):
-            price_col = "price"
+        self._apply_to_all(
+            lambda df: df[
+                df["price"].notna() &
+                (df["price"] >= lower) &
+                (df["price"] <= upper)
+                ]
+        )
 
-            # compute bounds from train
-            grp = train.groupby(["city", "district_name"])[price_col]
+    def _remove_extreme_price_per_sqms(self):
+        """Remove extreme prices using train statistics (applied to all datasets)"""
+        price_col = "price_per_sqm"
+        grp = self.train_df.groupby(["city", "district_name"])[price_col] # compute bounds from train
 
-            bounds = grp.quantile([0.25, 0.75]).unstack()
-            bounds.columns = ["q1", "q3"]
+        bounds = grp.quantile([0.25, 0.75]).unstack()
+        bounds.columns = ["q1", "q3"]
 
-            bounds["iqr"] = bounds["q3"] - bounds["q1"]
-            bounds["lower"] = bounds["q1"] - 1.5 * bounds["iqr"]
-            bounds["upper"] = bounds["q3"] + 1.5 * bounds["iqr"]
+        bounds["iqr"] = bounds["q3"] - bounds["q1"]
+        bounds["lower"] = bounds["q1"] - 1.5 * bounds["iqr"]
+        bounds["upper"] = bounds["q3"] + 1.5 * bounds["iqr"]
 
-            bounds = bounds.reset_index()
+        bounds = bounds.reset_index()
 
-            # apply to train
-            train = train.merge(bounds, on=["city", "district_name"], how="left")
-            train = train[(train[price_col] >= train["lower"]) & (train[price_col] <= train["upper"])]
-            train = train.drop(columns=["q1", "q3", "iqr", "lower", "upper"])
+        def apply_filter(df):
+            df = df.merge(bounds, on=["city", "district_name"], how="left")
 
-            # apply to test
-            test = test.merge(bounds, on=["city", "district_name"], how="left")
-            test = test[(test[price_col] >= test["lower"]) & (test[price_col] <= test["upper"])]
-            test = test.drop(columns=["q1", "q3", "iqr", "lower", "upper"])
+            # fallback for unseen districts
+            df["lower"] = df["lower"].fillna(df[price_col])
+            df["upper"] = df["upper"].fillna(df[price_col])
 
-            return train, test
+            df = df[(df[price_col] >= df["lower"]) & (df[price_col] <= df["upper"])]
 
-        self.sale_train, self.sale_test = clean_prices(self.sale_train, self.sale_test)
-        self.rent_train, self.rent_test = clean_prices(self.rent_train, self.rent_test)
+            return df.drop(columns=["q1", "q3", "iqr", "lower", "upper"])
+
+        # apply to all
+        self.train_df = apply_filter(self.train_df)
+        self.validation_df = apply_filter(self.validation_df)
+        self.test_df = apply_filter(self.test_df)
 
     def run(self):
         """ Main method to run Preprocessing tasks before model training """
-        self.__remove_missing_rows()
+        self._remove_missing_rows()
 
-        self.__remove_extreme_areas()
-        self.__remove_extreme_bedrooms()
-        self.__remove_extreme_floors()
+        self._remove_extreme_areas()
+        self._remove_extreme_bedrooms()
+        self._remove_extreme_floors()
 
-        self.__check_logical_relationships()
+        self._check_logical_relationships()
 
-        self.__remove_extreme_price_per_sqm()
-        self.__remove_extreme_prices()
+        self._remove_extreme_price_per_sqm()
+        self._remove_extreme_price_per_sqms()
+        self._remove_extreme_prices()
