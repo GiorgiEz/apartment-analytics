@@ -1,52 +1,32 @@
 from machine_learning.model_training.BaseModelTraining import BaseModelTraining
-from sklearn.preprocessing import OneHotEncoder
-from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import r2_score
 
 
 class RandomForestTraining(BaseModelTraining):
-    def __init__(self, train_df, validation_df, test_df, transaction_type):
+    def __init__(self, train_df, validation_df, test_df):
         super().__init__(train_df, validation_df, test_df)
         self.name = "RandomForestRegressor"
-        self.best_params = None
-        self.transaction_type = transaction_type
 
-        self.best_params_sale = {
-            "n_estimators": 450,
-            "max_depth": 30,
-            "min_samples_leaf": 2,
+        self.best_params = {
+            "n_estimators": 50,
+            "max_depth": 15,
+            "min_samples_leaf": 3,
             "max_features": 0.5,
-            "min_samples_split": 7,
+            "min_samples_split": 5,
         }
-
-        self.best_params_rent = {
-            "n_estimators": 450,
-            "max_depth": 25,
-            "min_samples_leaf": 2,
-            "max_features": "sqrt",
-            "min_samples_split": 2,
-        }
-
-    def build_preprocessor(self):
-        return ColumnTransformer(
-            transformers=[
-                ("num", "passthrough", self.numeric_features),
-                ("cat", OneHotEncoder(handle_unknown="ignore", sparse_output=False), self.categorical_features),
-            ]
-        )
 
     def tune_hyperparameters(self):
         best_score = -1
         best_params = None
 
         param_grid = {
-            "n_estimators": [400, 450, 500],
-            "max_depth": [30, 25, 35],
-            "min_samples_leaf": [2, 3],
-            "max_features": ["sqrt", 0.7],
-            "min_samples_split": [2, 3, 8],
+            "n_estimators": [50, 300],
+            "max_depth": [10, 20, None],
+            "min_samples_leaf": [4, 10, 20],
+            "min_samples_split": [5, 10, 20],
+            "max_features": ["sqrt", 0.5]
         }
 
         for n in param_grid["n_estimators"]:
@@ -54,6 +34,10 @@ class RandomForestTraining(BaseModelTraining):
                 for leaf in param_grid["min_samples_leaf"]:
                     for feature in param_grid["max_features"]:
                         for split in param_grid["min_samples_split"]:
+
+                            # skip invalid combinations
+                            if split < 2 * leaf:
+                                continue
 
                             # build model with params
                             self.pipeline = Pipeline(
@@ -94,14 +78,14 @@ class RandomForestTraining(BaseModelTraining):
         self.best_params = best_params
 
     def build_model(self):
-        # if self.best_params is None:
-        #     self.tune_hyperparameters()
+        # Used for parameter tuning. Could take a couple of minutes depending on amount of combinations testing
+        # self.tune_hyperparameters()
 
         self.pipeline = Pipeline(
             steps=[
                 ("preprocess", self.build_preprocessor()),
                 ("model", RandomForestRegressor(
-                    **self.best_params_sale if self.transaction_type == "sale" else self.best_params_rent,
+                    **self.best_params,
                     random_state=42,
                     n_jobs=-1
                 )),

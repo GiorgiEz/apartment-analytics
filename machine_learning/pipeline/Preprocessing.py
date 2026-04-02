@@ -2,10 +2,11 @@
 
 
 class Preprocessing:
-    def __init__(self, train_df, validation_df, test_df):
+    def __init__(self, train_df, validation_df, test_df, transaction_type):
         self.train_df = train_df
         self.validation_df = validation_df
         self.test_df = test_df
+        self.transaction_type = transaction_type
 
     def get_dataframes(self):
         return self.train_df, self.validation_df, self.test_df
@@ -21,6 +22,11 @@ class Preprocessing:
         """ Removes rows with missing values for the following columns """
         self._apply_to_all(lambda df: df.dropna(subset=["price", "area_m2", "district_name", "upload_date", "floor"]))
 
+    def _recalculate_price_per_sqm(self):
+        self._apply_to_all(
+            lambda df: df.assign(price_per_sqm=round(df["price"] / df["area_m2"], 2))
+        )
+
     def _remove_extreme_areas(self):
         """ Removes area_m2 values that are too high or low"""
         self._apply_to_all(lambda df: df[(df["area_m2"] >= 20) & (df["area_m2"] <= 500)])
@@ -33,37 +39,17 @@ class Preprocessing:
         """ Removes floor values that are too high or low"""
         self._apply_to_all(lambda df: df[(df["floor"] > 0) & (df["floor"] <= 60)])
 
-    def _check_logical_relationships(self):
-        # Removes row if there is impossible relationship between Area and bedrooms
-        self._apply_to_all(lambda df: df[(df["bedrooms"] == 0) | (df["area_m2"] / df["bedrooms"] >= 15)])
-
     def _remove_extreme_price_per_sqm(self):
+        # 1. Global Quantile Filtering
         train_lower = self.train_df["price_per_sqm"].quantile(0.02)
         train_upper = self.train_df["price_per_sqm"].quantile(0.99)
 
         # Removes too low or too high price_per_sqm values
         self._apply_to_all(
-            lambda df: df[
-                df["price_per_sqm"].notna() &
-                (df["price_per_sqm"] >= train_lower) &
-                (df["price_per_sqm"] <= train_upper)
-                ]
+            lambda df: df[(df["price_per_sqm"] >= train_lower) & (df["price_per_sqm"] <= train_upper)]
         )
 
-    def _remove_extreme_prices(self):
-        lower = self.train_df["price"].quantile(0.001)
-        upper = self.train_df["price"].quantile(0.999)
-
-        self._apply_to_all(
-            lambda df: df[
-                df["price"].notna() &
-                (df["price"] >= lower) &
-                (df["price"] <= upper)
-                ]
-        )
-
-    def _remove_extreme_price_per_sqms(self):
-        """Remove extreme prices using train statistics (applied to all datasets)"""
+        # 2. Local IQR filter per city and district
         price_col = "price_per_sqm"
         grp = self.train_df.groupby(["city", "district_name"])[price_col] # compute bounds from train
 
@@ -87,10 +73,19 @@ class Preprocessing:
 
             return df.drop(columns=["q1", "q3", "iqr", "lower", "upper"])
 
-        # apply to all
         self.train_df = apply_filter(self.train_df)
         self.validation_df = apply_filter(self.validation_df)
         self.test_df = apply_filter(self.test_df)
+
+        # 3. Strict manual filtering
+        if self.transaction_type == "sale":
+            self._apply_to_all(
+                lambda df: df[(df["price_per_sqm"] >= 150) & (df["price_per_sqm"] <= 10000)]
+            )
+        elif self.transaction_type == "rent":
+            self._apply_to_all(
+                lambda df: df[(df["price_per_sqm"] >= 2) & (df["price_per_sqm"] <= 100)]
+            )
 
     def run(self):
         """ Main method to run Preprocessing tasks before model training """
@@ -100,8 +95,6 @@ class Preprocessing:
         self._remove_extreme_bedrooms()
         self._remove_extreme_floors()
 
-        self._check_logical_relationships()
+        self._recalculate_price_per_sqm()
 
         self._remove_extreme_price_per_sqm()
-        self._remove_extreme_price_per_sqms()
-        self._remove_extreme_prices()

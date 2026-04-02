@@ -144,6 +144,7 @@ class FeatureEngineering:
             "upload_date",
             "price_per_sqm",
             "district_name",
+            "transaction_type"
         }
 
         for df in [self.train_df, self.validation_df, self.test_df]:
@@ -160,5 +161,3 @@ class FeatureEngineering:
         self.__extract_year_and_month()
 
         self.__drop_unused_columns()
-
-

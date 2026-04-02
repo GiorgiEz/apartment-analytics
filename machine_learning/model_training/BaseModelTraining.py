@@ -1,9 +1,10 @@
 from abc import ABC, abstractmethod
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score, mean_absolute_percentage_error
+from sklearn.preprocessing import OneHotEncoder
+from sklearn.compose import ColumnTransformer
 import numpy as np
 import pandas as pd
-import joblib
-from pathlib import Path
+
 
 
 class BaseModelTraining(ABC):
@@ -37,6 +38,14 @@ class BaseModelTraining(ABC):
         self.pipeline = None
 
         self._prepare_data()
+
+    def build_preprocessor(self):
+        return ColumnTransformer(
+            transformers=[
+                ("num", "passthrough", self.numeric_features),
+                ("cat", OneHotEncoder(handle_unknown="ignore", sparse_output=False), self.categorical_features),
+            ]
+        )
 
     def _prepare_data(self):
         """Prepare X/y datasets and apply log transformation to target"""
@@ -84,11 +93,6 @@ class BaseModelTraining(ABC):
             "Train samples": len(self.X_train) + len(self.X_val),
             "Test samples": len(self.X_test)
         }
-
-    def save(self, path):
-        """Save trained model pipeline"""
-        Path(path).parent.mkdir(parents=True, exist_ok=True)
-        joblib.dump(self.pipeline, path)
 
     def run(self):
         """Full training pipeline: train → evaluate"""

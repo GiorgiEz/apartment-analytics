@@ -63,11 +63,13 @@ class ModelTrainingManager:
         rent_train, rent_validation, rent_test = self.__time_split(self.rent_df)
 
         # Preprocessing
-        sale_preprocessing = Preprocessing(train_df=sale_train, validation_df=sale_validation, test_df=sale_test)
+        sale_preprocessing = Preprocessing(train_df=sale_train, validation_df=sale_validation,
+                                           test_df=sale_test, transaction_type="sale")
         sale_preprocessing.run()
         sale_train, sale_validation, sale_test = sale_preprocessing.get_dataframes()
 
-        rent_preprocessing = Preprocessing(train_df=rent_train, validation_df=rent_validation, test_df=rent_test)
+        rent_preprocessing = Preprocessing(train_df=rent_train, validation_df=rent_validation,
+                                           test_df=rent_test, transaction_type="rent")
         rent_preprocessing.run()
         rent_train, rent_validation, rent_test = rent_preprocessing.get_dataframes()
 
@@ -85,14 +87,14 @@ class ModelTrainingManager:
 
         sale_array = [
             HistGradientBoostingTraining(sale_train, sale_validation, sale_test),
-            RandomForestTraining(sale_train, sale_validation, sale_test, "sale"),
+            RandomForestTraining(sale_train, sale_validation, sale_test),
             DecisionTreeTraining(sale_train, sale_validation, sale_test),
             LinearRegressionTraining(sale_train, sale_validation, sale_test)
         ]
 
         rent_array = [
             HistGradientBoostingTraining(rent_train, rent_validation, rent_test),
-            RandomForestTraining(rent_train, rent_validation, rent_test, "rent"),
+            RandomForestTraining(rent_train, rent_validation, rent_test),
             DecisionTreeTraining(rent_train, rent_validation, rent_test),
             LinearRegressionTraining(rent_train, rent_validation, rent_test)
         ]
@@ -105,3 +107,6 @@ class ModelTrainingManager:
 
         # Displays MAE, MAPE, RMSE and R2 metrics for all models_metadata
         self.__display_metrics(results_sale, results_rent)
+
+        pd.concat([sale_train, sale_validation, sale_test]).to_csv("data/sale_ml_apartments_processed.csv", index=False)
+        pd.concat([rent_train, rent_validation, rent_test]).to_csv("data/rent_ml_apartments_processed.csv", index=False)
