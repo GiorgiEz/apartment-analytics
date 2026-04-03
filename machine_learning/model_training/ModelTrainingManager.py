@@ -30,6 +30,8 @@ class ModelTrainingManager:
         return train, validation, test
 
     def __deduplicate(self):
+        self.__display_df_length({"Sale": self.sale_df, "Rent": self.rent_df})
+        print("DEDUPLICATION -->")
         self.sale_df = (
             self.sale_df.sort_values("upload_date")
             .drop_duplicates(
@@ -44,6 +46,11 @@ class ModelTrainingManager:
                 keep="last"
             )
         )
+        self.__display_df_length({"Sale": self.sale_df, "Rent": self.rent_df})
+
+    def __display_df_length(self, type_df_map):
+        for transaction_type, df in type_df_map.items():
+            print(f"{transaction_type} Dataframe Length: {len(df)}")
 
     def __display_metrics(self, results_sale, results_rent):
         """ Display the metrics of sale, rent trained models_metadata as table """
@@ -58,31 +65,26 @@ class ModelTrainingManager:
         """Main ML pipeline: split → preprocess → train → evaluate → save"""
         self.__deduplicate()  # Remove duplicates before split
 
-        # Split (70 - 15 - 15)
+        """ 1. Split (70 - 15 - 15) into train, validation and test sets """
         sale_train, sale_validation, sale_test = self.__time_split(self.sale_df)
         rent_train, rent_validation, rent_test = self.__time_split(self.rent_df)
 
-        # Preprocessing
+        """ 2. Preprocessing """
+        print("PREPROCESSING -->")
         sale_preprocessing = Preprocessing(train_df=sale_train, validation_df=sale_validation,
-                                           test_df=sale_test, transaction_type="sale")
+                                           test_df=sale_test, transaction_type="Sale")
         sale_preprocessing.run()
         sale_train, sale_validation, sale_test = sale_preprocessing.get_dataframes()
 
         rent_preprocessing = Preprocessing(train_df=rent_train, validation_df=rent_validation,
-                                           test_df=rent_test, transaction_type="rent")
+                                           test_df=rent_test, transaction_type="Rent")
         rent_preprocessing.run()
         rent_train, rent_validation, rent_test = rent_preprocessing.get_dataframes()
 
-        # Feature Engineering
-        sale_feature_engineering = FeatureEngineering(train_df=sale_train, validation_df=sale_validation, test_df=sale_test)
-        sale_feature_engineering.run()
-        sale_train, sale_validation, sale_test = sale_feature_engineering.get_dataframes()
+        self.__display_df_length({"Sale": pd.concat([sale_train, sale_validation, sale_test]),
+                                  "Rent": pd.concat([rent_train, rent_validation, rent_test])})
 
-        rent_feature_engineering = FeatureEngineering(train_df=rent_train, validation_df=rent_validation, test_df=rent_test)
-        rent_feature_engineering.run()
-        rent_train, rent_validation, rent_test = rent_feature_engineering.get_dataframes()
-
-        # Train and save metrics for display
+        """ 3. Train and save metrics for display """
         results_sale, results_rent = {}, {}
 
         sale_array = [
@@ -101,11 +103,13 @@ class ModelTrainingManager:
 
         for sale_regressor in sale_array:
             results_sale[sale_regressor.name] = sale_regressor.run()
+            sale_regressor.save(base_dir="trained_models", transaction_type="Sale")
 
         for rent_regressor in rent_array:
             results_rent[rent_regressor.name] = rent_regressor.run()
+            rent_regressor.save(base_dir="trained_models", transaction_type="Rent")
 
-        # Displays MAE, MAPE, RMSE and R2 metrics for all models_metadata
+        """ 4. Displays MAE, MAPE, RMSE and R2 metrics for all models_metadata """
         self.__display_metrics(results_sale, results_rent)
 
         pd.concat([sale_train, sale_validation, sale_test]).to_csv("data/sale_ml_apartments_processed.csv", index=False)

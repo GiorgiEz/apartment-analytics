@@ -29,7 +29,7 @@ class Preprocessing:
 
     def _remove_extreme_areas(self):
         """ Removes area_m2 values that are too high or low"""
-        self._apply_to_all(lambda df: df[(df["area_m2"] >= 20) & (df["area_m2"] <= 500)])
+        self._apply_to_all(lambda df: df[(df["area_m2"] >= 15) & (df["area_m2"] <= 500)])
 
     def _remove_extreme_bedrooms(self):
         """ Removes bedrooms values that are too high or low"""
@@ -78,11 +78,11 @@ class Preprocessing:
         self.test_df = apply_filter(self.test_df)
 
         # 3. Strict manual filtering
-        if self.transaction_type == "sale":
+        if self.transaction_type == "Sale":
             self._apply_to_all(
                 lambda df: df[(df["price_per_sqm"] >= 150) & (df["price_per_sqm"] <= 10000)]
             )
-        elif self.transaction_type == "rent":
+        elif self.transaction_type == "Rent":
             self._apply_to_all(
                 lambda df: df[(df["price_per_sqm"] >= 2) & (df["price_per_sqm"] <= 100)]
             )
@@ -96,5 +96,4 @@ class Preprocessing:
         self._remove_extreme_floors()
 
         self._recalculate_price_per_sqm()
-
         self._remove_extreme_price_per_sqm()

@@ -8,11 +8,10 @@ if __name__ == "__main__":
 
     city = "თბილისი"
     district = "ვაკე"
-    area_m2 = 60
-    bedrooms = 1
+    area_m2 = 80
+    bedrooms = 2
     floor = 3
-    year = 1
-    month = 2
+    upload_date = "2026-01-14 13:39:00"
 
     prices = predictor.predict_single(
         city=city,
@@ -20,8 +19,7 @@ if __name__ == "__main__":
         area_m2=area_m2,
         bedrooms=bedrooms,
         floor=floor,
-        year=year,
-        month=month
+        upload_date=upload_date
     )
 
     print(f"\nTotal sale price: {prices['sale_price']}")

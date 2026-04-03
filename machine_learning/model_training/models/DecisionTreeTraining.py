@@ -2,6 +2,7 @@ from machine_learning.model_training.BaseModelTraining import BaseModelTraining
 from sklearn.pipeline import Pipeline
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.metrics import r2_score
+from machine_learning.pipeline.FeatureEngineeringTransformer import FeatureEngineeringTransformer
 
 
 
@@ -39,6 +40,7 @@ class DecisionTreeTraining(BaseModelTraining):
 
                         self.pipeline = Pipeline(
                             steps=[
+                                ("feature_engineering", FeatureEngineeringTransformer()),
                                 ("preprocess", self.build_preprocessor()),
                                 ("model", DecisionTreeRegressor(
                                     max_depth=depth,
@@ -77,6 +79,7 @@ class DecisionTreeTraining(BaseModelTraining):
 
         self.pipeline = Pipeline(
             steps=[
+                ("feature_engineering", FeatureEngineeringTransformer()),
                 ("preprocess", self.build_preprocessor()),
                 ("model", DecisionTreeRegressor(
                     **self.best_params,

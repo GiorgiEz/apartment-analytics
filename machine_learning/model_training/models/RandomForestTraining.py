@@ -2,6 +2,7 @@ from machine_learning.model_training.BaseModelTraining import BaseModelTraining
 from sklearn.pipeline import Pipeline
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import r2_score
+from machine_learning.pipeline.FeatureEngineeringTransformer import FeatureEngineeringTransformer
 
 
 class RandomForestTraining(BaseModelTraining):
@@ -15,6 +16,8 @@ class RandomForestTraining(BaseModelTraining):
             "min_samples_leaf": 3,
             "max_features": 0.5,
             "min_samples_split": 5,
+            "random_state": 42,
+            "n_jobs": -1
         }
 
     def tune_hyperparameters(self):
@@ -42,6 +45,7 @@ class RandomForestTraining(BaseModelTraining):
                             # build model with params
                             self.pipeline = Pipeline(
                                 steps=[
+                                    ("feature_engineering", FeatureEngineeringTransformer()),
                                     ("preprocess", self.build_preprocessor()),
                                     ("model", RandomForestRegressor(
                                         n_estimators=n,
@@ -83,11 +87,8 @@ class RandomForestTraining(BaseModelTraining):
 
         self.pipeline = Pipeline(
             steps=[
+                ("feature_engineering", FeatureEngineeringTransformer()),
                 ("preprocess", self.build_preprocessor()),
-                ("model", RandomForestRegressor(
-                    **self.best_params,
-                    random_state=42,
-                    n_jobs=-1
-                )),
+                ("model", RandomForestRegressor(**self.best_params)),
             ]
         )

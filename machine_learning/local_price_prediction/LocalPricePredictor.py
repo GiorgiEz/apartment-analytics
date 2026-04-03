@@ -8,14 +8,14 @@ class LocalPricePredictor:
 
     def __init__(self):
         # Load trained model bundle
-        sale_model_data = joblib.load("../models_metadata/sale_prediction.joblib")
+        sale_model_data = joblib.load("../trained_models/RandomForestRegressor_Sale.joblib")
         self.sale_pipeline = sale_model_data
 
-        rent_model_data = joblib.load("../models_metadata/rent_prediction.joblib")
+        rent_model_data = joblib.load("../trained_models/RandomForestRegressor_Rent.joblib")
         self.rent_pipeline = rent_model_data
 
     def predict_single(self, *, city: str, district: str, area_m2: float,
-                       bedrooms: int, floor: int, year: int, month: int) -> dict[str, float]:
+                       bedrooms: int, floor: int, upload_date) -> dict[str, float]:
         """Predicts price_per_sqm or price for a single apartment"""
 
         # Build single-row feature frame (must match training schema)
@@ -25,8 +25,7 @@ class LocalPricePredictor:
             "area_m2": area_m2,
             "bedrooms": bedrooms,
             "floor": floor,
-            "upload_year": year,
-            "upload_month": month,
+            "upload_date": upload_date
         }])
 
         # Model predicts log-space target → invert transform

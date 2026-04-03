@@ -2,6 +2,7 @@ from machine_learning.model_training.BaseModelTraining import BaseModelTraining
 from sklearn.pipeline import Pipeline
 from sklearn.ensemble import HistGradientBoostingRegressor
 from sklearn.metrics import r2_score
+from machine_learning.pipeline.FeatureEngineeringTransformer import FeatureEngineeringTransformer
 
 
 
@@ -39,6 +40,7 @@ class HistGradientBoostingTraining(BaseModelTraining):
                             # build model with params
                             self.pipeline = Pipeline(
                                 steps=[
+                                    ("feature_engineering", FeatureEngineeringTransformer()),
                                     ("preprocess", self.build_preprocessor()),
                                     ("model", HistGradientBoostingRegressor(
                                         max_iter=itr,
@@ -79,6 +81,7 @@ class HistGradientBoostingTraining(BaseModelTraining):
 
         self.pipeline = Pipeline(
             steps=[
+                ("feature_engineering", FeatureEngineeringTransformer()),
                 ("preprocess", self.build_preprocessor()),
                 ("model", HistGradientBoostingRegressor(
                     **self.best_params,

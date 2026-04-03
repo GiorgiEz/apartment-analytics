@@ -4,6 +4,7 @@ from sklearn.preprocessing import OneHotEncoder
 from sklearn.compose import ColumnTransformer
 import numpy as np
 import pandas as pd
+import os, joblib
 
 
 
@@ -93,6 +94,23 @@ class BaseModelTraining(ABC):
             "Train samples": len(self.X_train) + len(self.X_val),
             "Test samples": len(self.X_test)
         }
+
+    def save(self, base_dir, transaction_type):
+        """Save trained RandomForest pipeline with transaction type in filename"""
+        if self.pipeline is None:
+            raise ValueError("Pipeline is not trained.")
+
+        if self.name != "RandomForestRegressor":
+            return
+
+        os.makedirs(base_dir, exist_ok=True)  # Create directory if not exists
+
+        filename = f"{self.name}_{transaction_type}.joblib"  # Build filename
+        filepath = os.path.join(base_dir, filename)
+
+        joblib.dump(self.pipeline, filepath)  # Save
+
+        print(f"Model saved to: {filepath}")
 
     def run(self):
         """Full training pipeline: train → evaluate"""
