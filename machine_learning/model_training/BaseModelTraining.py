@@ -84,7 +84,7 @@ class BaseModelTraining(ABC):
         mae = f'{round(mean_absolute_error(y_test_orig, preds_orig), 2)} $'
         mape = f'{round(mean_absolute_percentage_error(y_test_orig, preds_orig) * 100, 2)} %'
         rmse = f'{round(np.sqrt(mean_squared_error(y_test_orig, preds_orig)), 2)} $'
-        r2 = round(r2_score(y_test_orig, preds_orig), 2)
+        r2 = f'{round(r2_score(y_test_orig, preds_orig), 2)} %'
 
         return {
             "MAE": mae,

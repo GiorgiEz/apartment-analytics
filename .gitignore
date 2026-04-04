@@ -43,6 +43,7 @@ data_analysis/charts
 machine_learning/data/
 machine_learning/trained_models/
 machine_learning/local_price_prediction/
+machine_learning/inference_schema/
 
 # backend
 backend/models/

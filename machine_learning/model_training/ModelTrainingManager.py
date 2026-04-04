@@ -3,8 +3,8 @@ from machine_learning.model_training.models.HistGradientBoostingTraining import 
 from machine_learning.model_training.models.LinearRegressionTraining import LinearRegressionTraining
 from machine_learning.model_training.models.RandomForestTraining import RandomForestTraining
 from machine_learning.model_training.models.DecisionTreeTraining import DecisionTreeTraining
-from machine_learning.pipeline.FeatureEngineering import FeatureEngineering
 from machine_learning.pipeline.Preprocessing import Preprocessing
+from machine_learning.pipeline.InferenceLimits import InferenceLimits
 import pandas as pd
 
 
@@ -84,7 +84,11 @@ class ModelTrainingManager:
         self.__display_df_length({"Sale": pd.concat([sale_train, sale_validation, sale_test]),
                                   "Rent": pd.concat([rent_train, rent_validation, rent_test])})
 
-        """ 3. Train and save metrics for display """
+        """ 3. Save inference Limit schema """
+        InferenceLimits(sale_train, sale_validation, "Sale", "inference_schema").run()
+        InferenceLimits(rent_train, rent_validation, "Rent", "inference_schema").run()
+
+        """ 4. Train and save metrics for display """
         results_sale, results_rent = {}, {}
 
         sale_array = [
@@ -109,8 +113,5 @@ class ModelTrainingManager:
             results_rent[rent_regressor.name] = rent_regressor.run()
             rent_regressor.save(base_dir="trained_models", transaction_type="Rent")
 
-        """ 4. Displays MAE, MAPE, RMSE and R2 metrics for all models_metadata """
+        """ 5. Displays MAE, MAPE, RMSE and R2 metrics for all models_metadata """
         self.__display_metrics(results_sale, results_rent)
-
-        pd.concat([sale_train, sale_validation, sale_test]).to_csv("data/sale_ml_apartments_processed.csv", index=False)
-        pd.concat([rent_train, rent_validation, rent_test]).to_csv("data/rent_ml_apartments_processed.csv", index=False)

@@ -1,12 +1,10 @@
 select COUNT(*) from sa.apartments;
 
-select COUNT(*) from dw.dim_districts;
+select * from dw.dim_districts;
 
 select COUNT(*) from dw.dim_dates;
 
 select COUNT(*) from dw.dim_apartments;
-
-SELECT COUNT(*) FROM dw.fct_apartments;
 
 SELECT * FROM dw.fct_apartments limit 10;
 
@@ -20,7 +18,7 @@ FROM dw.fct_apartments fa
 INNER JOIN dw.dim_apartments da ON fa.apartment_surr_id = da.apartment_surr_id
 INNER JOIN dw.dim_dates dd on dd.date_surr_id = fa.date_surr_id
 inner join dw.dim_transaction_types tt on tt.transaction_type_surr_id = fa.transaction_type_surr_id
-where tt.transaction_type = "იყიდება"
+where tt.transaction_type = 'იყიდება'
 ORDER BY fa.price ASC;
 
 SELECT

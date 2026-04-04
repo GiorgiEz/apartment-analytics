@@ -1,4 +1,4 @@
-
+import pandas as pd
 
 
 class Preprocessing:
@@ -33,11 +33,26 @@ class Preprocessing:
 
     def _remove_extreme_bedrooms(self):
         """ Removes bedrooms values that are too high or low"""
-        self._apply_to_all(lambda df: df[(df["bedrooms"] > 0) & (df["bedrooms"] <= 10)])
+        self._apply_to_all(lambda df: df[(df["bedrooms"] >= 0) & (df["bedrooms"] <= 10)])
 
     def _remove_extreme_floors(self):
-        """ Removes floor values that are too high or low"""
-        self._apply_to_all(lambda df: df[(df["floor"] > 0) & (df["floor"] <= 60)])
+        """ Removes floor values that are too high or low by strict and quantile filtering"""
+        def filter_df(df):
+            df = df.copy()
+            result = []
+
+            for city in df["city"].unique():
+                city_df = df[df["city"] == city]
+
+                upper = city_df["floor"].quantile(0.99)
+                filtered = city_df[(city_df["floor"] <= upper)]
+
+                result.append(filtered)
+
+            return pd.concat(result)
+
+        self._apply_to_all(lambda df: df[(df["floor"] > 0) & (df["floor"] <= 60)])  # Hard filtering
+        self._apply_to_all(filter_df)  # Quantile filtering by city
 
     def _remove_extreme_price_per_sqm(self):
         # 1. Global Quantile Filtering
@@ -50,8 +65,7 @@ class Preprocessing:
         )
 
         # 2. Local IQR filter per city and district
-        price_col = "price_per_sqm"
-        grp = self.train_df.groupby(["city", "district_name"])[price_col] # compute bounds from train
+        grp = self.train_df.groupby(["city", "district_name"])["price_per_sqm"] # compute bounds from train
 
         bounds = grp.quantile([0.25, 0.75]).unstack()
         bounds.columns = ["q1", "q3"]
@@ -66,10 +80,10 @@ class Preprocessing:
             df = df.merge(bounds, on=["city", "district_name"], how="left")
 
             # fallback for unseen districts
-            df["lower"] = df["lower"].fillna(df[price_col])
-            df["upper"] = df["upper"].fillna(df[price_col])
+            df["lower"] = df["lower"].fillna(df["price_per_sqm"])
+            df["upper"] = df["upper"].fillna(df["price_per_sqm"])
 
-            df = df[(df[price_col] >= df["lower"]) & (df[price_col] <= df["upper"])]
+            df = df[(df["price_per_sqm"] >= df["lower"]) & (df["price_per_sqm"] <= df["upper"])]
 
             return df.drop(columns=["q1", "q3", "iqr", "lower", "upper"])
 
