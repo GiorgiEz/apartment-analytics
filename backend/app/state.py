@@ -1,50 +1,39 @@
 # state.py
 
-import joblib
+import joblib, json
 from pathlib import Path
 
-MODELS_DIR = Path(__file__).resolve().parent.parent / "models"
+# Defines directory paths
+TRAINED_MODELS_DIR = Path(__file__).resolve().parent.parent / "machine_learning/trained_models"
+INFERENCE_SCHEMA_DIR = Path(__file__).resolve().parent.parent / "inference_schema"
 
-""" 1. ML MODELS """
-SALE_MODEL = joblib.load(MODELS_DIR / "sale_price_per_sqm.joblib")
-RENT_MODEL = joblib.load(MODELS_DIR / "rent_price.joblib")
 
-""" 2. INFERENCE METADATA """
-META = joblib.load(MODELS_DIR / "inference_metadata.joblib")
+# Load models and inference data
+def load_model(name):
+    return joblib.load(TRAINED_MODELS_DIR / name)
 
-""" 3. CITY-DISTRICT MAPPING """
-DISTRICT_GROUP_MAP = META["district_group_map"]
+def load_schema(name):
+    with open(INFERENCE_SCHEMA_DIR / name, encoding="utf-8") as f:
+        return json.load(f)
 
-ALLOWED_CITIES = sorted({city for city, _ in DISTRICT_GROUP_MAP.keys()})
+try:
+    SALE_MODEL = load_model("RandomForestRegressor_Sale.joblib")
+    RENT_MODEL = load_model("RandomForestRegressor_Rent.joblib")
+except Exception as e:
+    raise RuntimeError(f"Failed to load model: {e}")
 
-districts_by_city = {}
-for city, district in DISTRICT_GROUP_MAP.keys():
-    if not isinstance(district, str):
-        continue
-    districts_by_city.setdefault(city, set()).add(district.strip())
+try:
+    SALE_SCHEMA = load_schema("Sale_inference_data.json")
+    RENT_SCHEMA = load_schema("Rent_inference_data.json")
+except Exception as e:
+    raise RuntimeError(f"Failed to load schema: {e}")
 
-DISTRICTS_BY_CITY = {city: sorted(districts) for city, districts in districts_by_city.items()}
+# Get default values from inference data
+def build_defaults(schema):
+    max_year = max(schema["upload_date"]["years"])
+    months = schema["upload_date"]["year_month_map"][str(max_year)]
 
-""" 4. DISTRICT-LEVEL STATISTICS """
-DISTRICT_MEDIAN = META["district_stats"]["median_price_per_sqm"]
-DISTRICT_COUNT = META["district_stats"]["listing_count"]
+    return {"bedrooms": 2, "floor": 3, "year": max_year, "month": max(months)}
 
-""" 5. PREPROCESSING CONFIGURATION """
-PREPROCESSING_CONFIG = META["preprocessing_config"]
-
-""" 6. AVAILABLE YEAR AND MONTHS """
-AVAILABLE_DATES = META["available_dates"]
-
-""" 7. BOUND VALIDATIONS (area_m2, bedrooms, floor) """
-VALIDATION_BOUNDS = META.get("validation_bounds")
-
-""" 8. DEFAULT VALUES """
-LATEST_YEAR = max(int(year) for year in AVAILABLE_DATES.keys())
-LATEST_MONTH = max(int(m) for m in AVAILABLE_DATES[LATEST_YEAR])
-
-DEFAULTS = {
-    "bedrooms": 2,
-    "floor": 3,
-    "year": LATEST_YEAR,
-    "month": LATEST_MONTH,
-}
+SALE_DEFAULTS = build_defaults(SALE_SCHEMA)
+RENT_DEFAULTS = build_defaults(RENT_SCHEMA)
