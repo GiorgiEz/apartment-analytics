@@ -36,3 +36,13 @@ POSTGRESQL_SCRIPTS_DIR = POSTGRESQL_DIR / "sql"
 
 #POSGRESQL script files
 DML_ETL_FROM_STAGING_04_PATH = POSTGRESQL_SCRIPTS_DIR / "04_DML_ETL_FROM_STAGING.sql"
+
+# ====================== Backend
+BACKEND_DIR = PROJECT_ROOT / "backend"
+
+# Backend ML paths
+BACKEND_ML_DIR = BACKEND_DIR / "machine_learning"
+BACKEND_ML_TRAINED_MODELS_DIR = BACKEND_ML_DIR / "trained_models"
+
+# Backend inference schema
+BACKEND_INFERENCE_SCHEMA_DIR = BACKEND_DIR / "inference_schema"
