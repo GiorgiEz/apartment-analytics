@@ -5,6 +5,7 @@ from machine_learning.model_training.models.RandomForestTraining import RandomFo
 from machine_learning.model_training.models.DecisionTreeTraining import DecisionTreeTraining
 from machine_learning.pipeline.Preprocessing import Preprocessing
 from machine_learning.pipeline.InferenceLimits import InferenceLimits
+from config import paths
 import pandas as pd
 
 
@@ -85,8 +86,8 @@ class ModelTrainingManager:
                                   "Rent": pd.concat([rent_train, rent_validation, rent_test])})
 
         """ 3. Save inference Limit schema """
-        InferenceLimits(sale_train, sale_validation, "Sale", "inference_schema").run()
-        InferenceLimits(rent_train, rent_validation, "Rent", "inference_schema").run()
+        InferenceLimits(sale_train, sale_validation, "Sale", paths.BACKEND_INFERENCE_SCHEMA_DIR).run()
+        InferenceLimits(rent_train, rent_validation, "Rent", paths.BACKEND_INFERENCE_SCHEMA_DIR).run()
 
         """ 4. Train and save metrics for display """
         results_sale, results_rent = {}, {}
@@ -107,11 +108,11 @@ class ModelTrainingManager:
 
         for sale_regressor in sale_array:
             results_sale[sale_regressor.name] = sale_regressor.run()
-            sale_regressor.save(base_dir="trained_models", transaction_type="Sale")
+            sale_regressor.save(base_dir=paths.BACKEND_ML_TRAINED_MODELS_DIR, transaction_type="Sale")
 
         for rent_regressor in rent_array:
             results_rent[rent_regressor.name] = rent_regressor.run()
-            rent_regressor.save(base_dir="trained_models", transaction_type="Rent")
+            rent_regressor.save(base_dir=paths.BACKEND_ML_TRAINED_MODELS_DIR, transaction_type="Rent")
 
         """ 5. Displays MAE, MAPE, RMSE and R2 metrics for all models_metadata """
         self.__display_metrics(results_sale, results_rent)

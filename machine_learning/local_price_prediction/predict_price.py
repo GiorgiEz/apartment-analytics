@@ -6,12 +6,12 @@ if __name__ == "__main__":
     "Test models_metadata"
     predictor = LocalPricePredictor()
 
-    city = "თბილისი"
-    district = "ვაკე"
-    area_m2 = 80
-    bedrooms = 2
+    city = "ბათუმი"
+    district = "ბაგრატიონის უბანი"
+    area_m2 = 90
+    bedrooms = 3
     floor = 3
-    upload_date = "2026-01-14 13:39:00"
+    upload_date = "2026-03-15 12:00:00"
 
     prices = predictor.predict_single(
         city=city,
