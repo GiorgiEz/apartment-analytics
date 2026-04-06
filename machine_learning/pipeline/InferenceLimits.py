@@ -93,6 +93,13 @@ class InferenceLimits:
             "year_month_map": year_month_map
         }
 
+    def build_defaults(self):
+        """ Build default schema with default values """
+        max_year = max(self.schema["upload_date"]["years"])
+        months = self.schema["upload_date"]["year_month_map"][max_year]
+
+        self.schema["defaults"] = {"bedrooms": 2, "floor": 3, "year": max_year, "month": max(months)}
+
     def save(self):
         """ Saves schema into base_dir directory creating name based on transaction type """
         os.makedirs(self.base_dir, exist_ok=True)  # Create directory if not exists
@@ -110,5 +117,6 @@ class InferenceLimits:
         self.get_bedrooms_limits()
         self.get_floor_limits()
         self.get_upload_date_limits()
+        self.build_defaults()
 
         self.save()

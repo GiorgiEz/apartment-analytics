@@ -4,7 +4,7 @@ from sklearn.pipeline import Pipeline
 from sklearn.linear_model import LinearRegression
 from sklearn.impute import SimpleImputer
 from machine_learning.model_training.BaseModelTraining import BaseModelTraining
-from machine_learning.pipeline.FeatureEngineeringTransformer import FeatureEngineeringTransformer
+from backend.machine_learning.pipeline.FeatureEngineeringTransformer import FeatureEngineeringTransformer
 
 
 class LinearRegressionTraining(BaseModelTraining):

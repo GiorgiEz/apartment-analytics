@@ -3,7 +3,6 @@ from sklearn.pipeline import Pipeline
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import r2_score
 from backend.machine_learning.pipeline.FeatureEngineeringTransformer import FeatureEngineeringTransformer
-# from machine_learning.pipeline.FeatureEngineeringTransformer import FeatureEngineeringTransformer
 
 
 class RandomForestTraining(BaseModelTraining):

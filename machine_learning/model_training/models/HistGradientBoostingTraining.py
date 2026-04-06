@@ -2,7 +2,7 @@ from machine_learning.model_training.BaseModelTraining import BaseModelTraining
 from sklearn.pipeline import Pipeline
 from sklearn.ensemble import HistGradientBoostingRegressor
 from sklearn.metrics import r2_score
-from machine_learning.pipeline.FeatureEngineeringTransformer import FeatureEngineeringTransformer
+from backend.machine_learning.pipeline.FeatureEngineeringTransformer import FeatureEngineeringTransformer
 
 
 
