@@ -5,8 +5,8 @@ import numpy as np
 
 
 class PricePerSqmByDistrictBoxplot(DataAnalysis):
-    def __init__(self, df, output_dir):
-        super().__init__(df, output_dir)
+    def __init__(self):
+        super().__init__()
         self.base_path = "location_insights/price_per_sqm_by_district_boxplots/"
 
     def generate(self):

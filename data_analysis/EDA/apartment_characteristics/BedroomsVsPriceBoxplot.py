@@ -5,8 +5,8 @@ import numpy as np
 
 
 class BedroomsVsPriceBoxplot(DataAnalysis):
-    def __init__(self, df, output_dir):
-        super().__init__(df, output_dir)
+    def __init__(self):
+        super().__init__()
         self.base_path = "apartment_characteristics/bedrooms_vs_price_boxplot/"
 
     def _generate_for_type(self, geo_transaction_type):

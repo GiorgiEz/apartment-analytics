@@ -4,8 +4,8 @@ import matplotlib.pyplot as plt
 
 
 class ListingsByDistrictBarChart(DataAnalysis):
-    def __init__(self, df, output_dir):
-        super().__init__(df, output_dir)
+    def __init__(self):
+        super().__init__()
         self.base_path = "location_insights/districts_bar_charts/districts_in_"
 
     def generate(self):

@@ -4,8 +4,8 @@ import matplotlib.pyplot as plt
 
 
 class CityDistributionPieChart(DataAnalysis):
-    def __init__(self, df, output_dir):
-        super().__init__(df, output_dir)
+    def __init__(self):
+        super().__init__()
         self.image_name = "market_overview/city_distribution_pie_chart.png"
 
     def generate(self):

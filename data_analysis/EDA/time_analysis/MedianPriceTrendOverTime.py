@@ -5,8 +5,8 @@ import pandas as pd
 
 
 class MedianPriceTrendOverTime(DataAnalysis):
-    def __init__(self, df, output_dir):
-        super().__init__(df, output_dir)
+    def __init__(self):
+        super().__init__()
         self.base_path = "time_analysis/price_trend/median_price_per_sqm_"
 
     def generate(self):

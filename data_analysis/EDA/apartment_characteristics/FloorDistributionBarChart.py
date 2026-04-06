@@ -5,8 +5,8 @@ import matplotlib.pyplot as plt
 
 
 class FloorDistributionBarChart(DataAnalysis):
-    def __init__(self, df, output_dir):
-        super().__init__(df, output_dir)
+    def __init__(self):
+        super().__init__()
         self.base_path = "apartment_characteristics/floor_bar_charts/floor_"
 
     def _bucket_floor(self, floor):
