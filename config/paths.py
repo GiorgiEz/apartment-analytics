@@ -46,3 +46,6 @@ BACKEND_ML_TRAINED_MODELS_DIR = BACKEND_ML_DIR / "trained_models"
 
 # Backend inference schema
 BACKEND_INFERENCE_SCHEMA_DIR = BACKEND_DIR / "inference_schema"
+
+# Backend charts
+BACKEND_CHARTS_DIR = BACKEND_DIR / "charts"

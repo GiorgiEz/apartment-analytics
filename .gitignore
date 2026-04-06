@@ -46,7 +46,7 @@ machine_learning/local_price_prediction/
 machine_learning/inference_schema/
 
 # backend
-backend/models/
+backend/charts
 
 # mac files
 *.DS_Store
