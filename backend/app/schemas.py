@@ -1,7 +1,7 @@
 # schemas.py
 from pydantic import BaseModel, model_validator, PrivateAttr
 from typing import Optional
-from backend.app.state import SALE_SCHEMA, RENT_SCHEMA, SALE_DEFAULTS, RENT_DEFAULTS
+from backend.app.state import SALE_SCHEMA, RENT_SCHEMA
 
 
 class PredictionRequest(BaseModel):
@@ -35,9 +35,9 @@ class PredictionRequest(BaseModel):
         t = data.get("transaction_type")
 
         if t == "sale":
-            defaults = SALE_DEFAULTS
+            defaults = SALE_SCHEMA["defaults"]
         elif t == "rent":
-            defaults = RENT_DEFAULTS
+            defaults = RENT_SCHEMA["defaults"]
         else:
             return data
 

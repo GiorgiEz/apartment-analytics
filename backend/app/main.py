@@ -1,10 +1,12 @@
 from fastapi import FastAPI, HTTPException
+from fastapi.staticfiles import StaticFiles
 import numpy as np
 import pandas as pd
 from datetime import datetime
 from fastapi.middleware.cors import CORSMiddleware
+from pathlib import Path
 from backend.app.schemas import PredictionRequest
-from backend.app.state import SALE_MODEL, RENT_MODEL, SALE_SCHEMA, RENT_SCHEMA, SALE_DEFAULTS, RENT_DEFAULTS
+from backend.app.state import SALE_MODEL, RENT_MODEL, SALE_SCHEMA, RENT_SCHEMA
 
 # Run locally from backend/app:
 # uvicorn backend.app.main:app --reload
@@ -13,23 +15,26 @@ app = FastAPI(title="Apartment Price Prediction API", version="1.0.0")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173/"],
+    allow_origins=["http://localhost:5173"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Make charts accessible
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+app.mount("/charts", StaticFiles(directory=BASE_DIR / "charts"), name="charts")
 
 @app.get("/inference-data/{transaction_type}")
 def get_inference_data(transaction_type: str):
     if transaction_type == "sale":
         return {
             "schema": SALE_SCHEMA,
-            "defaults": SALE_DEFAULTS
         }
     elif transaction_type == "rent":
         return {
             "schema": RENT_SCHEMA,
-            "defaults": RENT_DEFAULTS
         }
     else:
         raise HTTPException(status_code=400, detail="Invalid transaction type")

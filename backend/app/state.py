@@ -27,13 +27,3 @@ try:
     RENT_SCHEMA = load_schema("Rent_inference_data.json")
 except Exception as e:
     raise RuntimeError(f"Failed to load schema: {e}")
-
-# Get default values from inference data
-def build_defaults(schema):
-    max_year = max(schema["upload_date"]["years"])
-    months = schema["upload_date"]["year_month_map"][str(max_year)]
-
-    return {"bedrooms": 2, "floor": 3, "year": max_year, "month": max(months)}
-
-SALE_DEFAULTS = build_defaults(SALE_SCHEMA)
-RENT_DEFAULTS = build_defaults(RENT_SCHEMA)

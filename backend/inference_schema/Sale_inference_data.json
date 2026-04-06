@@ -116,6 +116,12 @@
       "ჭომა"
     ]
   },
+  "defaults": {
+    "bedrooms": 2,
+    "floor": 3,
+    "month": 3,
+    "year": 2026
+  },
   "floor": {
     "hard_max": 60,
     "hard_min": 0,
