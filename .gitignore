@@ -75,6 +75,8 @@ machine_learning/inference_schema/
 
 # backend
 backend/charts
+backend/inference_schema
+backend/machine_learning/trained_models
 
 # mac files
 *.DS_Store

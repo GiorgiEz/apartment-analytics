@@ -2,7 +2,7 @@
   "area_m2": {
     "hard_max": 500,
     "hard_min": 15,
-    "soft_max": 209,
+    "soft_max": 210,
     "soft_min": 26
   },
   "bedrooms": {
