@@ -13,9 +13,37 @@ __pycache__/
 .vscode/
 .idea/
 
-# npm packages
+# frontend - npm packages
 /frontend/node_modules/
 /frontend/package-lock.json
+/frontend/.env
+
+# build output
+frontend/dist/
+frontend/build/
+
+# environment variables
+frontend/.env.local
+frontend/.env.*.local
+
+# logs
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
+frontend/pnpm-debug.log*
+
+# IDE / editors
+frontend/.vscode/
+frontend/.idea/
+
+# TypeScript
+frontend/*.tsbuildinfo
+
+# lock files (optional decision)
+# package-lock.json  <-- usually DO NOT ignore this (see below)
+
+# misc
+frontend/coverage/
 
 # System files
 Thumbs.db

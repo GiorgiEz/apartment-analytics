@@ -3,7 +3,7 @@ from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 
-# ====================== Data (CSV lifecycle)
+""" ====================== Data (CSV lifecycle) """
 DATA_DIR = PROJECT_ROOT / "new_data"
 
 RAW_DATA_DIR = DATA_DIR / "raw"
@@ -18,7 +18,7 @@ ALL_RAW_DATA_PATH = RAW_DATA_DIR / "all_data.csv"
 # Canonical cleaned CSV
 APARTMENTS_PROCESSED_PATH = PROCESSED_DATA_DIR / "apartments.csv"
 
-# ====================== Data storage (serving layer)
+""" ====================== Data storage (serving layer) """
 DATASTORAGE_DIR = PROJECT_ROOT / "datastorage"
 
 CSV_STORAGE_DIR = DATASTORAGE_DIR / "csv"
@@ -37,7 +37,7 @@ POSTGRESQL_SCRIPTS_DIR = POSTGRESQL_DIR / "sql"
 #POSGRESQL script files
 DML_ETL_FROM_STAGING_04_PATH = POSTGRESQL_SCRIPTS_DIR / "04_DML_ETL_FROM_STAGING.sql"
 
-# ====================== Backend
+""" ====================== Backend """
 BACKEND_DIR = PROJECT_ROOT / "backend"
 
 # Backend ML paths
