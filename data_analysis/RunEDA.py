@@ -19,21 +19,21 @@ from data_analysis.EDA.time_analysis.MedianPriceTrendOverTime import MedianPrice
 
 class RunEDA:
     """ Main class to Initialize all visualization objects and generate charts """
-    def __init__(self, df, output_dir):
+    def __init__(self):
         self.vis_objects = [
-            CityDistributionPieChart(df, output_dir), TransactionTypeBarChart(df, output_dir),  # Market Overview
+            CityDistributionPieChart(), TransactionTypeBarChart(),  # Market Overview
 
-            PriceDistributionHistogram(df, output_dir), PricePerSqmBoxplot(df, output_dir),
-            MedianPricePerCityBarChart(df, output_dir),  # Price Analysis
+            PriceDistributionHistogram(), PricePerSqmBoxplot(),
+            MedianPricePerCityBarChart(),  # Price Analysis
 
-            AreaDistributionHistogram(df, output_dir), BedroomsVsPriceBoxplot(df, output_dir),
-            FloorDistributionBarChart(df, output_dir),  # Apartment Characteristics
+            AreaDistributionHistogram(), BedroomsVsPriceBoxplot(),
+            FloorDistributionBarChart(),  # Apartment Characteristics
 
-            ListingsByDistrictBarChart(df, output_dir),
-            PricePerSqmByDistrictBoxplot(df, output_dir),  # Location Insights
+            ListingsByDistrictBarChart(),
+            PricePerSqmByDistrictBoxplot(),  # Location Insights
 
-            ListingsOverTimeLineChart(df, output_dir),
-            MedianPriceTrendOverTime(df, output_dir),
+            ListingsOverTimeLineChart(),
+            MedianPriceTrendOverTime(),
         ]
 
     def main(self):

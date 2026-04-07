@@ -5,8 +5,8 @@ import numpy as np
 
 
 class PricePerSqmBoxplot(DataAnalysis):
-    def __init__(self, df, output_dir):
-        super().__init__(df, output_dir)
+    def __init__(self):
+        super().__init__()
         self.base_path = "price_analysis/price_per_sqm_boxplots/price_per_sqm_"
 
     def _generate_for_type(self, geo_transaction_type):

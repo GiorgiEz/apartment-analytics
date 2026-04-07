@@ -16,7 +16,7 @@ class MyHomeScraper(BaseScraper):
 
     def get_url(self, city_id, page, deal_type):
         """ URL for apartment listings (not including houses, hotels or other real estate types)"""
-        return f'https://www.myhome.ge/s/?CardView=1&real_estate_types=1&cities={city_id}&page={page}'
+        return f'https://www.myhome.ge/s/?CardView=1&real_estate_types=1&deal_types={deal_type}&cities={city_id}&page={page}'
 
     def get_listings(self, driver):
         return self.wait_for_links(driver, 'pr')

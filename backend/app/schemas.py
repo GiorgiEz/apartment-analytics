@@ -1,16 +1,11 @@
 # schemas.py
-from pydantic import BaseModel, model_validator, field_validator
+from pydantic import BaseModel, model_validator, PrivateAttr
 from typing import Optional
-from state import (
-    ALLOWED_CITIES,
-    DISTRICTS_BY_CITY,
-    AVAILABLE_DATES,
-    VALIDATION_BOUNDS,
-    DEFAULTS
-)
+from backend.app.state import SALE_SCHEMA, RENT_SCHEMA
 
 
 class PredictionRequest(BaseModel):
+    transaction_type: str
     city: str
     district: str
     area_m2: float
@@ -20,88 +15,72 @@ class PredictionRequest(BaseModel):
     year: Optional[int] = None
     month: Optional[int] = None
 
-    @model_validator(mode="after")
-    def validate_location(self):
-        if self.city not in ALLOWED_CITIES:
-            raise ValueError(f"City '{self.city}' is not supported by the model")
-
-        allowed_districts = DISTRICTS_BY_CITY.get(self.city)
-        if not allowed_districts or self.district not in allowed_districts:
-            raise ValueError(f"District '{self.district}' is not supported for city '{self.city}'")
-        return self
-
-    @field_validator("area_m2")
-    @classmethod
-    def validate_area_m2(cls, v):
-        bounds = VALIDATION_BOUNDS["area_m2"]
-        if not bounds["min"] <= v <= bounds["max"]:
-            raise ValueError(f"area_m2 must be between {bounds['min']} and {bounds['max']}")
-        return v
-
-    @field_validator("bedrooms")
-    @classmethod
-    def validate_bedrooms(cls, v):
-        if v is None:
-            return v
-
-        bounds = VALIDATION_BOUNDS["bedrooms"]
-        if not bounds["min"] <= v <= bounds["max"]:
-            raise ValueError(f"bedrooms must be between {bounds['min']} and {bounds['max']}")
-        return v
-
-    @field_validator("floor")
-    @classmethod
-    def validate_floor(cls, v):
-        if v is None:
-            return v
-
-        bounds = VALIDATION_BOUNDS["floor"]
-        if not bounds["min"] <= v <= bounds["max"]:
-            raise ValueError(f"floor must be between {bounds['min']} and {bounds['max']}")
-        return v
+    # internal (not user input)
+    _schema: dict = PrivateAttr()
 
     @model_validator(mode="after")
-    def validate_year_month(self):
-        # Both missing → allowed (backend may default)
-        if self.year is None and self.month is None:
-            return self
-
-        # Month without year → invalid
-        if self.year is None and self.month is not None:
-            raise ValueError("Month cannot be provided without year")
-
-        # Year provided, month omitted → OK
-        if self.year is not None and self.month is None:
-            if self.year not in AVAILABLE_DATES:
-                raise ValueError(f"Year '{self.year}' is not supported by the model")
-            return self
-
-        # Year not supported
-        allowed_months = AVAILABLE_DATES.get(self.year)
-        if not allowed_months:
-            raise ValueError(f"Year '{self.year}' is not supported by the model")
-
-        # Month not valid for that year
-        if self.month not in allowed_months:
-            raise ValueError(f"Month '{self.month}' is not available for year '{self.year}'")
+    def attach_schema(self):
+        if self.transaction_type == "sale":
+            self._schema = SALE_SCHEMA
+        elif self.transaction_type == "rent":
+            self._schema = RENT_SCHEMA
+        else:
+            raise ValueError("Invalid transaction_type")
 
         return self
 
+    @model_validator(mode="before")
+    @classmethod
+    def apply_defaults(cls, data):
+        t = data.get("transaction_type")
+
+        if t == "sale":
+            defaults = SALE_SCHEMA["defaults"]
+        elif t == "rent":
+            defaults = RENT_SCHEMA["defaults"]
+        else:
+            return data
+
+        for key, value in defaults.items():
+            if data.get(key) is None:
+                data[key] = value
+
+        return data
+
     @model_validator(mode="after")
-    def apply_defaults(self):
-        # Bedrooms
-        if self.bedrooms is None:
-            self.bedrooms = DEFAULTS["bedrooms"]
+    def validate_all(self):
+        schema = self._schema
 
-        # Floor
-        if self.floor is None:
-            self.floor = DEFAULTS["floor"]
+        # --- city
+        if self.city not in schema["cities"]:
+            raise ValueError(f"City '{self.city}' is not supported")
 
-        # Year / month (must stay coupled)
-        if self.year is None:
-            self.year = DEFAULTS["year"]
+        # --- district
+        if self.district not in schema["city_districts"].get(self.city, []):
+            raise ValueError("Invalid district for city")
 
-        if self.month is None:
-            self.month = max(AVAILABLE_DATES[self.year])
+        # --- area
+        limits = schema["area_m2"]
+        if not (limits["hard_min"] <= self.area_m2 <= limits["hard_max"]):
+            raise ValueError("Invalid area")
+
+        # --- bedrooms
+        b_limits = schema["bedrooms"]
+        if not (b_limits["hard_min"] <= self.bedrooms <= b_limits["hard_max"]):
+            raise ValueError("Invalid bedrooms")
+
+        # --- floor
+        f_limits = schema["floor"]
+        if not (f_limits["hard_min"] < self.floor <= f_limits["hard_max"]):
+            raise ValueError("Invalid floor")
+
+        # --- year/month
+        years = schema["upload_date"]["years"]
+        if self.year not in years:
+            raise ValueError("Invalid year")
+
+        valid_months = schema["upload_date"]["year_month_map"].get(str(self.year), [])
+        if self.month not in valid_months:
+            raise ValueError("Invalid month for year")
 
         return self

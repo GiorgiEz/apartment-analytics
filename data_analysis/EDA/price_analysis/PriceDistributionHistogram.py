@@ -5,8 +5,8 @@ import numpy as np
 
 
 class PriceDistributionHistogram(DataAnalysis):
-    def __init__(self, df, output_dir):
-        super().__init__(df, output_dir)
+    def __init__(self):
+        super().__init__()
         self.base_path = "price_analysis/price_histograms/price_"
 
     def _kde(self, data, grid_points=1000):

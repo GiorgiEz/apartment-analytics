@@ -1,79 +1,84 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
+from fastapi.staticfiles import StaticFiles
 import numpy as np
 import pandas as pd
-from schemas import PredictionRequest
+from datetime import datetime
 from fastapi.middleware.cors import CORSMiddleware
-from state import (
-    SALE_MODEL, RENT_MODEL, DISTRICT_GROUP_MAP, ALLOWED_CITIES, DISTRICTS_BY_CITY,
-    DISTRICT_MEDIAN, DISTRICT_COUNT, PREPROCESSING_CONFIG, AVAILABLE_DATES, VALIDATION_BOUNDS, DEFAULTS
-)
+from pathlib import Path
+from backend.app.schemas import PredictionRequest
+from backend.app.state import SALE_MODEL, RENT_MODEL, SALE_SCHEMA, RENT_SCHEMA
 
 # Run locally from backend/app:
-# uvicorn main:app --reload
+# uvicorn backend.app.main:app --reload
 
 app = FastAPI(title="Apartment Price Prediction API", version="1.0.0")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[...],
+    allow_origins=["http://localhost:5173"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
+# Make charts accessible
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+app.mount("/charts", StaticFiles(directory=BASE_DIR / "charts"), name="charts")
+
+@app.get("/inference-data/{transaction_type}")
+def get_inference_data(transaction_type: str):
+    if transaction_type == "sale":
+        return {
+            "schema": SALE_SCHEMA,
+        }
+    elif transaction_type == "rent":
+        return {
+            "schema": RENT_SCHEMA,
+        }
+    else:
+        raise HTTPException(status_code=400, detail="Invalid transaction type")
+
 @app.post("/api/predict")
 def predict(req: PredictionRequest):
-    """ Returns predicted price_per_sqm, total sale price, and monthly rent """
+    """Returns predicted total price"""
 
-    # Load trained pipelines
-    sale_pipeline = SALE_MODEL["pipeline"]
-    rent_pipeline = RENT_MODEL["pipeline"]
+    # --- select model
+    if req.transaction_type == "sale":
+        pipeline = SALE_MODEL
+    elif req.transaction_type == "rent":
+        pipeline = RENT_MODEL
+    else:
+        raise HTTPException(status_code=400, detail="Invalid transaction type")
 
-    # Map raw district to grouped district used in training and load District-level fallback features
-    district_grouped = DISTRICT_GROUP_MAP.get((req.city, req.district), "other")
-    median = DISTRICT_MEDIAN.get((req.city, district_grouped), np.nan)
-    count = DISTRICT_COUNT.get((req.city, district_grouped), np.nan)
+    # --- construct upload_date
+    upload_date = datetime(
+        year=req.year,
+        month=req.month,
+        day=15,
+        hour=12,
+        minute=0,
+        second=0
+    )
 
-    # Convert floor to categorical bucket
-    floor_bucket = pd.cut(
-        [req.floor],
-        bins=PREPROCESSING_CONFIG["floor_bins"],
-        labels=PREPROCESSING_CONFIG["floor_labels"]
-    )[0]
-
-    # Build single-row feature frame
+    # --- build input dataframe
     X = pd.DataFrame([{
         "city": req.city,
-        "district_grouped": district_grouped,
+        "district_name": req.district,
         "area_m2": req.area_m2,
         "bedrooms": req.bedrooms,
         "floor": req.floor,
-        "upload_year": req.year,
-        "upload_month": req.month,
-        "floor_bucket": floor_bucket,
-        "price_per_sqm_district_median": median,
-        "district_listing_count": count,
+        "upload_date": upload_date
     }])
 
-    # Predict in log-space and invert transform
-    sale_prediction = round(float(np.expm1(sale_pipeline.predict(X)[0])), 2)
-    rent_prediction = round(float(np.expm1(rent_pipeline.predict(X)[0])), 2)
+    try:
+        pred_log = pipeline.predict(X)[0]
+        prediction = round(float(np.expm1(pred_log)), 2)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Prediction failed: {e}")
 
     return {
-        "price_per_sqm": sale_prediction,
-        "total_price": sale_prediction * req.area_m2,
-        "monthly_rent": rent_prediction
-    }
-
-
-@app.get("/api/model/metadata")
-def get_model_metadata():
-    return {
-        "cities": ALLOWED_CITIES,
-        "districts_by_city": DISTRICTS_BY_CITY,
-        "validation_bounds": VALIDATION_BOUNDS,
-        "available_dates": AVAILABLE_DATES,
-        "defaults": DEFAULTS
+        "total_price": prediction
     }
 
 

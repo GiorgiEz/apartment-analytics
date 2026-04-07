@@ -57,6 +57,50 @@ class ApartmentsDataFrame:
 
         print(f"DataFrame loaded with {len(self.df)} records.")
 
+        # Save raw combined data
+        self.save_raw_data()
+
+    def save_raw_data(self):
+        """Append current DataFrame to raw storage, add scrape date, and deduplicate by URL."""
+        path = paths.ALL_RAW_DATA_PATH
+
+        # Add timestamp to NEW data only
+        current_time = pd.Timestamp.now()
+        df_with_time = self.df.copy()
+
+        if "scraped_at" not in df_with_time.columns:
+            df_with_time["scraped_at"] = current_time
+
+        # Load existing data
+        if os.path.exists(path) and os.path.getsize(path) > 0:
+            try:
+                existing_df = pd.read_csv(path)
+            except Exception as e:
+                print(f"[WARN] Failed to read existing raw data: {e}. Starting fresh.")
+                existing_df = pd.DataFrame()
+        else:
+            existing_df = pd.DataFrame()
+
+        # Combine
+        combined_df = pd.concat([existing_df, df_with_time], ignore_index=True)
+        combined_df["scraped_at"] = pd.to_datetime(
+            combined_df["scraped_at"],
+            errors="coerce"
+        )
+        # Deduplicate by URL (keep latest scrape)
+        if "url" in combined_df.columns:
+            combined_df = combined_df.sort_values(by="scraped_at", ascending=True)
+            combined_df = combined_df.drop_duplicates(subset=["url"], keep="last")
+        else:
+            print("[WARN] 'url' column not found. Skipping deduplication.")
+
+        # Save
+        try:
+            combined_df.to_csv(path, index=False)
+            print(f"[INFO] Raw data saved. Total records: {len(combined_df)}")
+        except Exception as e:
+            print(f"[ERROR] Failed to save raw data: {e}")
+
     def get_df(self):
         """Returns the DataFrame instance."""
         return self.df
