@@ -24,7 +24,7 @@ export default function Prediction() {
 
     const isValid = transactionType && city && district && area;
 
-    const { result, predict, predictionLoading } = usePrediction();
+    const { result, predict, predictionLoading } = usePrediction(transactionType);
     const { schema, schemaLoading } = useSchema(transactionType);
 
     // fetch schema
