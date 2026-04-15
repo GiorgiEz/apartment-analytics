@@ -1,4 +1,4 @@
-from data_analysis.DataAnalysis import DataAnalysis
+from data_analysis.EDA.DataAnalysis import DataAnalysis
 import matplotlib.pyplot as plt
 import pandas as pd
 

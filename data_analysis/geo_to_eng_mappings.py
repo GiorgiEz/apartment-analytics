@@ -5,8 +5,8 @@ CITY_MAP = {
 }
 
 TRANSACTION_TYPE_MAP = {
-    "იყიდება": "For Sale",
+    "იყიდება": "Sale",
     "ქირავდება დღიურად": "Daily Rent",
-    "ქირავდება თვიურად": "Monthly Rent",
+    "ქირავდება თვიურად": "Rent",
     "გირავდება": "Mortgage",
 }
