@@ -71,7 +71,7 @@ class PredictionRequest(BaseModel):
 
         # --- floor
         f_limits = schema["floor"]
-        if not (f_limits["hard_min"] < self.floor <= f_limits["hard_max"]):
+        if not (f_limits["hard_min"] <= self.floor <= f_limits["hard_max"]):
             raise ValueError("Invalid floor")
 
         # --- year/month

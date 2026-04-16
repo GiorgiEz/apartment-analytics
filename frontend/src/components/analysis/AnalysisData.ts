@@ -8,11 +8,19 @@ export const ANALYSIS_DATA: Record<AnalysisKey, {label: string; charts: ChartSec
         charts: [
             {
                 title: "City Distribution",
-                src: ["/charts/market_overview/city_distribution_pie_chart.png"],
+                src: ["/charts/market_overview/city_distribution.png"],
             },
             {
-                title: "Transaction Type",
-                src: ["/charts/market_overview/transaction_type_bar_chart.png"],
+                title: "Transaction Type Distribution",
+                src: ["/charts/market_overview/transaction_distribution.png"],
+            },
+            {
+                title: "Transaction Type Distribution By City",
+                src: [
+                    "/charts/market_overview/transaction_by_tbilisi.png",
+                    "/charts/market_overview/transaction_by_batumi.png",
+                    "/charts/market_overview/transaction_by_kutaisi.png"
+                ],
             },
         ],
     },
@@ -23,26 +31,30 @@ export const ANALYSIS_DATA: Record<AnalysisKey, {label: string; charts: ChartSec
             {
                 title: "Median Price Comparison",
                 src: [
-                    "/charts/price_analysis/median_bar_charts/median_price_for_sale.png",
-                    "/charts/price_analysis/median_bar_charts/median_price_monthly_rent.png",
+                    '/charts/price_analysis/median_bar_charts/sale.png',
+                    "/charts/price_analysis/median_bar_charts/rent.png",
                 ],
             },
             {
                 title: "Price Distribution Histograms",
                 src: [
-                    "/charts/price_analysis/price_histograms/price_for_sale_batumi.png",
-                    "/charts/price_analysis/price_histograms/price_for_sale_kutaisi.png",
-                    "/charts/price_analysis/price_histograms/price_for_sale_tbilisi.png",
-                    "/charts/price_analysis/price_histograms/price_monthly_rent_batumi.png",
-                    "/charts/price_analysis/price_histograms/price_monthly_rent_kutaisi.png",
-                    "/charts/price_analysis/price_histograms/price_monthly_rent_tbilisi.png",
+                    "/charts/price_analysis/price_histograms/batumi.png",
+                    "/charts/price_analysis/price_histograms/kutaisi.png",
+                    "/charts/price_analysis/price_histograms/tbilisi.png"
                 ],
             },
             {
                 title: "Price per sqm Distribution",
                 src: [
-                    "/charts/price_analysis/price_per_sqm_boxplots/price_per_sqm_for_sale.png",
-                    "/charts/price_analysis/price_per_sqm_boxplots/price_per_sqm_monthly_rent.png",
+                    "/charts/price_analysis/price_per_sqm_boxplots/sale.png",
+                    "/charts/price_analysis/price_per_sqm_boxplots/rent.png",
+                ]
+            },
+            {
+                title: "Area and Floor vs Price",
+                src: [
+                    "/charts/price_analysis/feature_vs_price_scatter/area_m2_vs_price.png",
+                    "/charts/price_analysis/feature_vs_price_scatter/floor_vs_price.png",
                 ]
             },
         ],
@@ -54,15 +66,15 @@ export const ANALYSIS_DATA: Record<AnalysisKey, {label: string; charts: ChartSec
             {
                 title: "Area Histograms",
                 src: [
-                    "/charts/apartment_characteristics/area_histograms/area_for_sale.png",
-                    "/charts/apartment_characteristics/area_histograms/area_monthly_rent.png",
+                    "/charts/apartment_characteristics/area_histograms/area_sale.png",
+                    "/charts/apartment_characteristics/area_histograms/area_rent.png",
                 ]
             },
             {
                 title: "Bedrooms vs Price Boxplot",
                 src: [
-                    "/charts/apartment_characteristics/bedrooms_vs_price_boxplot/for_sale.png",
-                    "/charts/apartment_characteristics/bedrooms_vs_price_boxplot/monthly_rent.png",
+                    "/charts/apartment_characteristics/bedrooms_vs_price_boxplot/sale.png",
+                    "/charts/apartment_characteristics/bedrooms_vs_price_boxplot/rent.png",
                 ]
             },
             {
@@ -82,9 +94,9 @@ export const ANALYSIS_DATA: Record<AnalysisKey, {label: string; charts: ChartSec
             {
                 title: "Districts Distribution by City",
                 src: [
-                    "/charts/location_insights/districts_bar_charts/districts_in_batumi.png",
-                    "/charts/location_insights/districts_bar_charts/districts_in_kutaisi.png",
-                    "/charts/location_insights/districts_bar_charts/districts_in_tbilisi.png",
+                    "/charts/location_insights/districts_bar_charts/batumi.png",
+                    "/charts/location_insights/districts_bar_charts/kutaisi.png",
+                    "/charts/location_insights/districts_bar_charts/tbilisi.png",
                 ]
             },
             {
@@ -102,17 +114,16 @@ export const ANALYSIS_DATA: Record<AnalysisKey, {label: string; charts: ChartSec
         label: "Time Analysis",
         charts: [
             {
-                title: "Median Price per sqm Trend",
-                src: [
-                    "/charts/time_analysis/price_trend/median_price_per_sqm_batumi.png",
-                    "/charts/time_analysis/price_trend/median_price_per_sqm_kutaisi.png",
-                    "/charts/time_analysis/price_trend/median_price_per_sqm_tbilisi.png",
-                ]
-            },
-            {
                 title: "Listings Over Time",
                 src: [
                     "/charts/time_analysis/listings_over_time.png",
+                ]
+            },
+            {
+                title: "Median Price per sqm Trend",
+                src: [
+                    "/charts/time_analysis/price_trend/rent_price_over_time.png",
+                    "/charts/time_analysis/price_trend/sale_price_per_sqm_over_time.png"
                 ]
             },
         ],
