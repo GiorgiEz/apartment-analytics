@@ -10,9 +10,9 @@ from config import paths
 class DataAnalysis(ABC):
     def __init__(self):
         self.output_dir = Path(paths.BACKEND_CHARTS_DIR)
-        # light blue, light orange, light green
         self.CITY_MAP = {"თბილისი": "Tbilisi", "ბათუმი": "Batumi", "ქუთაისი": "Kutaisi"}
         self.cities = ["ქუთაისი", "ბათუმი", "თბილისი"]
+        # light blue, light orange, light green
         self.city_colors = {
             "Tbilisi": "#AEC7E8", "Batumi": "#FFBB78", "Kutaisi": "#98DF8A",
             "თბილისი": "#AEC7E8", "ბათუმი": "#FFBB78", "ქუთაისი": "#98DF8A"
@@ -31,7 +31,7 @@ class DataAnalysis(ABC):
         }
 
     def style_axes(self, ax=None, fig=None, max_height=None, y_numeric=True):
-        """ Remove top and right lines from bar charts and enable grid """
+        """ Remove top and right lines from bar charts and enable grid and add number formatting """
         if ax:
             ax.spines["top"].set_visible(False)
             ax.spines["right"].set_visible(False)
@@ -51,9 +51,6 @@ class DataAnalysis(ABC):
     def bar_label_offset(self, max_height):
         """ Offset between the bar and the label """
         return max_height * 0.01
-
-    def get_city_names(self, names):
-        return [self.CITY_MAP.get(name, name) for name in names]
 
     def lighten_color(self, color, amount=0.3):
         """ Lightens the given color. amount: 0 → original, 1 → white """

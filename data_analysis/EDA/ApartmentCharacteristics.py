@@ -5,6 +5,7 @@ import numpy as np
 
 
 class ApartmentCharacteristics(DataAnalysis):
+    """Apartment Characteristics class used to generate area histograms, bedrooms box plots and floor bar charts."""
     def __init__(self, sale_df, rent_df, combined_df):
         super().__init__()
         self.inner_dir = self.output_dir / "apartment_characteristics"

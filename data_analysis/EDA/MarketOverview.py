@@ -4,6 +4,7 @@ from data_analysis.EDA.DataAnalysis import DataAnalysis
 
 
 class MarketOverview(DataAnalysis):
+    """ Market Overview class, used to generate city listing distributions and transaction type comparisons """
     def __init__(self, sale_df, rent_df, combined_df):
         super().__init__()
         self.inner_dir = self.output_dir / "market_overview"
@@ -12,7 +13,7 @@ class MarketOverview(DataAnalysis):
         self.rent_df = rent_df
         self.df = combined_df
 
-    def city_distribution_generate(self):
+    def __city_distribution_generate(self):
         """
         Generates a bar chart showing the distribution of apartment listings by city.
         Displays each city's percentage share and total listing count, providing
@@ -23,7 +24,9 @@ class MarketOverview(DataAnalysis):
         colors = [self.city_colors.get(city, "#CCCCCC") for city in city_counts.index]
 
         fig, ax = plt.subplots(figsize=self.figsize)
-        bars = ax.bar(self.get_city_names(city_counts.index), city_counts.values, color=colors)  # Bar chart
+
+        city_names = [self.CITY_MAP.get(city, city) for city in city_counts.index]
+        bars = ax.bar(city_names, city_counts.values, color=colors)  # Bar chart
 
         max_height = city_counts.values.max()
         offset = self.bar_label_offset(max_height)
@@ -46,7 +49,7 @@ class MarketOverview(DataAnalysis):
 
         self.save_fig(fig, self.inner_dir / "city_distribution.png")
 
-    def transaction_distribution_generate(self):
+    def __transaction_distribution_generate(self):
         """ Generate a pie chart showing the distribution of different transaction types """
         values = [len(self.sale_df), len(self.rent_df)]
         total = sum(values)
@@ -69,7 +72,7 @@ class MarketOverview(DataAnalysis):
 
         self.save_fig(fig, self.inner_dir / "transaction_distribution.png")
 
-    def transaction_by_city_generate(self):
+    def __transaction_by_city_generate(self):
         """ Generate a pie chart showing the distribution of different transaction types per each city """
         # Group counts per (city, transaction_type)
         sale_grouped = self.sale_df.groupby(["city"]).size()
@@ -99,6 +102,6 @@ class MarketOverview(DataAnalysis):
             self.save_fig(fig, self.inner_dir / f"transaction_by_{city_name.lower()}.png")  # Save per city
 
     def generate(self):
-        self.city_distribution_generate()
-        self.transaction_distribution_generate()
-        self.transaction_by_city_generate()
+        self.__city_distribution_generate()
+        self.__transaction_distribution_generate()
+        self.__transaction_by_city_generate()

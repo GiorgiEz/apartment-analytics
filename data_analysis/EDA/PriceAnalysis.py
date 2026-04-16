@@ -5,6 +5,7 @@ import numpy as np
 
 
 class PriceAnalysis(DataAnalysis):
+    """ Price Analysis class used to generate media bar charts, price histograms, scatter and box plot comparisons """
     def __init__(self, sale_df, rent_df, combined_df):
         super().__init__()
         self.inner_dir = self.output_dir / "price_analysis"
@@ -134,9 +135,7 @@ class PriceAnalysis(DataAnalysis):
             self.save_fig(fig, histogram_dir / f"{english_city.lower()}.png")
 
     def price_per_sqm_box_plots_generate(self, df, title):
-        """
-        Generates boxplot of price per sqm by city.
-        """
+        """ Generates boxplot of price per sqm by city. """
 
         boxplot_dir = self.inner_dir / "price_per_sqm_boxplots"
         boxplot_dir.mkdir(parents=True, exist_ok=True)

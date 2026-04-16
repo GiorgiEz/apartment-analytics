@@ -5,6 +5,7 @@ import pandas as pd
 
 
 class TimeAnalysis(DataAnalysis):
+    """ Time Analysis class used to generate listings count and median price and price per sqm line charts """
     def __init__(self, sale_df, rent_df, combined_df):
         super().__init__()
         self.inner_dir = self.output_dir / "time_analysis"
@@ -44,26 +45,16 @@ class TimeAnalysis(DataAnalysis):
 
         fig, ax = plt.subplots(figsize=self.figsize)
 
-        # --- SALE ---
+        # SALE
         if sale_counts is not None:
-            ax.plot(
-                sale_counts.index,
-                sale_counts.values,
-                marker="o",
-                linewidth=2,
-                label=f"Sale ({sale_counts.sum():,})",
-                color=self.transaction_colors["Sale"]
+            ax.plot(sale_counts.index, sale_counts.values, marker="o", linewidth=2,
+                label=f"Sale ({sale_counts.sum():,})", color=self.transaction_colors["Sale"]
             )
 
-        # --- RENT ---
+        # RENT
         if rent_counts is not None:
-            ax.plot(
-                rent_counts.index,
-                rent_counts.values,
-                marker="o",
-                linewidth=2,
-                label=f"Rent ({rent_counts.sum():,})",
-                color=self.transaction_colors["Rent"]
+            ax.plot(rent_counts.index, rent_counts.values, marker="o", linewidth=2,
+                label=f"Rent ({rent_counts.sum():,})", color=self.transaction_colors["Rent"]
             )
 
         # Titles
@@ -78,10 +69,7 @@ class TimeAnalysis(DataAnalysis):
         # Styling
         self.style_axes(ax)
 
-        # Legend
         ax.legend()
-
-        # Improve date readability
         fig.autofmt_xdate()
 
         self.save_fig(fig, self.inner_dir / "listings_over_time.png")
@@ -93,6 +81,7 @@ class TimeAnalysis(DataAnalysis):
 
         Parameters:
         - df: dataframe (sale_df or rent_df)
+        - title: string (Sale or Rent)
         - feature: "price" or "price_per_sqm"
         """
 

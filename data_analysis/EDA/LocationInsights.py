@@ -5,6 +5,7 @@ import numpy as np
 
 
 class LocationInsights(DataAnalysis):
+    """ Location Insights class used to generate district bar charts by listings and top district box plots """
     def __init__(self, sale_df, rent_df, combined_df):
         super().__init__()
         self.inner_dir = self.output_dir / "location_insights"
@@ -40,7 +41,7 @@ class LocationInsights(DataAnalysis):
 
             fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(16, 10), sharey=False)
 
-            # --- SALE ---
+            # SALE
             if not sale_counts.empty:
                 sale_labels = [f"{i + 1:>2}. {name}" for i, name in enumerate(sale_counts.index)]
 
@@ -52,7 +53,7 @@ class LocationInsights(DataAnalysis):
                 ax1.set_title(f"Sale\nListings: {sum(sale_counts)}", **self.styles["title"])
                 ax1.invert_yaxis()
 
-            # --- RENT ---
+            # RENT
             if not rent_counts.empty:
                 rent_labels = [f"{i + 1}. {name}" for i, name in enumerate(rent_counts.index)]
 
@@ -99,7 +100,7 @@ class LocationInsights(DataAnalysis):
 
             fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(16, 10), sharey=False)
 
-            # ---------- SALE ----------
+            # SALE
             if not sale_city_df.empty:
                 top_districts = (sale_city_df["district_name"].value_counts().nlargest(8).index)
 
@@ -138,7 +139,7 @@ class LocationInsights(DataAnalysis):
                     ax1.set_title("Sale - Price per m²", **self.styles["title"])
                     ax1.invert_yaxis()
 
-            # ---------- RENT ----------
+            # RENT
             if not rent_city_df.empty:
                 top_districts = (rent_city_df["district_name"].value_counts().nlargest(8).index)
 
@@ -177,7 +178,7 @@ class LocationInsights(DataAnalysis):
                     ax2.set_title("Rent - Price", **self.styles["title"])
                     ax2.invert_yaxis()
 
-            # ---------- GLOBAL STYLING ----------
+            # GLOBAL STYLING
             english_city = self.CITY_MAP.get(city, city)
 
             fig.suptitle(f"Most expensive Districts in - {english_city}", **self.styles["suptitle"])
@@ -194,5 +195,8 @@ class LocationInsights(DataAnalysis):
             self.save_fig(fig, boxplot_dir / f"{english_city.lower()}.png")
 
     def generate(self):
+        # District by listing count
         self.listings_by_district_bar_chart_generate()
+
+        # Top districts
         self.price_per_sqm_by_district_boxplot_generate()

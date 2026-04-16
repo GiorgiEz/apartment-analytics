@@ -33,6 +33,6 @@ class RunEDA:
             TimeAnalysis(sale_df, rent_df, combined_df)
         ]
 
-    def main(self):
+    def run(self):
         for obj in self.vis_objects:
             obj.generate()
