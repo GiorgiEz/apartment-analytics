@@ -33,7 +33,7 @@ class Preprocessing:
 
     def _remove_extreme_bedrooms(self):
         """ Removes bedrooms values that are too high or low"""
-        self._apply_to_all(lambda df: df[(df["bedrooms"] >= 0) & (df["bedrooms"] <= 10)])
+        self._apply_to_all(lambda df: df[(df["bedrooms"] > 0) & (df["bedrooms"] <= 10)])
 
     def _remove_extreme_floors(self):
         """ Removes floor values that are too high or low by strict and quantile filtering"""

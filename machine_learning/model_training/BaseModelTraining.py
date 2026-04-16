@@ -75,8 +75,8 @@ class BaseModelTraining(ABC):
         y_full = pd.concat([self.y_train, self.y_val])
 
         # ---- Cross-validation (UNFITTED pipeline) ----
-        cv_scores = cross_val_score(self.pipeline, X_full, y_full, cv=5, scoring="r2", n_jobs=-1)
-        print(f"Model: {self.name}. CV R2 mean: {cv_scores.mean():.4f}, CV R2 std: {cv_scores.std():.4f}")
+        # cv_scores = cross_val_score(self.pipeline, X_full, y_full, cv=5, scoring="r2", n_jobs=-1)
+        # print(f"Model: {self.name}. CV R2 mean: {cv_scores.mean():.4f}, CV R2 std: {cv_scores.std():.4f}")
 
         self.pipeline.fit(X_full, y_full)
 
