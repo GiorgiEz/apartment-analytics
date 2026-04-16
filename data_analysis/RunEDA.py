@@ -7,6 +7,7 @@ from data_analysis.EDA.MarketOverview import MarketOverview
 from data_analysis.EDA.PriceAnalysis import PriceAnalysis
 from data_analysis.EDA.ApartmentCharacteristics import ApartmentCharacteristics
 from data_analysis.EDA.LocationInsights import LocationInsights
+from data_analysis.EDA.TimeAnalysis import TimeAnalysis
 
 
 
@@ -28,8 +29,8 @@ class RunEDA:
             MarketOverview(sale_df, rent_df, combined_df),
             PriceAnalysis(sale_df, rent_df, combined_df),
             ApartmentCharacteristics(sale_df, rent_df, combined_df),
-            LocationInsights(sale_df, rent_df, combined_df)
-
+            LocationInsights(sale_df, rent_df, combined_df),
+            TimeAnalysis(sale_df, rent_df, combined_df)
         ]
 
     def main(self):

@@ -1,7 +1,6 @@
 from data_analysis.EDA.DataAnalysis import DataAnalysis
 import matplotlib.pyplot as plt
 import numpy as np
-from data_analysis.geo_to_eng_mappings import CITY_MAP
 
 
 
@@ -30,7 +29,7 @@ class PriceAnalysis(DataAnalysis):
         medians = {}
         for city in self.cities:
             city_prices = df[df["city"] == city]["price"].values
-            medians[CITY_MAP.get(city, city)] = {"median": np.median(city_prices), "count": len(city_prices)}
+            medians[self.CITY_MAP.get(city, city)] = {"median": np.median(city_prices), "count": len(city_prices)}
 
         # Sort cities by median
         sorted_items = sorted(medians.items(), key=lambda x: x[1]["median"])
@@ -60,7 +59,7 @@ class PriceAnalysis(DataAnalysis):
 
         self.style_axes(ax, fig, max_height)
 
-        self.save_fig(fig, median_dir / title)
+        self.save_fig(fig, median_dir / title.lower())
 
     def price_histograms_generate(self):
         """ Generates 1 histogram per city with two subplots: Sale and Rent distributions, each with KDE overlay. """
@@ -128,11 +127,11 @@ class PriceAnalysis(DataAnalysis):
             self.style_axes(ax1, fig, max_height=counts_sale.max())
             self.style_axes(ax2, fig, max_height=counts_rent.max())
 
-            english_city = CITY_MAP.get(city, city)
+            english_city = self.CITY_MAP.get(city, city)
 
             fig.suptitle(f"Price Distribution - {english_city}", **self.styles["suptitle"])
 
-            self.save_fig(fig, histogram_dir / f"{english_city}.png")
+            self.save_fig(fig, histogram_dir / f"{english_city.lower()}.png")
 
     def price_per_sqm_box_plots_generate(self, df, title):
         """
@@ -157,7 +156,7 @@ class PriceAnalysis(DataAnalysis):
             values = values[values <= upper]
 
             city_data.append(values)
-            city_labels.append(CITY_MAP.get(city, city))
+            city_labels.append(self.CITY_MAP.get(city, city))
             cities_used.append(city)
 
         if not city_data:

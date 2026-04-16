@@ -1,7 +1,6 @@
 from data_analysis.EDA.DataAnalysis import DataAnalysis
 import matplotlib.pyplot as plt
 import numpy as np
-from data_analysis.geo_to_eng_mappings import CITY_MAP
 
 
 
@@ -74,7 +73,7 @@ class LocationInsights(DataAnalysis):
             self.style_axes(ax1, fig, y_numeric=False)
             self.style_axes(ax2, fig, y_numeric=False)
 
-            english_city = CITY_MAP.get(city, city)
+            english_city = self.CITY_MAP.get(city, city)
 
             # Main title
             fig.suptitle(f"Top 10 Districts by Listings - {english_city}", **self.styles["suptitle"])
@@ -179,7 +178,7 @@ class LocationInsights(DataAnalysis):
                     ax2.invert_yaxis()
 
             # ---------- GLOBAL STYLING ----------
-            english_city = CITY_MAP.get(city, city)
+            english_city = self.CITY_MAP.get(city, city)
 
             fig.suptitle(f"Most expensive Districts in - {english_city}", **self.styles["suptitle"])
 

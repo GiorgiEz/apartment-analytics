@@ -1,7 +1,6 @@
 from data_analysis.EDA.DataAnalysis import DataAnalysis
 import matplotlib.pyplot as plt
 import numpy as np
-from data_analysis.geo_to_eng_mappings import CITY_MAP
 
 
 
@@ -137,7 +136,7 @@ class ApartmentCharacteristics(DataAnalysis):
             for bar, value in zip(bars, counts.values):
                 ax.text(bar.get_x() + bar.get_width() / 2, value + offset, f"{value:,}", **self.styles["bar_label"])
 
-            english_city = CITY_MAP.get(city, city)
+            english_city = self.CITY_MAP.get(city, city)
 
             # Title
             ax.set_title(f"Floor Distribution - {english_city}\n"f"Listings: {counts.sum():,}", **self.styles["title"])

@@ -5,13 +5,13 @@ import matplotlib.colors as mcolors
 import os
 from pathlib import Path
 from config import paths
-from data_analysis.geo_to_eng_mappings import CITY_MAP
 
 
 class DataAnalysis(ABC):
     def __init__(self):
         self.output_dir = Path(paths.BACKEND_CHARTS_DIR)
         # light blue, light orange, light green
+        self.CITY_MAP = {"თბილისი": "Tbilisi", "ბათუმი": "Batumi", "ქუთაისი": "Kutaisi"}
         self.cities = ["ქუთაისი", "ბათუმი", "თბილისი"]
         self.city_colors = {
             "Tbilisi": "#AEC7E8", "Batumi": "#FFBB78", "Kutaisi": "#98DF8A",
@@ -53,7 +53,7 @@ class DataAnalysis(ABC):
         return max_height * 0.01
 
     def get_city_names(self, names):
-        return [CITY_MAP.get(name, name) for name in names]
+        return [self.CITY_MAP.get(name, name) for name in names]
 
     def lighten_color(self, color, amount=0.3):
         """ Lightens the given color. amount: 0 → original, 1 → white """

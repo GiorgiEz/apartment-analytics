@@ -1,6 +1,5 @@
 import matplotlib.pyplot as plt
 from data_analysis.EDA.DataAnalysis import DataAnalysis
-from data_analysis.geo_to_eng_mappings import CITY_MAP
 
 
 
@@ -93,11 +92,11 @@ class MarketOverview(DataAnalysis):
                 textprops=self.styles["pie_textprops"],
             )
 
-            city_name = CITY_MAP.get(city, city)
+            city_name = self.CITY_MAP.get(city, city)
             ax.set_title(f"{city_name} — Transaction Distribution\nTotal: {total:,}", **self.styles["title"])
             ax.axis("equal")
 
-            self.save_fig(fig, self.inner_dir / f"transaction_by_{city_name}.png")  # Save per city
+            self.save_fig(fig, self.inner_dir / f"transaction_by_{city_name.lower()}.png")  # Save per city
 
     def generate(self):
         self.city_distribution_generate()
