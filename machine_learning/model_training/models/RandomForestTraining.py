@@ -13,9 +13,9 @@ class RandomForestTraining(BaseModelTraining):
         self.best_params = {
             "n_estimators": 50,
             "max_depth": 15,
-            "min_samples_leaf": 3,
+            "min_samples_leaf": 4,
             "max_features": 0.5,
-            "min_samples_split": 5,
+            "min_samples_split": 15,
             "random_state": 42,
             "n_jobs": -1
         }

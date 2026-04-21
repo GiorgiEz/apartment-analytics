@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useLoading } from "./useLoading";
 
-export function usePrediction() {
+export function usePrediction(transaction_type: string) {
     const predictionLoading = useLoading(500);
     const [result, setResult] = useState<string | null>(null);
 
@@ -19,7 +19,14 @@ export function usePrediction() {
             });
 
             const data = await res.json();
-            const price = Math.round(data.total_price / 1000) * 1000;
+            let price = data.total_price;
+
+            if (transaction_type == "sale"){
+                price = Math.round(data.total_price / 1000) * 1000;
+            }
+            else {
+                price = Math.round(data.total_price)
+            }
 
             setResult(`Total Apartment Price: $${price.toLocaleString()}`);
 

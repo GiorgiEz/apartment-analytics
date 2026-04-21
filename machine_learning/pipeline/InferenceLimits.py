@@ -36,7 +36,7 @@ class InferenceLimits:
     def get_bedrooms_limits(self):
         df = self.df.copy()
         self.schema["bedrooms"] = {
-            "hard_min": 0,
+            "hard_min": 1,
             "hard_max": int(df["bedrooms"].max()),
         }
 
@@ -59,7 +59,7 @@ class InferenceLimits:
 
         # --- Save into schema
         self.schema["floor"] = {
-            "hard_min": 0,
+            "hard_min": 1,
             "hard_max": 60,
             "soft_max_by_city": city_upper_bounds
         }

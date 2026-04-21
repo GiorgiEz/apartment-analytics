@@ -40,4 +40,4 @@ if __name__ == "__main__":
 
     """ Step 4: Data Analysis """
     run_eda = RunEDA()
-    run_eda.main()
+    run_eda.run()

@@ -12,7 +12,6 @@ export default function Sidebar() {
     const location = useLocation();
 
     const isOpen = !collapsed;  // Derived states
-    const showOverlay = isMobile && isOpen;  // Overlay
 
     const isActive = (path: string) => location.pathname === path;
 
@@ -35,14 +34,6 @@ export default function Sidebar() {
 
     return (
         <>
-            {/* Overlay */}
-            {showOverlay && (
-                <div
-                    className="fixed inset-0 bg-black bg-opacity-40 z-30"
-                    onClick={() => setCollapsed(true)}
-                />
-            )}
-
             {/* Sidebar */}
             <aside className={`
                     bg-blue-800 text-blue-100 font-bold shadow-xl p-4

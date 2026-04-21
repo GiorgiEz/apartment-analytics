@@ -14,9 +14,10 @@ class HistGradientBoostingTraining(BaseModelTraining):
         self.best_params = {
             "max_iter": 500,
             "learning_rate": 0.1,
-            "max_depth": 11,
+            "max_depth": 12,
             "min_samples_leaf": 10,
             "l2_regularization": 0.1,
+            "random_state": 42,
         }
 
     def tune_hyperparameters(self):
@@ -83,9 +84,6 @@ class HistGradientBoostingTraining(BaseModelTraining):
             steps=[
                 ("feature_engineering", FeatureEngineeringTransformer()),
                 ("preprocess", self.build_preprocessor()),
-                ("model", HistGradientBoostingRegressor(
-                    **self.best_params,
-                    random_state=42
-                )),
+                ("model", HistGradientBoostingRegressor(**self.best_params)),
             ]
         )

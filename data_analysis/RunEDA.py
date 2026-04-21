@@ -1,41 +1,38 @@
-from data_analysis.EDA.market_overview.CityDistributionPieChart import CityDistributionPieChart
-from data_analysis.EDA.market_overview.TransactionTypeBarChart import TransactionTypeBarChart
+import pandas as pd
 
-from data_analysis.EDA.price_analysis.PriceDistributionHistogram import PriceDistributionHistogram
-from data_analysis.EDA.price_analysis.PricePerSqmBoxplot import PricePerSqmBoxplot
-from data_analysis.EDA.price_analysis.MedianPricePerCityBarChart import MedianPricePerCityBarChart
+from datastorage.postgresql.PostgresDatabase import PostgresDatabase
+from data_analysis.Preprocessing import Preprocessing
 
-from data_analysis.EDA.apartment_characteristics.AreaDistributionHistogram import AreaDistributionHistogram
-from data_analysis.EDA.apartment_characteristics.BedroomsVsPriceBoxplot import BedroomsVsPriceBoxplot
-from data_analysis.EDA.apartment_characteristics.FloorDistributionBarChart import FloorDistributionBarChart
-
-from data_analysis.EDA.location_insights.ListingsByDistrictBarChart import ListingsByDistrictBarChart
-from data_analysis.EDA.location_insights.PricePerSqmByDistrictBoxplot import PricePerSqmByDistrictBoxplot
-
-from data_analysis.EDA.time_analysis.ListingsOverTimeLineChart import ListingsOverTimeLineChart
-from data_analysis.EDA.time_analysis.MedianPriceTrendOverTime import MedianPriceTrendOverTime
+from data_analysis.EDA.MarketOverview import MarketOverview
+from data_analysis.EDA.PriceAnalysis import PriceAnalysis
+from data_analysis.EDA.ApartmentCharacteristics import ApartmentCharacteristics
+from data_analysis.EDA.LocationInsights import LocationInsights
+from data_analysis.EDA.TimeAnalysis import TimeAnalysis
 
 
 
 class RunEDA:
     """ Main class to Initialize all visualization objects and generate charts """
     def __init__(self):
+        postgres_db = PostgresDatabase()
+
+        sale_df = postgres_db.get_apartments_by_transaction('იყიდება')
+        rent_df = postgres_db.get_apartments_by_transaction('ქირავდება თვიურად')
+
+        # preprocess once
+        sale_df = Preprocessing(sale_df).run()
+        rent_df = Preprocessing(rent_df).run()
+
+        combined_df = pd.concat([sale_df, rent_df])
+
         self.vis_objects = [
-            CityDistributionPieChart(), TransactionTypeBarChart(),  # Market Overview
-
-            PriceDistributionHistogram(), PricePerSqmBoxplot(),
-            MedianPricePerCityBarChart(),  # Price Analysis
-
-            AreaDistributionHistogram(), BedroomsVsPriceBoxplot(),
-            FloorDistributionBarChart(),  # Apartment Characteristics
-
-            ListingsByDistrictBarChart(),
-            PricePerSqmByDistrictBoxplot(),  # Location Insights
-
-            ListingsOverTimeLineChart(),
-            MedianPriceTrendOverTime(),
+            MarketOverview(sale_df, rent_df, combined_df),
+            PriceAnalysis(sale_df, rent_df, combined_df),
+            ApartmentCharacteristics(sale_df, rent_df, combined_df),
+            LocationInsights(sale_df, rent_df, combined_df),
+            TimeAnalysis(sale_df, rent_df, combined_df)
         ]
 
-    def main(self):
+    def run(self):
         for obj in self.vis_objects:
             obj.generate()
