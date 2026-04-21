@@ -24,6 +24,8 @@ export default function Prediction() {
 
     const isValid = transactionType && city && district && area;
 
+    const [bedroomOptions, setBedroomOptions] = useState<{value: number; label: string}[]>([]);
+
     const { result, predict, predictionLoading } = usePrediction(transactionType);
     const { schema, schemaLoading } = useSchema(transactionType);
 
@@ -32,7 +34,7 @@ export default function Prediction() {
         if (!schema) return;
         const defaults = schema.defaults;
 
-        setBedrooms(String(defaults.bedrooms));
+        // setBedrooms(String(defaults.bedrooms));
         setFloor(String(defaults.floor));
         setYear(String(defaults.year));
         setMonth(String(defaults.month));
@@ -99,21 +101,54 @@ export default function Prediction() {
             )
             : [];
 
-    const bedroomOptions =
-        schema
-            ? Array.from(
-                {
-                    length: schema.bedrooms.hard_max - schema.bedrooms.hard_min + 1,
-                },
-                (_, i) => {
-                    const val = schema.bedrooms.hard_min + i;
-                    return {
-                        value: val,
-                        label: `${val}`,
-                    };
-                }
-            )
-            : [];
+    // Bedrooms Options
+    useEffect(() => {
+        if (!schema || !area) {
+            setBedroomOptions([]);
+            return;
+        }
+
+        const { hard_min, hard_max } = schema.bedrooms;
+        const curr_area = Number(area);
+
+        let base = Math.floor(curr_area / 25);  // base estimate
+
+        // handle very small areas explicitly
+        if (base <= 0) {
+            setBedroomOptions([{value: hard_min, label: `${hard_min}`}]);
+            setBedrooms(String(hard_min));
+            return;
+        }
+
+        if (base > hard_max){
+            setBedroomOptions([{value: hard_max, label: `${hard_max}`}]);
+            setBedrooms(String(hard_max));
+            return;
+        }
+
+        let candidates = [base - 1, base, base + 1];  // generate candidates
+
+        // filter within bounds
+        candidates = candidates.filter(v => v >= hard_min && v <= hard_max);
+
+        // remove duplicates & sort
+        const uniqueSorted = [...new Set(candidates)].sort((a, b) => a - b);
+
+        // map to select options
+        const newBedroomOptions = uniqueSorted.map(val => ({
+            value: val,
+            label: `${val}`,
+        }));
+
+        setBedroomOptions(newBedroomOptions);
+        setBedrooms(prev => {
+            if (!prev || !uniqueSorted.includes(Number(prev))) {
+                return String(uniqueSorted[0]);
+            }
+            return prev;
+        });
+
+    }, [area, schema]);
 
     const floorOptions =
         schema
@@ -214,7 +249,7 @@ export default function Prediction() {
                 {/* OPTIONAL */}
                 <div className="bg-blue-50 p-6 rounded-2xl border border-blue-200 space-y-6">
                     <h3 className="text-lg font-semibold text-blue-800 border-b pb-2">
-                        Optional Information (Default values)
+                        Optional Information
                     </h3>
 
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
