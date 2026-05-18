@@ -16,7 +16,20 @@ class DecisionTreeTraining(BaseModelTraining):
             "min_samples_leaf": 5,
             "min_samples_split": 25,
             "max_leaf_nodes": 200,
+            "random_state": 42
         }
+
+    def build_model(self):
+        # Used for parameter tuning. Could take a couple of minutes depending on amount of combinations testing
+        # self.tune_hyperparameters()
+
+        self.pipeline = Pipeline(
+            steps=[
+                ("feature_engineering", FeatureEngineeringTransformer()),
+                ("preprocess", self.build_preprocessor()),
+                ("model", DecisionTreeRegressor(**self.best_params)),
+            ]
+        )
 
     def tune_hyperparameters(self):
         best_score = -1
@@ -72,18 +85,3 @@ class DecisionTreeTraining(BaseModelTraining):
         print("Best validation R2:", best_score)
 
         self.best_params = best_params
-
-    def build_model(self):
-        # Used for parameter tuning. Could take a couple of minutes depending on amount of combinations testing
-        # self.tune_hyperparameters()
-
-        self.pipeline = Pipeline(
-            steps=[
-                ("feature_engineering", FeatureEngineeringTransformer()),
-                ("preprocess", self.build_preprocessor()),
-                ("model", DecisionTreeRegressor(
-                    **self.best_params,
-                    random_state=42
-                )),
-            ]
-        )

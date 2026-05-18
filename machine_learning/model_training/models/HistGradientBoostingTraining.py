@@ -14,22 +14,34 @@ class HistGradientBoostingTraining(BaseModelTraining):
         self.best_params = {
             "max_iter": 500,
             "learning_rate": 0.1,
-            "max_depth": 12,
+            "max_depth": 10,
             "min_samples_leaf": 10,
-            "l2_regularization": 0.1,
+            "l2_regularization": 0.2,
             "random_state": 42,
         }
+
+    def build_model(self):
+        # Used for parameter tuning. Could take a couple of minutes depending on amount of combinations testing
+        # self.tune_hyperparameters()
+
+        self.pipeline = Pipeline(
+            steps=[
+                ("feature_engineering", FeatureEngineeringTransformer()),
+                ("preprocess", self.build_preprocessor()),
+                ("model", HistGradientBoostingRegressor(**self.best_params)),
+            ]
+        )
 
     def tune_hyperparameters(self):
         best_score = -1
         best_params = None
 
         param_grid = {
-            "max_iter": [300, 350],
-            "learning_rate": [0.15, 0.2],
-            "max_depth": [10, 15],
-            "min_samples_leaf": [10, 12],
-            "l2_regularization": [0.1, 0.2],
+            "max_iter": [200, 400, 600],
+            "learning_rate": [0.05, 0.1, 0.15],
+            "max_depth": [6, 10, 15],
+            "min_samples_leaf": [10, 20],
+            "l2_regularization": [0.0, 0.1, 0.2],
         }
 
         for itr in param_grid["max_iter"]:
@@ -75,15 +87,3 @@ class HistGradientBoostingTraining(BaseModelTraining):
         print("Best validation R2:", best_score)
 
         self.best_params = best_params
-
-    def build_model(self):
-        # Used for parameter tuning. Could take a couple of minutes depending on amount of combinations testing
-        # self.tune_hyperparameters()
-
-        self.pipeline = Pipeline(
-            steps=[
-                ("feature_engineering", FeatureEngineeringTransformer()),
-                ("preprocess", self.build_preprocessor()),
-                ("model", HistGradientBoostingRegressor(**self.best_params)),
-            ]
-        )
