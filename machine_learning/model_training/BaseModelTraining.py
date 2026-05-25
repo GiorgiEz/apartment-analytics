@@ -5,7 +5,6 @@ from sklearn.compose import ColumnTransformer
 import numpy as np
 import pandas as pd
 import os, joblib
-from sklearn.model_selection import cross_val_score
 
 
 
@@ -86,11 +85,11 @@ class BaseModelTraining(ABC):
         train_preds = self.pipeline.predict(self.X_train)
 
         return {
-            "MAE": f'{round(mean_absolute_error(y_test_orig, preds_orig), 2)} $',
-            "MAPE(%)": f'{round(mean_absolute_percentage_error(y_test_orig, preds_orig) * 100, 2)} %',
-            "RMSE": f'{round(np.sqrt(mean_squared_error(y_test_orig, preds_orig)), 2)} $',
-            "R2 Test": f'{int(round(r2_score(y_test_orig, preds_orig) * 100, 0))} %',
+            "MAE": f'{int(round(mean_absolute_error(y_test_orig, preds_orig), 0))} $',
+            "MAPE(%)": f'{round(mean_absolute_percentage_error(y_test_orig, preds_orig) * 100, 1)} %',
+            "RMSE": f'{int(round(np.sqrt(mean_squared_error(y_test_orig, preds_orig)), 0))} $',
             "R2 Train": f'{int(round(r2_score(np.expm1(self.y_train), np.expm1(train_preds)) * 100, 0))} %',
+            "R2 Test": f'{int(round(r2_score(y_test_orig, preds_orig) * 100, 0))} %',
             "Train samples": len(self.X_train) + len(self.X_val),
             "Test samples": len(self.X_test)
         }
