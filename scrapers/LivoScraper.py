@@ -21,6 +21,7 @@ class LivoScraper(BaseScraper):
         return (f'https://livo.ge/s?deal_types={deal_type}&currency_id=2&real_estate_types=1&cities={city_id}&page={page}&order_by=date&sequence=desc')
 
     def get_listings(self, driver):
+        """ Gets the listings by substring: 'udzravi-qoneba' """
         return self.wait_for_links(driver, 'udzravi-qoneba', selector='a')
 
     def parse_listing(self, apartment, city_name, page):

@@ -14,10 +14,11 @@ class SSHomeScraper(BaseScraper):
         self.raw_apartments_csv_path = paths.SSHOME_APARTMENTS_RAW_PATH
 
     def get_url(self, city_id, page, deal_type):
-        """ URL for apartment listings (not including houses, hotels or other real estate types)"""
+        """ URL for apartment listings (not including houses, hotels or other real estate types) """
         return f'https://home.ss.ge/ka/udzravi-qoneba/l/bina?cityIdList={city_id}&order=1&page={page}'
 
     def get_listings(self, driver):
+        """ Gets the listings by directly entering the necessary container """
         try:
             listing_container = self.safe_find_element(driver, By.CLASS_NAME, "listing-container")
             if not listing_container:

@@ -19,17 +19,21 @@ class BaseScraper(ABC):
 
     @abstractmethod
     def get_url(self, city_id, page, deal_type):
+        """ Returns the url for the specific website for the given city, page and deal type """
         raise NotImplementedError("Subclasses must implement get_url function")
 
     @abstractmethod
     def get_listings(self, driver):
+        """ Gets listings by specific substring """
         raise NotImplementedError("Subclasses must implement get_listings function")
 
     @abstractmethod
     def parse_listing(self, apartment, city_name, page):
+        """ Main logic to parse the listing. Implemented by each subclass specifically """
         raise NotImplementedError("Subclasses must implement parse_listing function")
 
     def scraper(self, deal_types):
+        """ Main scraping template method, used for every child class """
         driver = self.configure_driver()
         data = []
 
@@ -71,6 +75,7 @@ class BaseScraper(ABC):
         print(f"{self.main_url} - {city_name} - Page: {page_counter}: Skipping Listing: {error_msg}")
 
     def configure_driver(self):
+        """ Main method to configure Microsoft Edge driver """
         os.environ["SE_DRIVER_MIRROR_URL"] = "https://msedgedriver.microsoft.com"
         options = EdgeOptions()
 
@@ -120,6 +125,7 @@ class BaseScraper(ABC):
         return driver
 
     def safe_find_element(self, driver, by, value, timeout=1):
+        """ Finds element using try except block """
         try:
             return WebDriverWait(driver, timeout).until(EC.presence_of_element_located((by, value)))
         except TimeoutException:

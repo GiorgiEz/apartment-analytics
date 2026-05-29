@@ -19,6 +19,7 @@ class MyHomeScraper(BaseScraper):
         return f'https://www.myhome.ge/s/?CardView=1&real_estate_types=1&deal_types={deal_type}&cities={city_id}&page={page}'
 
     def get_listings(self, driver):
+        """ Gets the listings by substring: 'pr' """
         return self.wait_for_links(driver, 'pr')
 
     def parse_listing(self, apartment, city_name, page):
