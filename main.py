@@ -11,7 +11,9 @@ from concurrent.futures import ThreadPoolExecutor
 
 
 if __name__ == "__main__":
-    """ Step 1: Scraping the data"""
+    """ Main pipeline to scrape the data, perform data cleaning, save data in database and perform EDA """
+
+    # Step 1: Scraping the data
     def run_myhome():
         MyHomeScraper().scraper(deal_types=[1,2])
 
@@ -23,21 +25,21 @@ if __name__ == "__main__":
 
     with ThreadPoolExecutor(max_workers=3) as executor:
         for future in [executor.submit(run_myhome), executor.submit(run_sshome), executor.submit(run_livo)]:
-            future.result()  # Ensures any exceptions are raised
+            future.result()
 
-    """ Step 2: Data cleaning and transformation """
+    # Step 2: Data cleaning and transformation
     apartments_df = ApartmentsDataFrame().get_df()
     data_cleaning = DataCleaning(apartments_df)
     data_cleaning.normalize()
     data_cleaning.write_to_csv()
 
-    """ Step 3: Save data in the datastorage """
+    # Step 3: Save data in the datastorage
     postgresql_database = PostgresDatabase()
     postgresql_database.database_insertion()
 
     csv = CSV()
     csv.deduplicate_and_write()
 
-    """ Step 4: Data Analysis """
+    # Step 4: Data Analysis
     run_eda = RunEDA()
     run_eda.run()

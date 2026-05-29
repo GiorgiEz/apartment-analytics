@@ -9,10 +9,7 @@ class CSV:
         self.backups_dir = paths.APARTMENTS_CSV_BACKUPS_DIR
 
     def backup(self):
-        """
-        Create a timestamped backup of the current apartments CSV
-        before any modification.
-        """
+        """ Create a timestamped backup of the current apartments CSV before any modification. """
         if not self.csv_path.exists():
             return  # nothing to back up
 
@@ -24,12 +21,14 @@ class CSV:
         df = pd.read_csv(self.csv_path)
         df.to_csv(backup_path, index=False)
 
-    def cleanup_old_backups(self, keep_last=20):
+    def cleanup_old_backups(self, keep_last=40):
+        """ Remove old apartments CSV backups"""
         backups = sorted(self.backups_dir.glob("apartments_*.csv"))
         for old in backups[:-keep_last]:
             old.unlink()
 
-    def deduplicate_and_write(self, write_from_path=paths.APARTMENTS_PROCESSED_PATH) -> None:
+    def deduplicate_and_write(self, write_from_path=paths.APARTMENTS_PROCESSED_PATH):
+        """ Deduplicate and write apartments CSV """
         self.backup()
         self.cleanup_old_backups()
         # Load new cleaned data
