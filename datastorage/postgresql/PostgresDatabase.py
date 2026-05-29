@@ -29,6 +29,7 @@ class PostgresDatabase:
                 conn.execute(text(f.read()))
 
     def _fetch_one(self, query):
+        """ Execute a SQL query and return the result """
         with self.engine.connect() as conn:
             result = conn.execute(text(query))
             return result.scalar()
@@ -39,6 +40,7 @@ class PostgresDatabase:
         return pd.read_sql(query, self.engine, parse_dates=["upload_date"])
 
     def get_apartments_by_transaction(self, transaction_type):
+        """ Gets apartment data by transaction type """
         query = text("""
                      SELECT *
                      FROM dw.all_apartments_view
@@ -52,10 +54,8 @@ class PostgresDatabase:
             parse_dates=["upload_date"]
         )
 
-    def write_all_apartments_data_to_csv(self, path):
-        self.get_all_apartments().to_csv(path, index=False)
-
     def database_insertion(self, write_from_path=paths.APARTMENTS_PROCESSED_PATH):
+        """ Main method to insert the data written in the csv file to the database """
         # 1. Load to staging
         df = pd.read_csv(write_from_path)
         self.__load_to_staging(df)

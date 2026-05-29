@@ -2,6 +2,7 @@ import requests, time
 
 
 def get_usd_exchange_rate(retries=3, timeout=3.0, backoff=1.0):
+    """ Uses public exchange rate api to convert GEL to USD """
     last_error = None
     EXCHANGE_URL = "https://api.exchangerate-api.com/v4/latest/GEL"
 

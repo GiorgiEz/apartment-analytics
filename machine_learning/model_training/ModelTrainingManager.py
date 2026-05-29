@@ -93,17 +93,17 @@ class ModelTrainingManager:
         results_sale, results_rent = {}, {}
 
         sale_array = [
-            HistGradientBoostingTraining(sale_train, sale_validation, sale_test),
-            RandomForestTraining(sale_train, sale_validation, sale_test),
+            LinearRegressionTraining(sale_train, sale_validation, sale_test),
             DecisionTreeTraining(sale_train, sale_validation, sale_test),
-            LinearRegressionTraining(sale_train, sale_validation, sale_test)
+            RandomForestTraining(sale_train, sale_validation, sale_test),
+            HistGradientBoostingTraining(sale_train, sale_validation, sale_test),
         ]
 
         rent_array = [
-            HistGradientBoostingTraining(rent_train, rent_validation, rent_test),
-            RandomForestTraining(rent_train, rent_validation, rent_test),
+            LinearRegressionTraining(rent_train, rent_validation, rent_test),
             DecisionTreeTraining(rent_train, rent_validation, rent_test),
-            LinearRegressionTraining(rent_train, rent_validation, rent_test)
+            RandomForestTraining(rent_train, rent_validation, rent_test),
+            HistGradientBoostingTraining(rent_train, rent_validation, rent_test),
         ]
 
         for sale_regressor in sale_array:
