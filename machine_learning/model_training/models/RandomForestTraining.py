@@ -21,7 +21,7 @@ class RandomForestTraining(BaseModelTraining):
         }
 
     def build_model(self):
-        # Used for parameter tuning. Could take a couple of minutes depending on amount of combinations testing
+        """ Method to build a random forest regressor pipeline """
         # self.tune_hyperparameters()
 
         self.pipeline = Pipeline(
@@ -33,6 +33,7 @@ class RandomForestTraining(BaseModelTraining):
         )
 
     def tune_hyperparameters(self):
+        """ Method for parameter tuning. Could take a couple of minutes depending on amount of combinations testing """
         best_score = -1
         best_params = None
 

@@ -108,11 +108,11 @@ class ModelTrainingManager:
 
         for sale_regressor in sale_array:
             results_sale[sale_regressor.name] = sale_regressor.run()
-            sale_regressor.save(base_dir=paths.BACKEND_ML_TRAINED_MODELS_DIR, transaction_type="Sale")
+            # sale_regressor.save(base_dir=paths.BACKEND_ML_TRAINED_MODELS_DIR, transaction_type="Sale")
 
         for rent_regressor in rent_array:
             results_rent[rent_regressor.name] = rent_regressor.run()
-            rent_regressor.save(base_dir=paths.BACKEND_ML_TRAINED_MODELS_DIR, transaction_type="Rent")
+            # rent_regressor.save(base_dir=paths.BACKEND_ML_TRAINED_MODELS_DIR, transaction_type="Rent")
 
         """ 5. Displays MAE, MAPE, RMSE and R2 metrics for all models_metadata """
         self.__display_metrics(results_sale, results_rent)

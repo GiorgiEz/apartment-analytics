@@ -13,6 +13,7 @@ class LinearRegressionTraining(BaseModelTraining):
         self.name = "LinearRegressor"
 
     def build_model(self):
+        """ Method to build a linear regression pipeline """
         preprocessor = ColumnTransformer(
             transformers=[
                 (

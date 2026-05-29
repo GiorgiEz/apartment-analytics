@@ -47,6 +47,7 @@ class BaseModelTraining(ABC):
         pass
 
     def build_preprocessor(self):
+        """ Builds a preprocessing pipeline for ML models """
         return ColumnTransformer(
             transformers=[
                 ("num", "passthrough", self.numeric_features),
