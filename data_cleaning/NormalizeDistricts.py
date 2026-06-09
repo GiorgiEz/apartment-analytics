@@ -79,7 +79,7 @@ class NormalizeDistricts:
             # Used as a fallback when full street normalization fails.
         """
 
-        if not street_norm:
+        if not street_norm or not isinstance(street_norm, str):
             return None
 
         # Remove street tokens even when concatenated
@@ -128,6 +128,7 @@ class NormalizeDistricts:
         - Temporary helper columns are removed before returning
         """
         df = df.copy()
+
 
         # Step 1: Extract district from street address
         district_names = set(city_map.values())
