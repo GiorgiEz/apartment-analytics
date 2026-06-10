@@ -12,7 +12,6 @@ export default function Sidebar() {
     const location = useLocation();
 
     const isOpen = !collapsed;  // Derived states
-
     const isActive = (path: string) => location.pathname === path;
 
     // Handle resize
@@ -32,32 +31,56 @@ export default function Sidebar() {
         return () => window.removeEventListener("resize", handleResize);
     }, []);
 
+    // Prevent scrolling when sidebar is open
+    useEffect(() => {
+        if (isMobile && isOpen) {
+            document.body.style.overflow = "hidden";
+        } else {
+            document.body.style.overflow = "auto";
+        }
+
+        return () => {
+            document.body.style.overflow = "auto";
+        };
+    }, [isMobile, isOpen]);
+
     return (
         <>
+            {/* Mobile overlay */}
+            {isMobile && isOpen && (
+                <div
+                    className="fixed inset-0 bg-black/40 backdrop-blur-sm z-30"
+                    onClick={() => setCollapsed(true)}
+                />
+            )}
+
             {/* Sidebar */}
             <aside className={`
                     bg-blue-800 text-blue-100 font-bold shadow-xl p-4
                     flex flex-col gap-4 h-full transition-all duration-300 z-40
-                    ${isOpen ? "w-64" : "w-14"}
+                    ${isOpen ? "w-64" : isMobile ? "w-10" : "w-14"}
                     ${isMobile && isOpen ? "fixed top-0 left-0 h-full" : ""}
                 `}>
                 {/* Toggle button */}
                 <button
                     onClick={() => setCollapsed((prev) => !prev)}
-                    className="fixed top-0 left-0 z-50 w-14 h-14 bg-blue-800 text-white
-                    hover:bg-blue-600 transition flex items-center justify-center text-2xl"
+                    className={`fixed top-0 left-0 z-50 ${isMobile ? "w-10 h-10" : "w-14 h-14"} bg-blue-800 
+                    text-white hover:bg-blue-600 transition flex items-center justify-center text-2xl`}
                 >
                     ☰
                 </button>
 
-                {/* Title */}
+                {/* Title and Buttons */}
                 {isOpen && (
                     <>
                         <h1 className="text-2xl mt-14 font-bold">Apartment Analytics In Georgia</h1>
 
                         <nav className="flex flex-col gap-4 mt-4">
                             <button
-                                onClick={() => navigate("/analysis")}
+                                onClick={() => {
+                                    navigate("/analysis");
+                                    if (isMobile && isOpen) setCollapsed(true)
+                                }}
                                 className={`px-4 py-3 rounded-lg text-left transition-all
                                   ${isActive("/analysis") ? "bg-blue-600" : "bg-blue-700"}
                                 `}
@@ -66,7 +89,10 @@ export default function Sidebar() {
                             </button>
 
                             <button
-                                onClick={() => navigate("/prediction")}
+                                onClick={() => {
+                                    navigate("/prediction");
+                                    if (isMobile && isOpen) setCollapsed(true)
+                                }}
                                 className={`px-4 py-3 rounded-lg text-left transition-all
                                   ${isActive("/prediction") ? "bg-blue-600" : "bg-blue-700"}
                                 `}

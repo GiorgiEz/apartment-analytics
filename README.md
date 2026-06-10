@@ -443,7 +443,7 @@ The main pipeline is located in the project root and executes the full data work
 - Exploratory Data Analysis (EDA)
 
 #### Run pipeline:
-```
+```bash
 python main.py
 ```
 
@@ -451,7 +451,7 @@ python main.py
 
 The ML pipeline is located in:
 
-```
+```bash
 /machine_learning/main.py
 ```
 
