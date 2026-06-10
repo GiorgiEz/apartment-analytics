@@ -32,8 +32,29 @@ export default function Sidebar() {
         return () => window.removeEventListener("resize", handleResize);
     }, []);
 
+    // Prevent scrolling when sidebar is open
+    useEffect(() => {
+        if (isMobile && isOpen) {
+            document.body.style.overflow = "hidden";
+        } else {
+            document.body.style.overflow = "auto";
+        }
+
+        return () => {
+            document.body.style.overflow = "auto";
+        };
+    }, [isMobile, isOpen]);
+
     return (
         <>
+            {/* Mobile overlay */}
+            {isMobile && isOpen && (
+                <div
+                    className="fixed inset-0 bg-black/40 backdrop-blur-sm z-30"
+                    onClick={() => setCollapsed(true)}
+                />
+            )}
+
             {/* Sidebar */}
             <aside className={`
                     bg-blue-800 text-blue-100 font-bold shadow-xl p-4
@@ -57,7 +78,7 @@ export default function Sidebar() {
 
                         <nav className="flex flex-col gap-4 mt-4">
                             <button
-                                onClick={() => navigate("/analysis")}
+                                onClick={() => {navigate("/analysis"); setCollapsed(true)}}
                                 className={`px-4 py-3 rounded-lg text-left transition-all
                                   ${isActive("/analysis") ? "bg-blue-600" : "bg-blue-700"}
                                 `}
@@ -66,7 +87,7 @@ export default function Sidebar() {
                             </button>
 
                             <button
-                                onClick={() => navigate("/prediction")}
+                                onClick={() => {navigate("/prediction"); setCollapsed(true)}}
                                 className={`px-4 py-3 rounded-lg text-left transition-all
                                   ${isActive("/prediction") ? "bg-blue-600" : "bg-blue-700"}
                                 `}
