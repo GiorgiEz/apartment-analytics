@@ -1,0 +1,112 @@
+DATABASE SETUP GUIDE
+====================
+
+This document explains how to initialize and configure the PostgreSQL database required for running the Apartment Analytics and Price Prediction System.
+
+The system uses a structured ETL pipeline consisting of staging tables, dimension tables, and transformation scripts. The database must be created and initialized before running any data ingestion or machine learning components.
+
+------------------------------------------------------------
+1. REQUIREMENTS
+------------------------------------------------------------
+
+Before starting, ensure you have:
+
+- PostgreSQL installed (version 12+ recommended)
+- A running PostgreSQL service
+- Access to a PostgreSQL user with permissions to create databases and tables
+- Project source code extracted locally
+
+------------------------------------------------------------
+2. CREATE DATABASE
+------------------------------------------------------------
+
+Create the main database used by the project.
+
+Option 1: Using terminal
+
+    createdb apartment_analytics
+
+Option 2: Using SQL
+
+    CREATE DATABASE apartment_analytics;
+
+------------------------------------------------------------
+3. CONFIGURE ENVIRONMENT VARIABLES
+------------------------------------------------------------
+
+In the project root, create a `.env` file based on `.env.example`.
+
+Example `.env.example` provided in the project:
+
+    DATABASE_URL=postgresql://<username>:<password>@localhost:5432/apartment_analytics
+
+Steps:
+
+1. Copy `.env.example` → `.env`
+2. Replace placeholders with your local PostgreSQL credentials
+
+Example:
+
+    DATABASE_URL=postgresql://postgres:your_password@localhost:5432/apartment_analytics
+
+------------------------------------------------------------
+4. INITIALIZE DATABASE SCHEMA
+------------------------------------------------------------
+
+Run the SQL scripts in STRICT ORDER.
+
+Each script depends on the previous one.
+
+Step 1: Create schema and core tables
+
+    psql -U postgres -d apartment_analytics -f 01_DDL.sql
+
+Step 2: Create staging layer
+
+    psql -U postgres -d apartment_analytics -f 02_STAGING.sql
+
+Step 3: Initialize dimension tables
+
+    psql -U postgres -d apartment_analytics -f 03_DML_INIT_DIMENSIONS.sql
+
+Step 4: Run ETL from staging to final tables
+
+    psql -U postgres -d apartment_analytics -f 04_DML_ETL_FROM_STAGING.sql
+
+------------------------------------------------------------
+5. VERIFY INSTALLATION
+------------------------------------------------------------
+
+After running all scripts, verify that:
+
+- All tables exist (staging, dimension, fact tables)
+- Relationships (foreign keys) are correctly created
+- ETL scripts execute without errors
+
+You can check tables using:
+
+    \dt   (inside psql shell)
+
+Or query:
+
+    SELECT table_name FROM information_schema.tables
+    WHERE table_schema = 'public';
+
+------------------------------------------------------------
+6. DATA INGESTION PIPELINE (OPTIONAL)
+------------------------------------------------------------
+
+The scraping pipeline will automatically insert data into the staging tables.
+
+Once staging tables are populated, run:
+
+    04_DML_ETL_FROM_STAGING.sql
+
+to transform data into final analytical tables used for:
+- Exploratory Data Analysis (EDA)
+- Machine Learning models
+- Dashboard visualization
+
+------------------------------------------------------------
+END OF GUIDE
+------------------------------------------------------------
