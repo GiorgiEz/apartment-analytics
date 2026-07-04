@@ -8,7 +8,7 @@ from pathlib import Path
 from backend.app.schemas import PredictionRequest
 from backend.app.state import SALE_MODEL, RENT_MODEL, SALE_SCHEMA, RENT_SCHEMA
 
-# Run locally from backend/app:
+# Run locally from root:
 # uvicorn backend.app.main:app --reload
 
 app = FastAPI(title="Apartment Price Prediction API", version="1.0.0")
