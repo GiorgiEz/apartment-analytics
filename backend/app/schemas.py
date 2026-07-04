@@ -1,7 +1,7 @@
 # schemas.py
 from pydantic import BaseModel, model_validator, PrivateAttr
 from typing import Optional
-from backend.app.state import SALE_SCHEMA, RENT_SCHEMA
+from .state import SALE_SCHEMA, RENT_SCHEMA
 
 
 class PredictionRequest(BaseModel):
