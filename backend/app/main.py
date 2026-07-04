@@ -5,8 +5,8 @@ import pandas as pd
 from datetime import datetime
 from fastapi.middleware.cors import CORSMiddleware
 from pathlib import Path
-from backend.app.schemas import PredictionRequest
-from backend.app.state import SALE_MODEL, RENT_MODEL, SALE_SCHEMA, RENT_SCHEMA
+from schemas import PredictionRequest
+from state import SALE_MODEL, RENT_MODEL, SALE_SCHEMA, RENT_SCHEMA
 
 # Run locally from root:
 # uvicorn backend.app.main:app --reload
