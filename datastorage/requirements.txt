@@ -1,3 +1,0 @@
-# datastorage requirements
-pandas
-sqlalchemy

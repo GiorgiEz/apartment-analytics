@@ -1,0 +1,26 @@
+# Core backend
+fastapi
+uvicorn
+pydantic
+
+# Data handling
+numpy
+pandas
+scikit-learn
+
+# ML model persistence
+joblib
+
+# Visualization (EDA)
+matplotlib
+
+# Database / storage
+sqlalchemy
+psycopg2-binary
+
+# Scraping
+selenium
+requests
+
+# Environment variables
+python-dotenv
