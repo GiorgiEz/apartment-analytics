@@ -410,7 +410,8 @@ The frontend is developed using a modern component-based architecture.
     - Area (m²)
     - Bedrooms
     - Floor
-    - Date
+    - Year
+    - Month
   - Sends request to backend API
   - Displays predicted price in real time
 
@@ -419,8 +420,6 @@ The frontend is developed using a modern component-based architecture.
 - Responsive UI design (Tailwind CSS)
 - Type safety and maintainability (TypeScript)
 - Dynamic chart rendering for analytics
-
-Here is a clean, **README-ready “How to Run” section** structured for clarity and reproducibility:
 
 
 ## How to Run
